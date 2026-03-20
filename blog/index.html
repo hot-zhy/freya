@@ -141,6 +141,22 @@
                 <div class="sidebar-title">计算机网络</div>
                 <a href="#" class="toc-item" data-id="tcp-handshake">TCP 握手三次、挥手四次为什么</a>
                 <a href="#" class="toc-item" data-id="tcp-diff">握手与挥手的区别，为什么少一次</a>
+                <a href="#" class="toc-item" data-id="http-https">HTTP 与 HTTPS 区别</a>
+                <a href="#" class="toc-item" data-id="http-versions">HTTP/1.0 到 HTTP/3 演进</a>
+                <a href="#" class="toc-item" data-id="browser-request">打开网页发生了什么</a>
+                <a href="#" class="toc-item" data-id="tls-handshake">TLS 握手过程</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">Netty / 网络</div>
+                <a href="#" class="toc-item" data-id="netty-tomcat">Netty 与 Tomcat 区别</a>
+                <a href="#" class="toc-item" data-id="sse-websocket">SSE vs WebSocket</a>
+                <a href="#" class="toc-item" data-id="bytebuf">ByteBuf 优化</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">操作系统</div>
+                <a href="#" class="toc-item" data-id="process-thread">进程与线程的区别及通信</a>
             </div>
 
             <div class="toc-category">
@@ -148,6 +164,11 @@
                 <a href="#" class="toc-item" data-id="sync-async">同步阻塞 / 异步非阻塞 等区别</a>
                 <a href="#" class="toc-item" data-id="optimistic-pessimistic">乐观锁和悲观锁</a>
                 <a href="#" class="toc-item" data-id="redis-lock">Redis 分布式锁</a>
+                <a href="#" class="toc-item" data-id="volatile">volatile 关键字</a>
+                <a href="#" class="toc-item" data-id="synchronized-upgrade">synchronized 锁升级</a>
+                <a href="#" class="toc-item" data-id="aqs">AQS 抽象队列同步器</a>
+                <a href="#" class="toc-item" data-id="cas">CAS 与 ABA 问题</a>
+                <a href="#" class="toc-item" data-id="reentrant-lock">ReentrantLock</a>
             </div>
 
             <div class="toc-category">
@@ -155,12 +176,17 @@
                 <a href="#" class="toc-item" data-id="cache-avalanche">缓存雪崩、穿透、击穿</a>
                 <a href="#" class="toc-item" data-id="redis-hotkey">Redis 热 Key 问题</a>
                 <a href="#" class="toc-item" data-id="redis-rdb-aof">Redis RDB 与 AOF</a>
+                <a href="#" class="toc-item" data-id="redis-datastruct">Redis 数据结构底层实现</a>
                 <a href="#" class="toc-item" data-id="rate-limit">限流算法：漏桶 vs 令牌桶</a>
             </div>
 
             <div class="toc-category">
                 <div class="sidebar-title">系统设计</div>
                 <a href="#" class="toc-item" data-id="seckill">设计秒杀系统</a>
+                <a href="#" class="toc-item" data-id="consistent-hash">一致性 Hash</a>
+                <a href="#" class="toc-item" data-id="ranking-design">排行榜设计</a>
+                <a href="#" class="toc-item" data-id="order-timeout">订单超时取消</a>
+                <a href="#" class="toc-item" data-id="rate-limit-circuit">限流与熔断</a>
             </div>
 
             <div class="toc-category">
@@ -169,11 +195,31 @@
                 <a href="#" class="toc-item" data-id="array-vs-list">数组 vs 链表（内存有限）</a>
                 <a href="#" class="toc-item" data-id="bean-lifecycle">Spring Bean 生命周期</a>
                 <a href="#" class="toc-item" data-id="jvm-gc">JVM 垃圾回收机制</a>
+                <a href="#" class="toc-item" data-id="jvm-memory">JVM 内存区域</a>
+                <a href="#" class="toc-item" data-id="jvm-oom">OOM 排查</a>
+                <a href="#" class="toc-item" data-id="threadlocal-leak">ThreadLocal 内存泄漏</a>
+                <a href="#" class="toc-item" data-id="thread-pool">线程池参数与工作原理</a>
+                <a href="#" class="toc-item" data-id="thread-pool-reject">线程池拒绝策略</a>
+                <a href="#" class="toc-item" data-id="cookie-session-token">Cookie / Session / Token</a>
+                <a href="#" class="toc-item" data-id="exception">检查异常 vs 非检查异常</a>
+                <a href="#" class="toc-item" data-id="try-with-resources">try-with-resources</a>
+                <a href="#" class="toc-item" data-id="final-finally">final / finally / finalize</a>
+                <a href="#" class="toc-item" data-id="dynamic-proxy">动态代理 vs CGLIB</a>
+                <a href="#" class="toc-item" data-id="spring-transaction-fail">Spring 事务失效</a>
+                <a href="#" class="toc-item" data-id="spring-circular">Spring 循环依赖</a>
+                <a href="#" class="toc-item" data-id="spring-autoconfig">Spring Boot 自动装配</a>
+                <a href="#" class="toc-item" data-id="spring-ioc-aop">Spring IOC 与 AOP</a>
             </div>
 
             <div class="toc-category">
                 <div class="sidebar-title">数据库</div>
                 <a href="#" class="toc-item" data-id="mysql-mvcc">MySQL MVCC 可重复读</a>
+                <a href="#" class="toc-item" data-id="mysql-btree">MySQL 索引为什么用 B+ 树</a>
+                <a href="#" class="toc-item" data-id="mysql-acid">MySQL 事务 ACID 与隔离级别</a>
+                <a href="#" class="toc-item" data-id="mysql-logs">Binlog / Redolog / Undolog</a>
+                <a href="#" class="toc-item" data-id="innodb-myisam">InnoDB vs MyISAM</a>
+                <a href="#" class="toc-item" data-id="sql-execute">SQL 执行过程</a>
+                <a href="#" class="toc-item" data-id="big-field-query">大字段查询慢优化</a>
             </div>
 
             <div class="toc-category">
@@ -187,11 +233,45 @@
                 <a href="#" class="toc-item" data-id="n-diff-k">构造 n 个数字差值为 k</a>
                 <a href="#" class="toc-item" data-id="binary-tree-path">二叉树路径和</a>
                 <a href="#" class="toc-item" data-id="remove-nth-node">删除链表倒数第 N 个节点</a>
+                <a href="#" class="toc-item" data-id="lru">LRU 缓存实现</a>
+                <a href="#" class="toc-item" data-id="reverse-list">反转链表</a>
+                <a href="#" class="toc-item" data-id="lca">二叉树最近公共祖先</a>
+                <a href="#" class="toc-item" data-id="lis">最长递增子序列</a>
+                <a href="#" class="toc-item" data-id="invert-tree">翻转二叉树</a>
             </div>
 
             <div class="toc-category">
                 <div class="sidebar-title">消息队列</div>
                 <a href="#" class="toc-item" data-id="msg-idempotent">消息重复消费与幂等</a>
+                <a href="#" class="toc-item" data-id="sticky-packet">粘包与半包问题</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">运维 / 排查</div>
+                <a href="#" class="toc-item" data-id="cpu-100">CPU 100% 排查</a>
+                <a href="#" class="toc-item" data-id="deadlock">死锁检查与影响</a>
+                <a href="#" class="toc-item" data-id="linux-log">Linux 查日志</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">情景题</div>
+                <a href="#" class="toc-item" data-id="phone-exists">1000W 手机号是否存在</a>
+                <a href="#" class="toc-item" data-id="huffman-compress">哈夫曼压缩</a>
+                <a href="#" class="toc-item" data-id="api-topk">API 访问 TopK 统计</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">项目实战</div>
+                <a href="#" class="toc-item" data-id="essay-async">作文批改异步流程与消息不丢</a>
+                <a href="#" class="toc-item" data-id="gzip-tradeoff">GZIP 压缩与 CPU 权衡</a>
+                <a href="#" class="toc-item" data-id="redisson-watchdog">Redisson Watchdog 原理</a>
+                <a href="#" class="toc-item" data-id="mq-idempotent">MQ 如何保证不重复消费</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">其他</div>
+                <a href="#" class="toc-item" data-id="redis-usage">Redis 除了缓存还能做什么</a>
+                <a href="#" class="toc-item" data-id="rabbitmq-choice">为什么选 RabbitMQ</a>
             </div>
 
             <div class="toc-category">
@@ -204,126 +284,260 @@
         <main class="reader">
             <div class="reader-welcome" id="welcome">
                 <h2>面经 / 面试准备</h2>
-                <p>从左侧目录选择题目，右侧查看答案。整理自牛客、掘金等大厂后端面经，涵盖计算机网络、Redis、MySQL、Java、Spring、系统设计、AI、算法等。</p>
+                <p>从左侧目录选择题目，右侧查看答案。整合面试拷打宝典、牛客、掘金等大厂后端面经，涵盖计算机网络、Netty、Redis、MySQL、Java、Spring、JVM、系统设计、AI、算法、运维排查、项目实战等。</p>
             </div>
 
             <article class="article-content" id="tcp-handshake">
                 <h1>TCP 握手是三次，挥手是四次为什么？</h1>
                 <div class="meta">计算机网络</div>
-                <p><strong>三次握手：</strong></p>
+                <p><strong>三次握手流程：</strong>① 客户端 SYN → ② 服务端 SYN+ACK → ③ 客户端 ACK</p>
+                <p><strong>为什么是三次：</strong></p>
                 <ul>
-                    <li>防止历史连接：若用两次，旧 SYN 可能迟到，服务端误开连接</li>
-                    <li>同步序列号：双方确认对方的初始序列号</li>
-                    <li>避免资源浪费：两次握手时服务端无法确认客户端是否收到 SYN+ACK</li>
+                    <li><strong>防止历史连接：</strong>若只用两次握手，旧 SYN 可能迟到到达，服务端会误开连接并回复 SYN+ACK，客户端收到后发现自己未发起则发 RST 关闭，但服务端已分配资源</li>
+                    <li><strong>同步序列号：</strong>双方需确认对方的初始序列号（ISN），用于后续可靠传输</li>
+                    <li><strong>避免资源浪费：</strong>两次握手时服务端无法确认客户端是否收到 SYN+ACK，若丢失则服务端一直等待</li>
                 </ul>
-                <p><strong>四次挥手：</strong></p>
+                <p><strong>四次挥手流程：</strong>① 客户端 FIN → ② 服务端 ACK → ③ 服务端 FIN → ④ 客户端 ACK</p>
+                <p><strong>为什么是四次：</strong></p>
                 <ul>
-                    <li>TCP 全双工，双方需各自关闭</li>
-                    <li>被动方收到 FIN 后可能还有数据要发，先 ACK，发完再发 FIN</li>
-                    <li>FIN 和 ACK 不能合并</li>
+                    <li>TCP 全双工，双方需各自关闭自己的发送方向</li>
+                    <li>被动方收到 FIN 后可能还有数据要发，先 ACK 确认收到，发完数据再发 FIN</li>
+                    <li>FIN 和 ACK 不能合并，因为中间可能有数据传输</li>
                 </ul>
             </article>
 
             <article class="article-content" id="tcp-diff">
                 <h1>TCP 三次握手和四次挥手的区别，为什么少一次？</h1>
                 <div class="meta">计算机网络</div>
-                <p>握手时服务端 SYN+ACK 可合并；挥手时被动方可能还有数据要发，FIN 不能与 ACK 同时发，所以多一次。</p>
+                <p><strong>握手少一次的原因：</strong>服务端收到 SYN 后，可以立即回复 SYN+ACK，将「确认」和「自己的 SYN」合并为一条报文，无需等待。</p>
+                <p><strong>挥手多一次的原因：</strong>被动方收到 FIN 时，可能还有数据未发送完，必须先 ACK 确认收到关闭请求，等数据发完后再发 FIN，因此 ACK 和 FIN 必须分开发送。</p>
+            </article>
+
+            <article class="article-content" id="http-https">
+                <h1>HTTP 与 HTTPS 的区别</h1>
+                <div class="meta">计算机网络</div>
+                <p><strong>核心区别：</strong>HTTP 明文传输；HTTPS = HTTP + SSL/TLS，加密传输。端口 80 vs 443。</p>
+                <p><strong>HTTP 三大问题：</strong>窃听（明文可被中间人看到）、篡改（无完整性校验）、冒充（无身份验证）。</p>
+                <p><strong>HTTPS 加密流程：</strong></p>
+                <ol>
+                    <li>客户端发送支持的加密套件 + 随机数 A</li>
+                    <li>服务端选择套件 + 下发证书 + 随机数 B</li>
+                    <li>客户端验证证书 → 用公钥加密随机数 C 发给服务端</li>
+                    <li>双方用 A+B+C 生成会话密钥，后续用对称加密通信</li>
+                </ol>
+                <p>混合加密：非对称加密用于密钥交换，对称加密用于数据传输（速度快）。</p>
+            </article>
+
+            <article class="article-content" id="http-versions">
+                <h1>HTTP/1.0 到 HTTP/3 演进</h1>
+                <div class="meta">计算机网络</div>
+                <p><strong>HTTP/1.0：</strong>一个请求一次 TCP 连接，成本高。</p>
+                <p><strong>HTTP/1.1：</strong>Keep-Alive 长连接、Host 头、虚拟主机。但响应按序、队头阻塞；文本协议头重复。</p>
+                <p><strong>HTTP/2：</strong>多路复用、头部压缩、帧交错。底层仍 TCP，丢包时队头阻塞。</p>
+                <p><strong>HTTP/3：</strong>基于 QUIC（UDP），按 stream 独立处理，解决队头阻塞。</p>
+            </article>
+
+            <article class="article-content" id="browser-request">
+                <h1>打开网页发生了什么</h1>
+                <div class="meta">计算机网络</div>
+                <p>解析 URL → 缓存判断（浏览器/系统/路由器）→ DNS 解析 → 获取 MAC（ARP）→ TCP 三次握手 → TLS 握手 → 发 HTTP 请求 → 服务器处理返回 → 解析 HTML 渲染。</p>
+            </article>
+
+            <article class="article-content" id="tls-handshake">
+                <h1>TLS 握手过程</h1>
+                <div class="meta">计算机网络</div>
+                <p>① 客户端：支持的加密方式、协议版本、随机数 a、公开材料 A；② 服务端：选择加密方式、证书（含公钥）、随机数 b、公开材料 B；③ 客户端：校验证书、域名、有效期；④ 双方：a+B/b+A 算出会话密钥 K；⑤ 后续用 K 对称加密传输。</p>
+            </article>
+
+            <article class="article-content" id="netty-tomcat">
+                <h1>Netty 与 Tomcat 区别</h1>
+                <div class="meta">Netty</div>
+                <p><strong>定位：</strong>Tomcat 是 Web 容器（Servlet+HTTP）；Netty 是网络通信框架。</p>
+                <p><strong>协议：</strong>Tomcat 主要 HTTP/HTTPS；Netty 适合长连接、自定义协议（IM、游戏、TCP 私有协议）。</p>
+                <p><strong>线程模型：</strong>Tomcat 一请求一线程；Netty 是 Reactor 模型，BossGroup 接收、WorkerGroup 处理 IO，多请求共享少量线程。</p>
+            </article>
+
+            <article class="article-content" id="sse-websocket">
+                <h1>SSE vs WebSocket</h1>
+                <div class="meta">Netty / 网络</div>
+                <p><strong>选 SSE：</strong>服务端单向推送、流式输出；自带重连、Last-Event-ID 续传；更轻量。</p>
+                <p><strong>选 WebSocket：</strong>双向、强交互、频繁通信。</p>
+                <p><strong>SSE 真流式：</strong>Nginx 需 proxy_buffering off；响应头 Content-Type: event-stream；Connection: keep-alive。</p>
+            </article>
+
+            <article class="article-content" id="bytebuf">
+                <h1>ByteBuf 优化</h1>
+                <div class="meta">Netty</div>
+                <p><strong>读写指针分离：</strong>readerIndex/writerIndex，无需 flip/clear。</p>
+                <p><strong>自动扩容：</strong>超容量自动扩展。</p>
+                <p><strong>池化：</strong>PooledByteBufAllocator 对象池复用。</p>
+                <p><strong>零拷贝：</strong>减少用户态/内核态复制；mmap、sendfile。</p>
+            </article>
+
+            <article class="article-content" id="process-thread">
+                <h1>进程与线程的区别及通信方式</h1>
+                <div class="meta">操作系统</div>
+                <p><strong>区别：</strong>进程是资源分配单位，拥有独立地址空间；线程是 CPU 调度单位，共享进程资源。进程创建/切换开销大，线程开销小。一个线程崩溃可能导致整个进程死亡。</p>
+                <p><strong>进程间通信（IPC）：</strong>管道、消息队列、共享内存、信号量、信号、套接字。</p>
+                <p><strong>线程间通信：</strong>共享地址空间，可直接访问全局变量；同步用互斥锁、条件变量、信号量等。</p>
             </article>
 
             <article class="article-content" id="sync-async">
                 <h1>同步阻塞、同步非阻塞、异步阻塞、异步非阻塞的区别</h1>
                 <div class="meta">操作系统 / 并发</div>
-                <p><strong>同步/异步：</strong>调用方是否等待结果返回。</p>
-                <p><strong>阻塞/非阻塞：</strong>等待时线程是否挂起。</p>
+                <p><strong>同步/异步：</strong>调用方是否等待结果。同步：调用后阻塞直到拿到结果；异步：调用后立即返回，结果通过回调/通知获取。</p>
+                <p><strong>阻塞/非阻塞：</strong>等待时线程是否挂起。阻塞：线程挂起；非阻塞：线程可做其他事。</p>
                 <ul>
-                    <li><strong>同步阻塞 (BIO)：</strong>调用后一直等，线程阻塞</li>
-                    <li><strong>同步非阻塞 (NIO 轮询)：</strong>立即返回，轮询检查是否就绪</li>
-                    <li><strong>异步阻塞：</strong>少见</li>
-                    <li><strong>异步非阻塞 (AIO / NIO 多路复用)：</strong>注册回调，就绪后通知</li>
+                    <li><strong>同步阻塞 (BIO)：</strong>read() 一直等数据，线程阻塞。典型：传统 Socket。</li>
+                    <li><strong>同步非阻塞 (NIO 轮询)：</strong>read() 立即返回，无数据则轮询。CPU 空转。</li>
+                    <li><strong>异步阻塞：</strong>少见，如 select 等待多个 fd 但阻塞。</li>
+                    <li><strong>异步非阻塞 (epoll/多路复用)：</strong>注册 fd 和回调，事件就绪时通知，无需轮询。</li>
                 </ul>
             </article>
 
             <article class="article-content" id="optimistic-pessimistic">
                 <h1>乐观锁和悲观锁的区别</h1>
                 <div class="meta">并发</div>
-                <p><strong>悲观锁：</strong>先加锁再操作。如 synchronized、SELECT FOR UPDATE、行锁。</p>
-                <p><strong>乐观锁：</strong>无锁，通过版本号/CAS 检测冲突后重试。</p>
-                <p>读多写少、冲突少时用乐观锁；写多、冲突多时用悲观锁。</p>
+                <p><strong>悲观锁：</strong>假设冲突多，先加锁再操作。synchronized、ReentrantLock、SELECT FOR UPDATE、行锁。</p>
+                <p><strong>乐观锁：</strong>假设冲突少，无锁，通过版本号/CAS 检测冲突后重试。如：UPDATE ... SET version=version+1 WHERE version=?</p>
+                <p><strong>选型：</strong>读多写少、冲突少用乐观锁（无锁开销）；写多、冲突多用悲观锁。</p>
             </article>
 
             <article class="article-content" id="redis-lock">
                 <h1>Redis 分布式锁</h1>
                 <div class="meta">系统设计</div>
-                <p><code>SET key value NX EX seconds</code> 实现基本锁。</p>
-                <ul>
-                    <li>value 用 UUID 防误删其他客户端的锁</li>
-                    <li>Lua 脚本保证「判断+删除」原子性</li>
-                    <li>Redisson 看门狗：自动续期，防止业务未完成锁过期</li>
-                    <li>Redlock：多 Redis 实例，多数成功才加锁</li>
-                </ul>
+                <p><strong>基本实现：</strong><code>SET key value NX EX seconds</code> 原子设置。value 用 UUID 防误删其他客户端的锁。</p>
+                <p><strong>删除时：</strong>需先判断 value 是否为自己，否则可能删别人的锁。用 Lua 保证「判断+删除」原子性。</p>
+                <p><strong>锁续期：</strong>业务执行时间可能超过 TTL，Redisson 看门狗每 1/3 过期时间自动续期。</p>
+                <p><strong>Redlock：</strong>多 Redis 实例（通常 5 个），超过半数加锁成功才认为成功，防止单点故障。</p>
+            </article>
+
+            <article class="article-content" id="volatile">
+                <h1>volatile 关键字</h1>
+                <div class="meta">Java 并发</div>
+                <p><strong>内存可见性：</strong>写 volatile 立即刷主存，其他核缓存失效（MESI 协议）；禁止变量缓存到寄存器，强制读 Cache Line。</p>
+                <p><strong>禁止指令重排：</strong>在读写处插入内存屏障；volatile 写 release，volatile 读 acquire。</p>
+                <p><strong>不保证原子性：</strong>i++ 分读-改-写三步，需 AtomicInteger 或 synchronized。</p>
+            </article>
+
+            <article class="article-content" id="aqs">
+                <h1>AQS 抽象队列同步器</h1>
+                <div class="meta">Java 并发</div>
+                <p>AbstractQueuedSynchronizer，构建锁和同步组件的基础。内部 FIFO 队列 + state 变量。ReentrantLock、Semaphore、CountDownLatch 基于 AQS。state=0 无锁，CAS 修改 state 获取锁，失败则入队等待。</p>
+            </article>
+
+            <article class="article-content" id="cas">
+                <h1>CAS 与 ABA 问题</h1>
+                <div class="meta">Java 并发</div>
+                <p><strong>CAS：</strong>Compare-And-Swap，内存值等于期望值才更新。乐观锁实现。</p>
+                <p><strong>ABA：</strong>A→B→A，指针/引用类可能致命。解决：版本号机制，(引用, version) 一起 CAS。</p>
+                <p><strong>高并发自旋：</strong>CPU 空转。解决：退避、LongAdder 分散热点。</p>
+            </article>
+
+            <article class="article-content" id="reentrant-lock">
+                <h1>ReentrantLock</h1>
+                <div class="meta">Java 并发</div>
+                <p>可重入锁，基于 AQS。相比 synchronized：可中断、可超时、可公平锁、多 Condition。FairSync 排队；NonfairSync 直接 CAS 抢锁。Condition 支持多条件队列，精准唤醒。</p>
+            </article>
+
+            <article class="article-content" id="synchronized-upgrade">
+                <h1>synchronized 锁升级</h1>
+                <div class="meta">Java 并发</div>
+                <p><strong>四种状态：</strong>无锁(01) → 偏向锁(01) → 轻量级锁(00) → 重量级锁(11)</p>
+                <p><strong>偏向锁：</strong>单线程反复进入，Mark Word 记录线程 ID，无竞争时几乎无开销。</p>
+                <p><strong>轻量级锁：</strong>有竞争时，CAS 将 Mark Word 指向栈中 Lock Record，自旋获取。</p>
+                <p><strong>重量级锁：</strong>自旋失败（约 10 次）或多线程竞争，升级为 Monitor，线程进入阻塞队列。</p>
             </article>
 
             <article class="article-content" id="cache-avalanche">
                 <h1>缓存雪崩、穿透、击穿的区别与解决方案</h1>
                 <div class="meta">Redis / 缓存 · 大厂高频</div>
-                <p><strong>三者区别：</strong></p>
-                <ul>
-                    <li><strong>缓存穿透：</strong>查询的数据在缓存和 DB 都不存在，请求绕过缓存直打 DB（非法/恶意查询）</li>
-                    <li><strong>缓存击穿：</strong>热点 key 过期，大量并发集中打到 DB（单个热点失效）</li>
-                    <li><strong>缓存雪崩：</strong>大量 key 同时失效或 Redis 宕机，请求集中打 DB（大面积失效）</li>
-                </ul>
-                <p><strong>解决方案：</strong></p>
-                <ul>
-                    <li><strong>穿透：</strong>布隆过滤器、缓存空对象（短 TTL）、参数校验</li>
-                    <li><strong>击穿：</strong>互斥锁、热点永不过期、逻辑过期+异步更新、预热</li>
-                    <li><strong>雪崩：</strong>过期时间加随机值、多级缓存、限流熔断、Redis 高可用</li>
-                </ul>
+                <p><strong>三者区别：</strong>穿透（数据不存在，直打 DB）；击穿（热点 key 过期）；雪崩（大量 key 同时失效或 Redis 宕机）。</p>
+                <p><strong>穿透：</strong>网关参数校验；布隆过滤器（False 直接拦截）；缓存空对象（短 TTL）。</p>
+                <p><strong>击穿：</strong>SingleFlight 模式：ConcurrentHashMap+CompletableFuture，同 key 只有第一个线程查 DB，其余等待 Future.get() 复用结果。</p>
+                <p><strong>雪崩：</strong>随机 TTL（如 +0~20min Jitter）；多级缓存；限流熔断。</p>
             </article>
 
             <article class="article-content" id="redis-hotkey">
                 <h1>Redis 热 Key 问题如何发现和解决？</h1>
                 <div class="meta">Redis / 缓存 · 大厂高频</div>
-                <p><strong>什么是热 Key：</strong>某 Key 访问量远高于其他，如总 QPS 10000 时某 Key 达 7000。</p>
-                <p><strong>危害：</strong>缓存击穿、单节点网卡打满、DB 雪崩、集群不均衡。</p>
-                <p><strong>发现：</strong>经验预测、<code>redis-cli --hotkeys</code>、MONITOR+redis-faina、客户端/代理层统计。</p>
-                <p><strong>解决：</strong></p>
-                <ul>
-                    <li>本地缓存（Guava/Caffeine）分散请求</li>
-                    <li>热 Key 拆分：key_0001～key_0015 分散到不同节点</li>
-                    <li>热 Key 备份、读写分离、从节点扩容</li>
-                    <li>热 Key 永不过期 + MQ 异步更新</li>
-                </ul>
+                <p><strong>定义：</strong>某 Key 访问量远高于其他，如总 QPS 10000 时某 Key 达 7000，或对大 Hash/ZSet 频繁操作。</p>
+                <p><strong>危害：</strong>单节点网卡打满、缓存击穿、DB 雪崩、Redis Cluster 分片不均衡。</p>
+                <p><strong>发现：</strong>经验预测（秒杀商品 ID）；<code>redis-cli --hotkeys</code>；MONITOR+redis-faina 分析；客户端/代理层统计访问频率。</p>
+                <p><strong>解决：</strong>本地缓存分散请求；热 Key 拆分（key_001～key_015）；读写分离+从节点扩容；热 Key 永不过期+MQ 更新。</p>
             </article>
 
             <article class="article-content" id="redis-rdb-aof">
                 <h1>Redis RDB 与 AOF 持久化区别</h1>
                 <div class="meta">Redis / 缓存</div>
-                <p><strong>RDB：</strong>二进制快照，某一时刻完整数据。触发：save m n、BGSAVE。恢复快、文件小，但可能丢失分钟级数据。</p>
-                <p><strong>AOF：</strong>追加写命令，重启时重放。刷盘策略：always / everysec（默认）/ no。数据安全高，恢复慢、文件易膨胀。</p>
-                <p><strong>对比：</strong>RDB 恢复快、AOF 数据安全；生产常用混合模式（Redis 4.0+）平衡两者。</p>
+                <p><strong>RDB：</strong>二进制快照，某一时刻完整数据。触发：save 900 1、BGSAVE。恢复快、文件小，可能丢失分钟级数据。</p>
+                <p><strong>AOF：</strong>追加写命令，重启时重放。刷盘：always（每次）、everysec（默认）、no。数据安全高，恢复慢、文件易膨胀。</p>
+                <p><strong>混合模式（4.0+）：</strong>RDB 做全量 + AOF 做增量，兼顾恢复速度与数据安全。</p>
+            </article>
+
+            <article class="article-content" id="redis-datastruct">
+                <h1>Redis 数据结构底层实现</h1>
+                <div class="meta">Redis / 缓存</div>
+                <p><strong>上层类型：</strong>String、List、Hash、Set、Sorted Set</p>
+                <p><strong>底层编码：</strong></p>
+                <ul>
+                    <li>String：int / embstr(≤44B) / raw；SDS 实现，O(1) 取长度、二进制安全</li>
+                    <li>List：QuickList（ZipList+链表）</li>
+                    <li>Hash：ZipList（元素少）→ Hashtable</li>
+                    <li>Set：IntSet（全整数）→ Hashtable</li>
+                    <li>ZSet：ZipList（元素少）→ SkipList+Dict</li>
+                </ul>
             </article>
 
             <article class="article-content" id="rate-limit">
                 <h1>限流算法：漏桶 vs 令牌桶</h1>
                 <div class="meta">Redis / 缓存 · 大厂高频</div>
-                <p><strong>漏桶：</strong>请求进桶排队，以固定速率流出。强制匀速，无法处理突发。</p>
-                <p><strong>令牌桶：</strong>以恒定速率生成令牌，请求取令牌通过。允许突发（桶有容量）。</p>
+                <p><strong>漏桶：</strong>请求进桶排队，以固定速率流出。无论请求多快，输出速率恒定。无法处理突发。</p>
+                <p><strong>令牌桶：</strong>以恒定速率往桶里放令牌，请求取到令牌才通过。桶有容量，可应对短时突发。</p>
                 <p><strong>区别：</strong>令牌桶允许突发、漏桶强制平滑。令牌桶保护自己（限调用方），漏桶保护下游（限输出）。</p>
-                <p><strong>场景：</strong>接口限流用令牌桶；消息队列消费、支付系统用漏桶。</p>
+                <p><strong>场景：</strong>接口限流用令牌桶（Guava RateLimiter）；MQ 消费、支付回调用漏桶。</p>
             </article>
 
             <article class="article-content" id="seckill">
                 <h1>设计秒杀系统</h1>
                 <div class="meta">系统设计</div>
-                <ul>
-                    <li>前端：按钮防重复、限流</li>
-                    <li>CDN：静态资源</li>
-                    <li>网关：限流、熔断</li>
-                    <li>Redis：预减库存、防超卖</li>
-                    <li>MQ：异步下单、削峰</li>
-                    <li>数据库：唯一索引防超卖、分库分表</li>
-                    <li>缓存预热</li>
-                </ul>
+                <p><strong>前端：</strong>按钮防重复点击、前端限流、静态资源 CDN。</p>
+                <p><strong>网关：</strong>限流（令牌桶/漏桶）、熔断、黑白名单。</p>
+                <p><strong>Redis：</strong>预减库存（DECR）、防超卖（Lua 原子判断）；库存预热；热点数据本地缓存。</p>
+                <p><strong>MQ：</strong>异步下单，请求进队列削峰，消费者控制 DB 写入速率。</p>
+                <p><strong>数据库：</strong>唯一索引（用户+商品）防重复下单；乐观锁/悲观锁防超卖；分库分表。</p>
+                <p><strong>其他：</strong>缓存预热、降级（核心功能优先）、监控告警。</p>
+            </article>
+
+            <article class="article-content" id="consistent-hash">
+                <h1>一致性 Hash</h1>
+                <div class="meta">系统设计</div>
+                <p><strong>问题：</strong>普通 Hash 取模，节点增删时大量 key 需重新映射。</p>
+                <p><strong>思路：</strong>Hash 环（0～2^32-1），节点和 key 都映射到环上，key 顺时针找最近节点。</p>
+                <p><strong>虚拟节点：</strong>每个物理节点对应多个虚拟节点，分散到环上，使数据分布更均匀。</p>
+                <p><strong>应用：</strong>分布式缓存、负载均衡。</p>
+            </article>
+
+            <article class="article-content" id="ranking-design">
+                <h1>排行榜设计</h1>
+                <div class="meta">系统设计</div>
+                <p>Redis ZSET：key=榜单维度，member=userId，score=分数。ZADD/ZINCRBY 更新，ZREVRANGE 取 TopK。展示信息放 Hash（user:id），批量获取。score 相同需 tie-breaker（如时间编码进复合 score）。</p>
+            </article>
+
+            <article class="article-content" id="order-timeout">
+                <h1>订单超时取消</h1>
+                <div class="meta">系统设计</div>
+                <p><strong>定时轮询：</strong>简单但时效差、DB 压力大。</p>
+                <p><strong>Redis 过期监听：</strong>不可靠（发后即忘）、延迟大，不推荐。</p>
+                <p><strong>ZSet+轮询：</strong>score=超时时间戳，ZRANGEBYSCORE 取超时订单；Lua 原子移到 processing_queue，业务处理后再删；宕机时守护线程扫描 processing_queue 重试。</p>
+                <p><strong>MQ 延时队列：</strong>RocketMQ 原生延时消息 / RabbitMQ delayed 插件 + 定时扫表兜底。状态机：UNPAID→PAID/CANCELLED，更新带条件 where status='UNPAID'。</p>
+            </article>
+
+            <article class="article-content" id="rate-limit-circuit">
+                <h1>限流与熔断</h1>
+                <div class="meta">系统设计</div>
+                <p><strong>限流：</strong>固定窗口（临界点问题）、滑动窗口、漏桶、令牌桶。单机 Guava RateLimiter；分布式 Redis+Lua。拒绝/降级/转异步。</p>
+                <p><strong>熔断：</strong>下游不健康时停止调用，快速失败/降级。触发：连续失败次数、失败率。半开探测恢复。</p>
             </article>
 
             <article class="article-content" id="a-plus-plus">
@@ -345,44 +559,246 @@
                 <div class="meta">Java / Spring · 大厂高频</div>
                 <p><strong>主要阶段：</strong></p>
                 <ol>
-                    <li>实例化（构造方法创建对象）</li>
-                    <li>属性注入（依赖注入）</li>
-                    <li>Aware 回调（BeanNameAware、BeanFactoryAware 等）</li>
+                    <li>实例化（构造方法创建对象，分配内存）</li>
+                    <li>属性注入（@Autowired、setter 等）</li>
+                    <li>Aware 回调（BeanNameAware、BeanFactoryAware、ApplicationContextAware）</li>
                     <li>BeanPostProcessor.postProcessBeforeInitialization</li>
                     <li>初始化：@PostConstruct → InitializingBean.afterPropertiesSet() → init-method</li>
-                    <li>BeanPostProcessor.postProcessAfterInitialization</li>
+                    <li>BeanPostProcessor.postProcessAfterInitialization（AOP 代理在此生成）</li>
                     <li>销毁：@PreDestroy → DisposableBean.destroy() → destroy-method</li>
                 </ol>
-                <p>实例化是分配内存，初始化是执行业务逻辑。BeanPostProcessor 是扩展点。</p>
+                <p>BeanPostProcessor 是扩展点，可对每个 Bean 做前后处理。</p>
             </article>
 
             <article class="article-content" id="jvm-gc">
                 <h1>JVM 垃圾回收机制</h1>
                 <div class="meta">Java / Spring · 大厂高频</div>
-                <p><strong>垃圾识别：</strong>可达性分析（从 GC Roots 出发，不可达即垃圾）。GC Roots：栈引用、静态变量、常量、JNI 引用。</p>
-                <p><strong>回收算法：</strong>标记-清除（有碎片）、复制（新生代）、标记-整理（老年代）。</p>
-                <p><strong>回收器：</strong>Serial/ParNew、Parallel、CMS（已废弃）、G1（JDK9+ 默认）、ZGC（超低停顿）。</p>
-                <p><strong>分代：</strong>Minor GC（新生代）、Major/Full GC（老年代/整堆）。</p>
+                <p><strong>垃圾识别：</strong>可达性分析（从 GC Roots 出发，不可达即垃圾）。引用计数法有循环引用问题已废弃。</p>
+                <p><strong>GC Roots：</strong>栈中引用、静态变量、常量、JNI 引用。</p>
+                <p><strong>回收算法：</strong>标记-清除（有碎片）；复制（新生代 Eden+S0+S1）；标记-整理（老年代）。</p>
+                <p><strong>回收器：</strong>Serial/ParNew、Parallel、CMS（已废弃）、G1（JDK9+ 默认，分区）、ZGC（超低停顿）。</p>
+                <p><strong>分代：</strong>Minor GC（新生代）、Major/Full GC（老年代/整堆）。对象晋升：年龄达阈值或 S 区装不下。</p>
+            </article>
+
+            <article class="article-content" id="thread-pool">
+                <h1>线程池参数与工作原理</h1>
+                <div class="meta">Java <span class="company-tag">大厂高频</span></div>
+                <p><strong>七大参数：</strong>corePoolSize、maximumPoolSize、keepAliveTime、unit、workQueue、threadFactory、handler。</p>
+                <p><strong>JDK 流程：</strong>核心满→入队→队列满→开非核心→拒绝。IO 密集时队列排队 RT 飙升，Tomcat 自定义 TaskQueue：核心满后优先开非核心直到 MAX，再入队。</p>
+                <p><strong>拒绝策略：</strong>生产不用 CallerRunsPolicy（主线程执行会卡死）；核心任务落 MQ/告警；非核心可丢弃但需统计。</p>
+            </article>
+
+            <article class="article-content" id="thread-pool-reject">
+                <h1>线程池拒绝策略</h1>
+                <div class="meta">Java</div>
+                <p>AbortPolicy：抛异常；CallerRunsPolicy：主线程执行（高并发会雪崩）；DiscardPolicy：静默丢弃；DiscardOldestPolicy：弃最旧。自定义：打点告警、分级处理、熔断限流。</p>
+            </article>
+
+            <article class="article-content" id="cookie-session-token">
+                <h1>Cookie / Session / Token</h1>
+                <div class="meta">Java</div>
+                <p>Cookie：浏览器存储载体；Session：服务端会话，SessionID 放 Cookie；JWT：自包含令牌，服务端解析即可。Session 状态在服务端；JWT 无状态。JWT 强制下线：jti 存 Redis 黑名单，过期时间=token 剩余有效期。</p>
+            </article>
+
+            <article class="article-content" id="exception">
+                <h1>检查异常 vs 非检查异常</h1>
+                <div class="meta">Java</div>
+                <p>检查异常：编译器强制 try-catch 或 throws，如 IOException；非检查异常：RuntimeException 及子类。设计原因：检查异常代表可预期、可恢复的外部问题；非检查异常代表程序员编码错误。</p>
+            </article>
+
+            <article class="article-content" id="try-with-resources">
+                <h1>try-with-resources</h1>
+                <div class="meta">Java</div>
+                <p>语法糖，资源需实现 AutoCloseable。无论正常/异常都会 close；try 和 close 都抛异常时，主异常抛出，close 异常 addSuppressed。避免忘记关闭、避免 finally 中 close 异常覆盖主异常。</p>
+            </article>
+
+            <article class="article-content" id="final-finally">
+                <h1>final / finally / finalize</h1>
+                <div class="meta">Java</div>
+                <p>final：修饰类不可继承、方法不可重写、变量不可变。finally：正常/异常/return 都会执行（System.exit 除外）。finalize：GC 前可能调用，不保证时机，已废弃。</p>
+            </article>
+
+            <article class="article-content" id="dynamic-proxy">
+                <h1>动态代理 vs CGLIB</h1>
+                <div class="meta">Java</div>
+                <p><strong>JDK 动态代理：</strong>基于接口，InvocationHandler；只能代理接口。</p>
+                <p><strong>CGLIB：</strong>基于继承，字节码生成子类；可代理无接口类。创建开销大，调用性能好。</p>
+            </article>
+
+            <article class="article-content" id="spring-transaction-fail">
+                <h1>Spring 事务失效</h1>
+                <div class="meta">Spring</div>
+                <p>① 自调用（this.B()）不走代理；② 方法非 public；③ 异常被 catch 没抛出；④ 抛出检查异常（默认只回滚非检查异常）。</p>
+            </article>
+
+            <article class="article-content" id="spring-circular">
+                <h1>Spring 循环依赖</h1>
+                <div class="meta">Spring</div>
+                <p>构造注入循环 ❌；Prototype 循环 ❌。Setter+单例 ✔：三级缓存。一级 singletonObjects 完全初始化；二级 earlySingletonObjects 早期引用；三级 singletonFactories 生成早期引用（含 AOP 代理）。</p>
+            </article>
+
+            <article class="article-content" id="spring-autoconfig">
+                <h1>Spring Boot 自动装配</h1>
+                <div class="meta">Spring</div>
+                <p>@SpringBootApplication = @Configuration + @ComponentScan + @EnableAutoConfiguration。@EnableAutoConfiguration 读取 META-INF/spring.factories 中的自动配置类。@ConditionalOnClass、@ConditionalOnMissingBean 等条件生效。</p>
+            </article>
+
+            <article class="article-content" id="spring-ioc-aop">
+                <h1>Spring IOC 与 AOP</h1>
+                <div class="meta">Spring</div>
+                <p>IOC：对象创建和依赖交给容器，依赖注入。AOP：日志、事务、权限等横切逻辑，通过动态代理在方法前后插入。</p>
+            </article>
+
+            <article class="article-content" id="jvm-memory">
+                <h1>JVM 内存区域</h1>
+                <div class="meta">JVM</div>
+                <p><strong>线程私有：</strong>程序计数器、虚拟机栈、本地方法栈。</p>
+                <p><strong>线程共享：</strong>堆（对象实例、GC 主战场）、方法区/元空间（类元信息）。栈存方法调用、局部变量、引用。</p>
+            </article>
+
+            <article class="article-content" id="jvm-oom">
+                <h1>OOM 排查</h1>
+                <div class="meta">JVM</div>
+                <p>① 一次性申请太多：-XX:+HeapDumpOnOutOfMemoryError 导出 dump，VisualVM 分析；② 未及时释放：ThreadLocal、大集合；③ 堆太小：jmap -heap 查看。运行中可用 Arthas。</p>
+            </article>
+
+            <article class="article-content" id="threadlocal-leak">
+                <h1>ThreadLocal 内存泄漏</h1>
+                <div class="meta">JVM</div>
+                <p>Entry.key 是弱引用（ThreadLocal），value 是强引用。ThreadLocal 被回收后 key=null，但 value 仍被 Thread→ThreadLocalMap 引用，线程池场景线程不死则泄漏。用完必须 remove()。生产还会导致用户数据错乱（线程复用）。</p>
             </article>
 
             <article class="article-content" id="mysql-mvcc">
                 <h1>MySQL MVCC 可重复读实现原理</h1>
                 <div class="meta">数据库 · 大厂高频</div>
-                <p><strong>MVCC：</strong>多版本并发控制，InnoDB 实现可重复读的机制。</p>
-                <p><strong>三大组件：</strong></p>
-                <ul>
-                    <li>隐藏字段：DB_TRX_ID、DB_ROLL_PTR、DB_ROW_ID</li>
-                    <li>Undo Log：版本链，存历史版本</li>
-                    <li>Read View：m_ids、min_trx_id、max_trx_id、creator_trx_id</li>
-                </ul>
-                <p><strong>可见性：</strong>TRX_ID == creator 可见；&lt; min 可见；&gt;= max 不可见；在 [min,max) 内看是否在 m_ids 中。</p>
-                <p><strong>RR vs RC：</strong>RR 事务开始时生成一次 Read View；RC 每次 SELECT 生成新 Read View。</p>
+                <p><strong>MVCC：</strong>多版本并发控制，InnoDB 实现可重复读，读写不阻塞。</p>
+                <p><strong>三大组件：</strong>隐藏字段（DB_TRX_ID、DB_ROLL_PTR）；Undo Log 版本链；Read View（m_ids、min_trx_id、max_trx_id、creator_trx_id）。</p>
+                <p><strong>可见性：</strong>TRX_ID==creator 可见；&lt;min 可见；&gt;=max 不可见；[min,max) 内看是否在 m_ids（未提交则不可见）。不可见则沿 ROLL_PTR 找上一版本。</p>
+                <p><strong>RR vs RC：</strong>RR 事务内首次读生成 Read View 并复用；RC 每次 SELECT 生成新 Read View。</p>
+            </article>
+
+            <article class="article-content" id="mysql-btree">
+                <h1>MySQL 索引为什么用 B+ 树</h1>
+                <div class="meta">数据库 · 大厂高频</div>
+                <p><strong>二叉树/红黑树问题：</strong>二叉树易退化成链表；红黑树虽平衡但仍是二叉，百万数据约 26 层，每层一次磁盘 IO，性能差。</p>
+                <p><strong>B+ 树优势：</strong>多路平衡，每个节点存多个 key，树高低（1 亿数据约 3 层）；非叶节点只存索引不存数据，单页可存更多 key；叶子节点双向链表，范围查询高效。</p>
+                <p><strong>B 树 vs B+ 树：</strong>B+ 树数据全在叶子，查询稳定；B 树数据在非叶节点，范围查询需中序遍历。</p>
+            </article>
+
+            <article class="article-content" id="mysql-acid">
+                <h1>MySQL 事务 ACID 与隔离级别</h1>
+                <div class="meta">数据库 · 大厂高频</div>
+                <p><strong>ACID：</strong>原子性（Undo Log 回滚）、一致性（业务约束）、隔离性（MVCC+锁）、持久性（Redo Log）。</p>
+                <p><strong>隔离级别：</strong>读未提交→读已提交→可重复读（默认）→串行化。级别越高一致性越强，并发越低。</p>
+                <p><strong>并发问题：</strong>脏读（读未提交）、不可重复读（同一事务内多次读结果不同）、幻读（行数变化）。</p>
+                <p><strong>幻读解决：</strong>RR 下 Next-Key 锁（行锁+间隙锁）可防幻读，但需 SELECT FOR UPDATE 等加锁读。</p>
+            </article>
+
+            <article class="article-content" id="mysql-logs">
+                <h1>Binlog / Redolog / Undolog</h1>
+                <div class="meta">数据库</div>
+                <p><strong>Undo：</strong>回滚 + MVCC，存旧值。</p>
+                <p><strong>Redo：</strong>宕机重做，保证持久性。</p>
+                <p><strong>Binlog：</strong>主从复制、按时间点恢复。</p>
+                <p><strong>两阶段提交：</strong>InnoDB Prepare → 写 Binlog → InnoDB Commit。崩溃恢复时：有 COMMIT 则提交；只有 PREPARED 则查 Binlog 有 XID 则提交、无则回滚。</p>
+            </article>
+
+            <article class="article-content" id="innodb-myisam">
+                <h1>InnoDB vs MyISAM</h1>
+                <div class="meta">数据库</div>
+                <p>InnoDB：支持事务、行锁、MVCC、外键、聚簇索引；MyISAM：无事务、表锁、非聚簇。InnoDB 二级索引存主键需回表；MyISAM 全表行数 O(1)。</p>
+            </article>
+
+            <article class="article-content" id="sql-execute">
+                <h1>SQL 执行过程</h1>
+                <div class="meta">数据库</div>
+                <p>连接器 → 解析器（词法、语法、语法树）→ 预处理器（表字段检查、* 展开）→ 优化器（选执行计划）→ 执行器（调用存储引擎读数据）。</p>
+            </article>
+
+            <article class="article-content" id="big-field-query">
+                <h1>大字段查询慢优化</h1>
+                <div class="meta">数据库</div>
+                <p>不用 select *；主表与大字段拆表；分接口查；文件存 COS。覆盖索引；深分页先查 id 再查。列表页存 summary 短字段。explain 看执行计划。</p>
+            </article>
+
+            <article class="article-content" id="cpu-100">
+                <h1>CPU 100% 排查</h1>
+                <div class="meta">运维</div>
+                <p>top 找进程 → ps H -eo pid,tid,%cpu | grep pid 找线程 → jstack pid 打印栈 → tid 转 16 进制在栈中找 nid 定位代码。K8s：kubectl top pod → exec 进容器 top → top -Hp pid 找线程。结合 GC、线程栈、错误率判断。</p>
+            </article>
+
+            <article class="article-content" id="deadlock">
+                <h1>死锁检查与影响</h1>
+                <div class="meta">运维</div>
+                <p>jstack 打印线程信息，出现 "Found one Java-level deadlock"。或大量 BLOCKED 指向同一锁。死锁：锁粒度小影响局部；线程池耗尽、队列满、拒绝策略触发。</p>
+            </article>
+
+            <article class="article-content" id="linux-log">
+                <h1>Linux 查日志</h1>
+                <div class="meta">运维</div>
+                <p>tail -f 实时跟踪；grep 关键字；less 分页。日志多：先看最新错误，拿 traceId/requestId 再 grep 追查上下文。</p>
+            </article>
+
+            <article class="article-content" id="phone-exists">
+                <h1>1000W 手机号是否存在</h1>
+                <div class="meta">情景题</div>
+                <p>BitMap 值域太大（11 位约 12.5G）。用布隆过滤器：k 个 hash 置位；查询时任一 bit 为 0 则一定不存在，全 1 则可能存在。n=1000W、假阳率 0.01 可算位数组大小和 hash 个数。不允许误判时：分块编码+排序+二分。</p>
+            </article>
+
+            <article class="article-content" id="huffman-compress">
+                <h1>哈夫曼压缩</h1>
+                <div class="meta">情景题</div>
+                <p>① 扫描统计字符频率 freq[256]；② 小根堆建哈夫曼树：每次取两最小合并，直到剩一个；③ 根到叶左 0 右 1 得编码。</p>
+            </article>
+
+            <article class="article-content" id="api-topk">
+                <h1>API 访问 TopK 统计</h1>
+                <div class="meta">情景题</div>
+                <p>网关 Interceptor 统计，key=minuteBucket+apiKey（HTTP_METHOD+PATH_TEMPLATE）。本地 ConcurrentHashMap+LongAdder，定时每 10s 上报 Redis。Redis Hash：key=api:counter:{yyyyMMddHHmm}，field=apiKey，value=次数。定时聚合近 10 分钟桶，取 TopK（小根堆 O(NlogK)），写 Redis 供看板读取。</p>
+            </article>
+
+            <article class="article-content" id="essay-async">
+                <h1>作文批改异步流程与消息不丢</h1>
+                <div class="meta">项目实战</div>
+                <p><strong>入口幂等：</strong>Redis+Lua（userId+homeworkId+textHash）防重复提交；Guava 5s 短缓存吸收热点。</p>
+                <p><strong>生产端：</strong>落库生成 taskId → 立即返回 → 投递 MQ 轻量消息；Publisher Confirm 确保发送成功，失败则补偿。</p>
+                <p><strong>消费端：</strong>版本校验（dbVersion&gt;submissionVersion 则 ACK 丢弃）；先更新 DB 成功再 Manual ACK；失败进延迟队列重试 3 次；retry≥3 进 DLQ，replay_count 控制可重放一次，最终进停车场队列+告警。</p>
+            </article>
+
+            <article class="article-content" id="gzip-tradeoff">
+                <h1>GZIP 压缩与 CPU 权衡</h1>
+                <div class="meta">项目实战</div>
+                <p>AI 返回 JSON 常 200~500KB，高并发带宽打满。server.compression.enabled=true，min-response-size=2KB（小包压缩亏）。应用是 IO 密集型，CPU 利用率约 20%，用冗余算力换带宽。压缩后体积降 50%~60%。</p>
+            </article>
+
+            <article class="article-content" id="redisson-watchdog">
+                <h1>Redisson Watchdog 原理</h1>
+                <div class="meta">项目实战</div>
+                <p>Watchdog 不理解业务，只理解锁。Redisson 在 JVM 内维护「需续期的锁集合」：lockKey、ownerId、threadId、重入次数。未指定 leaseTime 时登记。调度器每隔固定间隔批量遍历，对每把锁执行续期（校验锁还在、属于当前 owner、原子执行）。停止续期：unlock() 后计数为 0 删 key；JVM 挂则 TTL 到期自动释放。</p>
+            </article>
+
+            <article class="article-content" id="mq-idempotent">
+                <h1>MQ 如何保证不重复消费</h1>
+                <div class="meta">项目实战</div>
+                <p>业务幂等：子任务状态 QUEUED→PROCESSING→SUCCESS/FAILED。消费前 CAS 更新：where status in ('QUEUED','RETRYING') 更新为 PROCESSING；更新成功才处理；失败则跳过。更新结果时带条件：where status='PROCESSING'，防止终态被覆盖。三步骤（grading_execution_task、question_task、homework_task）放同一本地事务。</p>
+            </article>
+
+            <article class="article-content" id="redis-usage">
+                <h1>Redis 除了缓存还能做什么</h1>
+                <div class="meta">Redis</div>
+                <p>Session 存储、分布式锁、限流、排行榜（ZSET）、购物车（Hash）、Bitmap（替代 Bloom Filter 做分布式）。</p>
+            </article>
+
+            <article class="article-content" id="rabbitmq-choice">
+                <h1>为什么选 RabbitMQ</h1>
+                <div class="meta">消息队列</div>
+                <p>业务异步任务场景（非 Kafka 日志流）。Exchange+RoutingKey 灵活路由；消息确认、重试、死信队列成熟；与 Spring 集成好。适合按题型路由、失败重试、延迟队列。</p>
             </article>
 
             <article class="article-content" id="msg-idempotent">
                 <h1>消息重复消费与幂等性</h1>
                 <div class="meta">消息队列 · 大厂高频</div>
-                <p><strong>原因：</strong>网络抖动、Consumer 宕机未 ACK、Rebalance 等导致重复投递。</p>
+                <p><strong>原因：</strong>网络抖动、Consumer 宕机未 ACK、Rebalance 导致重复投递。MQ 至少一次语义。</p>
                 <p><strong>幂等方案：</strong></p>
                 <ul>
                     <li>唯一键：DB 唯一索引，重复插入失败</li>
@@ -390,50 +806,96 @@
                     <li>状态机：业务状态流转，幂等校验</li>
                     <li>分布式锁：messageId 做锁 key，获取成功才处理</li>
                 </ul>
-                <p>核心：用 messageId 或业务唯一键做去重。</p>
+                <p>核心：用 messageId 或业务唯一键（如订单号）做去重</p>
+            </article>
+
+            <article class="article-content" id="sticky-packet">
+                <h1>粘包与半包问题</h1>
+                <div class="meta">计算机网络</div>
+                <p><strong>粘包：</strong>多条消息被合并成一个 TCP 包发送，接收方无法区分边界。</p>
+                <p><strong>半包：</strong>一条消息被拆成多个 TCP 包，接收方需多次读取才能拼完整。</p>
+                <p><strong>原因：</strong>TCP 流式传输，无消息边界；应用层发送/接收缓冲区与网络 MTU 不匹配。</p>
+                <p><strong>解决：</strong>定长协议；分隔符（如 \n）；长度+内容（先 4 字节长度再读 body）；或使用有边界的协议（如 HTTP、自定义协议）。</p>
             </article>
 
             <article class="article-content" id="embedding">
                 <h1>Embedding</h1>
                 <div class="meta">AI</div>
-                <p>将文本/图像等映射为高维向量，用于相似度计算、检索、聚类。</p>
-                <p>常见模型：text-embedding-ada、BGE、M3E。向量维度通常 256～1536。相似度：余弦、欧氏。</p>
+                <p>将文本/图像等映射为高维向量，语义相近的向量距离近。用于相似度计算、检索、聚类、推荐。</p>
+                <p><strong>常见模型：</strong>OpenAI text-embedding-ada、BGE、M3E、bge-m3。向量维度通常 256～1536。</p>
+                <p><strong>相似度：</strong>余弦相似度、欧氏距离。向量库：Milvus、Faiss、Elasticsearch。</p>
             </article>
 
             <article class="article-content" id="rag">
                 <h1>RAG（检索增强生成）</h1>
                 <div class="meta">AI</div>
-                <p>检索相关文档 → 拼入 Prompt → LLM 生成。解决幻觉、知识截止、私有数据。</p>
-                <p>流程：文档分块 → Embedding → 存入向量库 → 查询时检索 TopK → 重排序 → 拼入 Prompt → 生成。</p>
+                <p>检索相关文档 → 拼入 Prompt → LLM 生成。解决幻觉、知识截止、私有数据接入。</p>
+                <p><strong>流程：</strong>文档分块（按段落/句/固定长度）→ Embedding → 存入向量库 → 查询时检索 TopK → 可选重排序（Reranker）→ 拼入 Prompt → LLM 生成。</p>
+                <p><strong>优化：</strong>HyDE（假设性文档）、多路召回、多粒度分块。</p>
             </article>
 
             <article class="article-content" id="n-diff-k">
                 <h1>构造 n 个数字差值为 k</h1>
                 <div class="meta">算法</div>
                 <p>给定 n、k，构造长度为 n 的数组，相邻元素差为 k。</p>
-                <p>思路：等差数列 [0, k, 2k, ...] 或交替正负 [k, -k, k, -k, ...]。注意边界。</p>
+                <p><strong>思路：</strong>等差数列 [0, k, 2k, ...] 或交替正负 [k, -k, k, -k, ...]。注意 k 为 0 或负数时的边界。</p>
             </article>
 
             <article class="article-content" id="binary-tree-path">
                 <h1>二叉树路径和</h1>
                 <div class="meta">算法 <span class="company-tag">某大厂二面</span></div>
                 <p>LeetCode 112/113：判断是否存在/找出所有路径和等于 target 的路径。</p>
-                <p>DFS(root, target - root.val)；到叶子且 target==0 则找到；回溯时恢复 path。</p>
+                <p><strong>思路：</strong>DFS(root, target - root.val)；到叶子且 target==0 则找到；回溯时恢复 path。注意空树、单节点。</p>
             </article>
 
             <article class="article-content" id="remove-nth-node">
                 <h1>删除链表倒数第 N 个节点</h1>
                 <div class="meta">算法 · LeetCode 19</div>
-                <p>双指针：快指针先走 n+1 步，然后快慢一起走，快指针到 null 时慢指针在待删节点前驱。</p>
-                <p>注意：可能删除头节点，用 dummy 虚拟头简化。</p>
+                <p><strong>双指针：</strong>快指针先走 n+1 步，然后快慢一起走，快指针到 null 时慢指针在待删节点前驱，删除 next 即可。</p>
+                <p>可能删除头节点，用 dummy 虚拟头简化。</p>
+            </article>
+
+            <article class="article-content" id="lru">
+                <h1>LRU 缓存实现</h1>
+                <div class="meta">算法 · LeetCode 146</div>
+                <p><strong>LRU：</strong>最近最少使用，淘汰最久未访问的数据。</p>
+                <p><strong>结构：</strong>HashMap + 双向链表。HashMap 存 key→节点；链表头为最近使用，尾为最久未使用。</p>
+                <p><strong>get：</strong>查 HashMap，若存在则把节点移到链表头，再删原位置。</p>
+                <p><strong>put：</strong>若存在则更新并移到头；若不存在且满则删尾节点，再插入新节点到头。</p>
+                <p>双向链表便于 O(1) 删除任意节点（需前后驱）。</p>
+            </article>
+
+            <article class="article-content" id="reverse-list">
+                <h1>反转链表</h1>
+                <div class="meta">算法 · LeetCode 206</div>
+                <p>迭代：prev=null，cur=head；每次 next=cur.next，cur.next=prev，prev=cur，cur=next。递归：reverse(head.next)，head.next.next=head，head.next=null。</p>
+            </article>
+
+            <article class="article-content" id="lca">
+                <h1>二叉树最近公共祖先</h1>
+                <div class="meta">算法 · LeetCode 236</div>
+                <p>后序遍历。若 root 为 null 或 p 或 q 则返回 root。左右递归得 left、right。left 和 right 都非空则 root 为 LCA；否则返回非空的那边。</p>
+            </article>
+
+            <article class="article-content" id="lis">
+                <h1>最长递增子序列</h1>
+                <div class="meta">算法 · LeetCode 300</div>
+                <p>DP：dp[i]=以 nums[i] 结尾的 LIS 长度，dp[i]=max(dp[j]+1) for j&lt;i and nums[j]&lt;nums[i]。O(n²)。贪心+二分：维护单调递增的 tail 数组，二分找第一个≥当前值的位置替换，长度即答案。O(nlogn)。</p>
+            </article>
+
+            <article class="article-content" id="invert-tree">
+                <h1>翻转二叉树</h1>
+                <div class="meta">算法 · LeetCode 226</div>
+                <p>递归：swap(root.left, root.right)，再递归翻转 left 和 right。可前序或后序。</p>
             </article>
 
             <article class="article-content" id="basics-summary">
                 <h1>计算机基础知识总结</h1>
                 <div class="meta">总结</div>
-                <p><strong>计网：</strong>TCP/UDP、HTTP/HTTPS、DNS。</p>
-                <p><strong>OS：</strong>进程线程、虚拟内存、调度。</p>
-                <p><strong>数据库：</strong>索引、事务、锁。</p>
+                <p><strong>计网：</strong>TCP/UDP、三次握手四次挥手、HTTP/HTTPS、DNS、CDN。</p>
+                <p><strong>OS：</strong>进程线程、虚拟内存、页面置换、调度算法。</p>
+                <p><strong>数据库：</strong>索引（B+）、事务 ACID、隔离级别、MVCC、锁。</p>
+                <p><strong>Redis：</strong>数据结构、持久化、缓存雪崩穿透击穿、分布式锁。</p>
             </article>
         </main>
     </div>
