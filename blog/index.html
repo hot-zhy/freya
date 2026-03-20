@@ -277,6 +277,21 @@
             </div>
 
             <div class="toc-category">
+                <div class="sidebar-title">简历追问</div>
+                <a href="#" class="toc-item" data-id="resume-xiaohuashi-qps">小花狮：QPS 2000+、P99&lt;100ms 如何实现</a>
+                <a href="#" class="toc-item" data-id="resume-llm-mix">大模型+小模型混合架构怎么设计</a>
+                <a href="#" class="toc-item" data-id="resume-event-report">事件驱动报表怎么做</a>
+                <a href="#" class="toc-item" data-id="resume-mcp">MCP 是什么？多源信息融合怎么实现</a>
+                <a href="#" class="toc-item" data-id="resume-mem0">Mem0 用户画像与特征抽取</a>
+                <a href="#" class="toc-item" data-id="resume-milvus">为什么选 Milvus 做向量召回</a>
+                <a href="#" class="toc-item" data-id="resume-redis-stream">Redis Stream vs Kafka，断点续传与一致性</a>
+                <a href="#" class="toc-item" data-id="resume-lora">LoRA 原理与语料清洗评测</a>
+                <a href="#" class="toc-item" data-id="resume-rag-design">RAG 系统如何设计与优化</a>
+                <a href="#" class="toc-item" data-id="resume-adaptive">自适应学习与知识追踪</a>
+                <a href="#" class="toc-item" data-id="resume-gpu-platform">GPU 压测平台多机多 Job 状态追踪</a>
+            </div>
+
+            <div class="toc-category">
                 <div class="sidebar-title">其他</div>
                 <a href="#" class="toc-item" data-id="redis-usage">Redis 除了缓存还能做什么</a>
                 <a href="#" class="toc-item" data-id="rabbitmq-choice">为什么选 RabbitMQ</a>
@@ -285,6 +300,13 @@
             <div class="toc-category">
                 <div class="sidebar-title">计算机基础</div>
                 <a href="#" class="toc-item" data-id="basics-summary">基础知识总结</a>
+                <a href="#" class="toc-item" data-id="cpu-cache">CPU 多级缓存与缓存一致性</a>
+                <a href="#" class="toc-item" data-id="hash-conflict">哈希表冲突解决</a>
+                <a href="#" class="toc-item" data-id="rbtree-avl">红黑树与 AVL 区别</a>
+                <a href="#" class="toc-item" data-id="sort-algorithms">排序算法总结</a>
+                <a href="#" class="toc-item" data-id="big-little-endian">大端与小端</a>
+                <a href="#" class="toc-item" data-id="float-represent">浮点数表示</a>
+                <a href="#" class="toc-item" data-id="compile-interpret">编译与解释</a>
             </div>
         </aside>
 
@@ -879,6 +901,93 @@ void encode(Node root, String path, Map&lt;Character,String&gt; codes) {
                 <p>业务幂等：子任务状态 QUEUED→PROCESSING→SUCCESS/FAILED。消费前 CAS 更新：where status in ('QUEUED','RETRYING') 更新为 PROCESSING；更新成功才处理；失败则跳过。更新结果时带条件：where status='PROCESSING'，防止终态被覆盖。三步骤（grading_execution_task、question_task、homework_task）放同一本地事务。</p>
             </article>
 
+            <article class="article-content" id="resume-xiaohuashi-qps">
+                <h1>小花狮：QPS 2000+、P99&lt;100ms 如何实现</h1>
+                <div class="meta">简历追问 · 小花狮作文辅导</div>
+                <p><strong>分层拆解：</strong>① 入口限流熔断，防止雪崩；② 异步化：作文批改进 RabbitMQ，请求快速返回，不阻塞；③ 缓存：Redis 缓存热点数据、批改结果、用户信息；④ 大模型调用：流式返回 + 超时控制，避免长耗时拖垮 P99；⑤ 小模型分流：简单题走小模型，降低大模型 QPS；⑥ 连接池、线程池合理配置；⑦ 数据库：索引、避免 N+1、大字段拆表。</p>
+                <p><strong>P99 保障：</strong>慢查询监控、超时熔断、降级策略（大模型超时则返回简化反馈）；关键路径无阻塞、异步任务不占主线程。</p>
+            </article>
+
+            <article class="article-content" id="resume-llm-mix">
+                <h1>大模型+小模型混合架构怎么设计</h1>
+                <div class="meta">简历追问 · 小花狮</div>
+                <p><strong>分流策略：</strong>根据文本长度、题型、难度等特征路由。短文本、简单题、模板化场景走小模型（如 7B）；长文本、复杂批改、需深度反馈走大模型。</p>
+                <p><strong>小模型作用：</strong>低成本、低延迟，承担大部分简单请求；大模型做「兜底」和「精品」场景。</p>
+                <p><strong>实现：</strong>规则 + 模型预测（如小模型先判断是否需要大模型介入）；或基于历史数据训练路由模型。需监控分流准确率、大模型调用占比。</p>
+            </article>
+
+            <article class="article-content" id="resume-event-report">
+                <h1>事件驱动报表怎么做</h1>
+                <div class="meta">简历追问 · 小花狮</div>
+                <p><strong>思路：</strong>业务事件（提交、批改完成、登录等）发 MQ，报表消费者订阅，按维度聚合写入报表表或 OLAP。</p>
+                <p><strong>优势：</strong>主流程解耦，报表不影响核心链路；可异步、批量写入，降低 DB 压力。</p>
+                <p><strong>实现：</strong>RabbitMQ 声明报表专用 Exchange/Queue；业务方 publish 事件（含 userId、时间、类型等）；消费者按分钟/小时/天聚合，写 Redis 或 MySQL 汇总表；看板查汇总表。</p>
+                <p><strong>延展：</strong>实时看板用 Redis 计数器 + 定时落库；离线报表用 Flink/Spark 消费 MQ。</p>
+            </article>
+
+            <article class="article-content" id="resume-mcp">
+                <h1>MCP 是什么？多源信息融合怎么实现</h1>
+                <div class="meta">简历追问 · 智慧大师 Agent</div>
+                <p><strong>MCP（Model Context Protocol）：</strong>由 Anthropic 提出，用于 LLM 与外部工具/数据源的标准协议。定义统一的工具调用、资源访问接口，Agent 可动态发现并调用 MCP 服务器提供的工具（如日历、数据库、API）。</p>
+                <p><strong>多源信息融合：</strong>用户可能来自多个数据源（行为日志、画像、第三方 API、知识库）。通过 MCP 将各源封装为工具，Agent 在推理时按需调用；或先对各源做检索/聚合，再拼入 Prompt。融合策略：时间加权、来源可信度、去重合并。</p>
+            </article>
+
+            <article class="article-content" id="resume-mem0">
+                <h1>Mem0 用户画像与特征抽取</h1>
+                <div class="meta">简历追问 · 智慧大师</div>
+                <p><strong>Mem0：</strong>面向 LLM 的记忆层，支持长期记忆存储与检索。将用户交互、偏好等转为向量，按用户 ID 组织，支持相似度检索、时间衰减。</p>
+                <p><strong>用户画像：</strong>从对话、行为中抽取结构化特征（兴趣、习惯、历史问题等），存入 Mem0；Dify 工作流中可调用 Mem0 做记忆读写。</p>
+                <p><strong>特征抽取：</strong>可用 LLM 从对话中抽取（如「用户偏好数学」）；或规则 + 统计（点击、停留时长）；Embedding 后存向量库，检索时作为上下文增强推荐。</p>
+            </article>
+
+            <article class="article-content" id="resume-milvus">
+                <h1>为什么选 Milvus 做向量召回</h1>
+                <div class="meta">简历追问 · 智慧大师</div>
+                <p><strong>场景：</strong>用户画像、知识库、推荐等需向量相似度检索。</p>
+                <p><strong>Milvus 优势：</strong>专为向量检索设计，支持 IVF、HNSW 等索引；分布式、可扩展；与 LangChain、LlamaIndex 等集成好。相比 Elasticsearch 的向量插件，Milvus 在纯向量场景下性能和功能更专精。</p>
+                <p><strong>选型考量：</strong>数据量、QPS、延迟要求；是否需混合检索（向量+关键词）；运维成本。小规模可用 Faiss、pgvector；大规模、生产级选 Milvus、Qdrant 等。</p>
+            </article>
+
+            <article class="article-content" id="resume-redis-stream">
+                <h1>Redis Stream vs Kafka，断点续传与一致性</h1>
+                <div class="meta">简历追问 · 科研助手思维导图</div>
+                <p><strong>选 Redis Stream 原因：</strong>项目已有 Redis，无需额外组件；消息量、吞吐在 Redis 能力范围内；Consumer Group 支持消费组、ACK、Pending 列表，满足至少一次语义。</p>
+                <p><strong>断点续传：</strong>Consumer 用 XREADGROUP 消费，处理成功后 XACK；宕机后重启，用 XPENDING 查看未 ACK 的消息，从 last_id 继续消费。或记录 last_id 到 DB/Redis，重启时从该位置 XREADGROUP。</p>
+                <p><strong>一致性：</strong>业务处理与 ACK 顺序：先落库/更新状态成功，再 XACK；失败则重试或进死信。避免 ACK 了但业务未完成导致消息丢失。</p>
+            </article>
+
+            <article class="article-content" id="resume-lora">
+                <h1>LoRA 原理与语料清洗评测</h1>
+                <div class="meta">简历追问 · Rego 策略生成 / AAAI 数学推理</div>
+                <p><strong>LoRA：</strong>低秩适应，在预训练模型旁路加低秩矩阵 A、B，只训练 A、B，冻结原模型。参数量小、显存省、训练快，适合领域适配。</p>
+                <p><strong>语料清洗：</strong>去重、去噪、格式统一；过滤低质量样本（如过短、乱码）；数据增强（同义改写、回译）；正负样本平衡。</p>
+                <p><strong>评测：</strong>划分 train/val/test；指标：准确率、F1、BLEU（生成任务）；人工抽检；A/B 测试线上效果。Rego 场景可加语法正确性、策略有效性等专项评测。</p>
+            </article>
+
+            <article class="article-content" id="resume-rag-design">
+                <h1>RAG 系统如何设计与优化</h1>
+                <div class="meta">简历追问 · Java AI 小助手 / 智慧大师</div>
+                <p><strong>基础流程：</strong>文档分块 → Embedding → 存向量库 → 查询时检索 TopK → 拼入 Prompt → LLM 生成。</p>
+                <p><strong>优化：</strong>① 分块策略：按段落/句/固定长度，可重叠；多粒度分块；② 检索：向量 + 关键词混合；HyDE 生成假设文档再检索；③ 重排序 Reranker 精排；④ 上下文压缩，只保留关键句；⑤ 多路召回、多模型投票。</p>
+                <p><strong>延展：</strong>见「RAG」面经；评估用 Faithfulness、Relevance 等指标。</p>
+            </article>
+
+            <article class="article-content" id="resume-adaptive">
+                <h1>自适应学习与知识追踪</h1>
+                <div class="meta">简历追问 · Java AI 小助手</div>
+                <p><strong>知识追踪（KT）：</strong>根据学生历史答题序列，预测其对各知识点的掌握程度。常用模型：DKT、DKVMN、SAKT 等，输入 (题目, 知识点, 对错)，输出掌握度向量。</p>
+                <p><strong>自适应学习：</strong>基于 KT 结果，动态推荐下一题（薄弱知识点、适当难度）；避免重复已掌握内容，聚焦薄弱环节。</p>
+                <p><strong>自适应选题：</strong>题库按知识点、难度标注；根据学生掌握度 + 选题策略（如 IRT、多臂老虎机）选择下一题，平衡探索与利用。</p>
+            </article>
+
+            <article class="article-content" id="resume-gpu-platform">
+                <h1>GPU 压测平台多机多 Job 状态追踪</h1>
+                <div class="meta">简历追问 · GPU 压测平台</div>
+                <p><strong>场景：</strong>多台机器、多个 Job 并发执行，需实时展示执行流、状态、进度。</p>
+                <p><strong>设计：</strong>① 状态机：PENDING→RUNNING→SUCCESS/FAILED；② 后端：Job 表存机器、状态、开始/结束时间；Worker 心跳上报进度；③ 前端：Gantt 图横轴时间、纵轴 Job/机器，色块表示状态；④ 轮询或 WebSocket 拉取状态更新。</p>
+                <p><strong>一致性：</strong>Worker 上报需带 JobId、时间戳；超时未上报则标记异常；分布式锁防重复执行。</p>
+            </article>
+
             <article class="article-content" id="redis-usage">
                 <h1>Redis 除了缓存还能做什么</h1>
                 <div class="meta">Redis</div>
@@ -1108,6 +1217,73 @@ public int lengthOfLIS(int[] nums) {
 }</code></pre>
             </article>
 
+            <article class="article-content" id="cpu-cache">
+                <h1>CPU 多级缓存与缓存一致性</h1>
+                <div class="meta">计算机基础 · 计算机组成</div>
+                <p><strong>多级缓存架构：</strong>CPU 与内存速度差异大，采用三级缓存。L1：容量最小（几十～几百 KB）、速度最快（2～4 周期），分指令/数据缓存，各核独占；L2：中等容量与速度（10～20 周期），各核独占；L3：容量较大（几 MB～几十 MB）、速度较慢（20～60 周期），所有核共享。访问顺序：L1 → L2 → L3 → 主存。</p>
+                <p><strong>缓存一致性问题：</strong>多核下每核有独占 L1/L2，一核修改共享数据后，其他核的缓存副本过期。需保证：① 写传播（修改需传播到其他核）；② 事务串行化（所有核看到的写顺序一致）。</p>
+                <p><strong>MESI 协议：</strong>总线窥探 + 写失效。缓存行四状态：M（Modified，已修改未写回）、E（Exclusive，独占且与内存一致）、S（Shared，多核共享）、I（Invalid，失效）。</p>
+                <p><strong>伪共享：</strong>多个独立变量共享同一缓存行（通常 64B），一核修改导致整行失效，影响其他核。解决：字节填充、<code>@sun.misc.Contended</code>。</p>
+            </article>
+
+            <article class="article-content" id="hash-conflict">
+                <h1>哈希表冲突解决</h1>
+                <div class="meta">计算机基础 · 数据结构</div>
+                <p><strong>冲突原因：</strong>不同 key 经 hash 函数映射到同一桶。</p>
+                <p><strong>链地址法（拉链法）：</strong>每个桶存链表，冲突时追加到链表尾部。实现简单，删除方便；链表过长时退化为 O(n)。优化：链表过长转红黑树（HashMap 8 转树、6 退链表）。</p>
+                <p><strong>开放寻址：</strong>冲突时在表中找下一个空位。线性探测：h+1, h+2...；二次探测：h+1², h+2²...；双重哈希：用第二个 hash 函数。优点：无指针、缓存友好；缺点：删除复杂（需标记 tombstone）、负载因子高时性能下降。</p>
+                <p><strong>再哈希：</strong>冲突时换一个 hash 函数重新计算。</p>
+                <p><strong>延展：</strong>负载因子 = 元素数/桶数，一般 0.75 左右扩容；HashMap 容量为 2 的幂，取模用 <code>hash & (n-1)</code> 替代 <code>%</code>。</p>
+            </article>
+
+            <article class="article-content" id="rbtree-avl">
+                <h1>红黑树与 AVL 区别</h1>
+                <div class="meta">计算机基础 · 数据结构</div>
+                <p><strong>AVL：</strong>严格平衡，任意节点左右子树高度差 ≤ 1。查询 O(log n) 最优；插入/删除可能需多次旋转，维护成本高。</p>
+                <p><strong>红黑树：</strong>近似平衡，满足：① 节点红或黑；② 根和叶子（NIL）为黑；③ 红节点的子必为黑；④ 任意节点到其子孙叶子的路径上黑节点数相同。树高最多 2log(n+1)，查询略慢于 AVL，但插入/删除旋转次数少（最多 3 次）。</p>
+                <p><strong>选型：</strong>读多写少用 AVL（如数据库索引）；写多或需频繁插入删除用红黑树（如 Java TreeMap、Linux 调度器 CFS）。</p>
+                <p><strong>延展：</strong>B+ 树多路平衡，适合磁盘；跳表实现简单，Redis ZSet 底层用跳表+字典。</p>
+            </article>
+
+            <article class="article-content" id="sort-algorithms">
+                <h1>排序算法总结</h1>
+                <div class="meta">计算机基础 · 算法</div>
+                <p><strong>复杂度与稳定性：</strong></p>
+                <ul>
+                    <li>冒泡/选择/插入：O(n²)，冒泡和插入稳定，选择不稳定</li>
+                    <li>快排：平均 O(nlogn)，最坏 O(n²)，不稳定；原地，空间 O(logn)</li>
+                    <li>归并：O(nlogn) 稳定，空间 O(n)；适合外部排序、链表排序</li>
+                    <li>堆排序：O(nlogn) 不稳定，原地</li>
+                </ul>
+                <p><strong>快排 vs 归并：</strong>快排平均更快、原地；归并稳定、最坏也 O(nlogn)。工程常用快排，需随机 pivot 或三数取中防退化。</p>
+                <p><strong>稳定性：</strong>相等元素排序后相对顺序不变。多关键字排序时，先按次关键字排，再按主关键字排，需稳定排序。</p>
+            </article>
+
+            <article class="article-content" id="big-little-endian">
+                <h1>大端与小端</h1>
+                <div class="meta">计算机基础 · 计算机组成</div>
+                <p><strong>定义：</strong>多字节数据在内存中的存放顺序。大端（Big-Endian）：高字节存低地址，如 0x12345678 存为 12 34 56 78；小端（Little-Endian）：低字节存低地址，存为 78 56 34 12。</p>
+                <p><strong>常见场景：</strong>网络字节序为大端（TCP/IP）；x86 为小端；ARM 可配置。网络传输需统一，发送前 htonl/ntohl 转换。</p>
+                <p><strong>判断方法：</strong>用 union 或指针取低地址字节，若为高字节则为大端。</p>
+            </article>
+
+            <article class="article-content" id="float-represent">
+                <h1>浮点数表示</h1>
+                <div class="meta">计算机基础 · 计算机组成</div>
+                <p><strong>IEEE 754：</strong>float 32 位：1 符号位 + 8 指数位 + 23 尾数位；double 64 位：1 + 11 + 52。公式：(-1)^s × 1.M × 2^(E-127)（规格化）。</p>
+                <p><strong>精度问题：</strong>浮点无法精确表示部分十进制（如 0.1），比较用误差范围；累加误差会累积。金融用 BigDecimal。</p>
+                <p><strong>特殊值：</strong>指数全 0 全 1 表示非规格化数、无穷、NaN。</p>
+            </article>
+
+            <article class="article-content" id="compile-interpret">
+                <h1>编译与解释</h1>
+                <div class="meta">计算机基础 · 编译原理</div>
+                <p><strong>编译型：</strong>源码一次性翻译成机器码（或中间码），再执行。如 C、C++、Go。执行快，但需针对平台编译。</p>
+                <p><strong>解释型：</strong>逐行或逐块解释执行，不生成独立可执行文件。如 Python、JavaScript（传统）。开发灵活，执行较慢。</p>
+                <p><strong>混合型：</strong>先编译成字节码，再由虚拟机解释/JIT 编译。如 Java、C#。JIT 将热点代码编译为机器码，兼顾启动速度和运行性能。</p>
+                <p><strong>编译流程：</strong>词法分析 → 语法分析 → 语义分析 → 中间代码生成 → 优化 → 目标代码生成。</p>
+            </article>
+
             <article class="article-content" id="basics-summary">
                 <h1>计算机基础知识总结</h1>
                 <div class="meta">总结</div>
@@ -1115,6 +1291,8 @@ public int lengthOfLIS(int[] nums) {
                 <p><strong>OS：</strong>进程线程、虚拟内存、页面置换、调度算法。</p>
                 <p><strong>数据库：</strong>索引（B+）、事务 ACID、隔离级别、MVCC、锁。</p>
                 <p><strong>Redis：</strong>数据结构、持久化、缓存雪崩穿透击穿、分布式锁。</p>
+                <p><strong>计算机组成：</strong>CPU 多级缓存、MESI、大端小端、浮点数表示。</p>
+                <p><strong>数据结构：</strong>哈希冲突、红黑树 vs AVL、排序算法稳定性。</p>
             </article>
         </main>
     </div>
