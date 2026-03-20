@@ -151,14 +151,29 @@
             </div>
 
             <div class="toc-category">
+                <div class="sidebar-title">Redis / 缓存</div>
+                <a href="#" class="toc-item" data-id="cache-avalanche">缓存雪崩、穿透、击穿</a>
+                <a href="#" class="toc-item" data-id="redis-hotkey">Redis 热 Key 问题</a>
+                <a href="#" class="toc-item" data-id="redis-rdb-aof">Redis RDB 与 AOF</a>
+                <a href="#" class="toc-item" data-id="rate-limit">限流算法：漏桶 vs 令牌桶</a>
+            </div>
+
+            <div class="toc-category">
                 <div class="sidebar-title">系统设计</div>
                 <a href="#" class="toc-item" data-id="seckill">设计秒杀系统</a>
             </div>
 
             <div class="toc-category">
-                <div class="sidebar-title">Java</div>
+                <div class="sidebar-title">Java / Spring</div>
                 <a href="#" class="toc-item" data-id="a-plus-plus">a++ 和 ++a 谁性能高</a>
                 <a href="#" class="toc-item" data-id="array-vs-list">数组 vs 链表（内存有限）</a>
+                <a href="#" class="toc-item" data-id="bean-lifecycle">Spring Bean 生命周期</a>
+                <a href="#" class="toc-item" data-id="jvm-gc">JVM 垃圾回收机制</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">数据库</div>
+                <a href="#" class="toc-item" data-id="mysql-mvcc">MySQL MVCC 可重复读</a>
             </div>
 
             <div class="toc-category">
@@ -171,6 +186,12 @@
                 <div class="sidebar-title">算法</div>
                 <a href="#" class="toc-item" data-id="n-diff-k">构造 n 个数字差值为 k</a>
                 <a href="#" class="toc-item" data-id="binary-tree-path">二叉树路径和</a>
+                <a href="#" class="toc-item" data-id="remove-nth-node">删除链表倒数第 N 个节点</a>
+            </div>
+
+            <div class="toc-category">
+                <div class="sidebar-title">消息队列</div>
+                <a href="#" class="toc-item" data-id="msg-idempotent">消息重复消费与幂等</a>
             </div>
 
             <div class="toc-category">
@@ -183,7 +204,7 @@
         <main class="reader">
             <div class="reader-welcome" id="welcome">
                 <h2>面经 / 面试准备</h2>
-                <p>从左侧目录选择题目，右侧查看答案。涵盖计算机网络、并发、系统设计、Java、AI、算法等。</p>
+                <p>从左侧目录选择题目，右侧查看答案。整理自牛客、掘金等大厂后端面经，涵盖计算机网络、Redis、MySQL、Java、Spring、系统设计、AI、算法等。</p>
             </div>
 
             <article class="article-content" id="tcp-handshake">
@@ -242,6 +263,55 @@
                 </ul>
             </article>
 
+            <article class="article-content" id="cache-avalanche">
+                <h1>缓存雪崩、穿透、击穿的区别与解决方案</h1>
+                <div class="meta">Redis / 缓存 · 大厂高频</div>
+                <p><strong>三者区别：</strong></p>
+                <ul>
+                    <li><strong>缓存穿透：</strong>查询的数据在缓存和 DB 都不存在，请求绕过缓存直打 DB（非法/恶意查询）</li>
+                    <li><strong>缓存击穿：</strong>热点 key 过期，大量并发集中打到 DB（单个热点失效）</li>
+                    <li><strong>缓存雪崩：</strong>大量 key 同时失效或 Redis 宕机，请求集中打 DB（大面积失效）</li>
+                </ul>
+                <p><strong>解决方案：</strong></p>
+                <ul>
+                    <li><strong>穿透：</strong>布隆过滤器、缓存空对象（短 TTL）、参数校验</li>
+                    <li><strong>击穿：</strong>互斥锁、热点永不过期、逻辑过期+异步更新、预热</li>
+                    <li><strong>雪崩：</strong>过期时间加随机值、多级缓存、限流熔断、Redis 高可用</li>
+                </ul>
+            </article>
+
+            <article class="article-content" id="redis-hotkey">
+                <h1>Redis 热 Key 问题如何发现和解决？</h1>
+                <div class="meta">Redis / 缓存 · 大厂高频</div>
+                <p><strong>什么是热 Key：</strong>某 Key 访问量远高于其他，如总 QPS 10000 时某 Key 达 7000。</p>
+                <p><strong>危害：</strong>缓存击穿、单节点网卡打满、DB 雪崩、集群不均衡。</p>
+                <p><strong>发现：</strong>经验预测、<code>redis-cli --hotkeys</code>、MONITOR+redis-faina、客户端/代理层统计。</p>
+                <p><strong>解决：</strong></p>
+                <ul>
+                    <li>本地缓存（Guava/Caffeine）分散请求</li>
+                    <li>热 Key 拆分：key_0001～key_0015 分散到不同节点</li>
+                    <li>热 Key 备份、读写分离、从节点扩容</li>
+                    <li>热 Key 永不过期 + MQ 异步更新</li>
+                </ul>
+            </article>
+
+            <article class="article-content" id="redis-rdb-aof">
+                <h1>Redis RDB 与 AOF 持久化区别</h1>
+                <div class="meta">Redis / 缓存</div>
+                <p><strong>RDB：</strong>二进制快照，某一时刻完整数据。触发：save m n、BGSAVE。恢复快、文件小，但可能丢失分钟级数据。</p>
+                <p><strong>AOF：</strong>追加写命令，重启时重放。刷盘策略：always / everysec（默认）/ no。数据安全高，恢复慢、文件易膨胀。</p>
+                <p><strong>对比：</strong>RDB 恢复快、AOF 数据安全；生产常用混合模式（Redis 4.0+）平衡两者。</p>
+            </article>
+
+            <article class="article-content" id="rate-limit">
+                <h1>限流算法：漏桶 vs 令牌桶</h1>
+                <div class="meta">Redis / 缓存 · 大厂高频</div>
+                <p><strong>漏桶：</strong>请求进桶排队，以固定速率流出。强制匀速，无法处理突发。</p>
+                <p><strong>令牌桶：</strong>以恒定速率生成令牌，请求取令牌通过。允许突发（桶有容量）。</p>
+                <p><strong>区别：</strong>令牌桶允许突发、漏桶强制平滑。令牌桶保护自己（限调用方），漏桶保护下游（限输出）。</p>
+                <p><strong>场景：</strong>接口限流用令牌桶；消息队列消费、支付系统用漏桶。</p>
+            </article>
+
             <article class="article-content" id="seckill">
                 <h1>设计秒杀系统</h1>
                 <div class="meta">系统设计</div>
@@ -270,6 +340,59 @@
                 <p>内存紧张时数组更优。</p>
             </article>
 
+            <article class="article-content" id="bean-lifecycle">
+                <h1>Spring Bean 生命周期</h1>
+                <div class="meta">Java / Spring · 大厂高频</div>
+                <p><strong>主要阶段：</strong></p>
+                <ol>
+                    <li>实例化（构造方法创建对象）</li>
+                    <li>属性注入（依赖注入）</li>
+                    <li>Aware 回调（BeanNameAware、BeanFactoryAware 等）</li>
+                    <li>BeanPostProcessor.postProcessBeforeInitialization</li>
+                    <li>初始化：@PostConstruct → InitializingBean.afterPropertiesSet() → init-method</li>
+                    <li>BeanPostProcessor.postProcessAfterInitialization</li>
+                    <li>销毁：@PreDestroy → DisposableBean.destroy() → destroy-method</li>
+                </ol>
+                <p>实例化是分配内存，初始化是执行业务逻辑。BeanPostProcessor 是扩展点。</p>
+            </article>
+
+            <article class="article-content" id="jvm-gc">
+                <h1>JVM 垃圾回收机制</h1>
+                <div class="meta">Java / Spring · 大厂高频</div>
+                <p><strong>垃圾识别：</strong>可达性分析（从 GC Roots 出发，不可达即垃圾）。GC Roots：栈引用、静态变量、常量、JNI 引用。</p>
+                <p><strong>回收算法：</strong>标记-清除（有碎片）、复制（新生代）、标记-整理（老年代）。</p>
+                <p><strong>回收器：</strong>Serial/ParNew、Parallel、CMS（已废弃）、G1（JDK9+ 默认）、ZGC（超低停顿）。</p>
+                <p><strong>分代：</strong>Minor GC（新生代）、Major/Full GC（老年代/整堆）。</p>
+            </article>
+
+            <article class="article-content" id="mysql-mvcc">
+                <h1>MySQL MVCC 可重复读实现原理</h1>
+                <div class="meta">数据库 · 大厂高频</div>
+                <p><strong>MVCC：</strong>多版本并发控制，InnoDB 实现可重复读的机制。</p>
+                <p><strong>三大组件：</strong></p>
+                <ul>
+                    <li>隐藏字段：DB_TRX_ID、DB_ROLL_PTR、DB_ROW_ID</li>
+                    <li>Undo Log：版本链，存历史版本</li>
+                    <li>Read View：m_ids、min_trx_id、max_trx_id、creator_trx_id</li>
+                </ul>
+                <p><strong>可见性：</strong>TRX_ID == creator 可见；&lt; min 可见；&gt;= max 不可见；在 [min,max) 内看是否在 m_ids 中。</p>
+                <p><strong>RR vs RC：</strong>RR 事务开始时生成一次 Read View；RC 每次 SELECT 生成新 Read View。</p>
+            </article>
+
+            <article class="article-content" id="msg-idempotent">
+                <h1>消息重复消费与幂等性</h1>
+                <div class="meta">消息队列 · 大厂高频</div>
+                <p><strong>原因：</strong>网络抖动、Consumer 宕机未 ACK、Rebalance 等导致重复投递。</p>
+                <p><strong>幂等方案：</strong></p>
+                <ul>
+                    <li>唯一键：DB 唯一索引，重复插入失败</li>
+                    <li>Redis：messageId 存 Set，存在则跳过</li>
+                    <li>状态机：业务状态流转，幂等校验</li>
+                    <li>分布式锁：messageId 做锁 key，获取成功才处理</li>
+                </ul>
+                <p>核心：用 messageId 或业务唯一键做去重。</p>
+            </article>
+
             <article class="article-content" id="embedding">
                 <h1>Embedding</h1>
                 <div class="meta">AI</div>
@@ -296,6 +419,13 @@
                 <div class="meta">算法 <span class="company-tag">某大厂二面</span></div>
                 <p>LeetCode 112/113：判断是否存在/找出所有路径和等于 target 的路径。</p>
                 <p>DFS(root, target - root.val)；到叶子且 target==0 则找到；回溯时恢复 path。</p>
+            </article>
+
+            <article class="article-content" id="remove-nth-node">
+                <h1>删除链表倒数第 N 个节点</h1>
+                <div class="meta">算法 · LeetCode 19</div>
+                <p>双指针：快指针先走 n+1 步，然后快慢一起走，快指针到 null 时慢指针在待删节点前驱。</p>
+                <p>注意：可能删除头节点，用 dummy 虚拟头简化。</p>
             </article>
 
             <article class="article-content" id="basics-summary">
