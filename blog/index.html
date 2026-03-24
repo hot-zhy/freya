@@ -305,6 +305,11 @@
                 <a href="#" class="toc-item" data-id="agent-self-consistency">Self-Consistency 采样</a>
                 <a href="#" class="toc-item" data-id="agent-scaling">Scaling Laws 尺度定律</a>
                 <a href="#" class="toc-item" data-id="agent-plan-execute">Plan-and-Execute 与 Self-Ask</a>
+                <a href="#" class="toc-item" data-id="rag-retrieval-fails">RAG 检索失败模式</a>
+                <a href="#" class="toc-item" data-id="rag-generation-fails">RAG 生成失败模式</a>
+                <a href="#" class="toc-item" data-id="rag-data-challenges">RAG 数据与安全挑战</a>
+                <a href="#" class="toc-item" data-id="rag-pros-cons">RAG 优缺点与 RAG-Fusion</a>
+                <a href="#" class="toc-item" data-id="rag-agentic">Agentic RAG 模式</a>
             </div>
 
             <div class="toc-category" data-tag="algorithm">
@@ -2771,6 +2776,233 @@ chunks = splitter.split_text(document_text)</code></pre>
                     <li><strong>Plan B 机制：</strong>在规划阶段同时生成主计划和备选计划（Plan B），当主计划某一步失败时，自动切换到备选路径。代价是规划阶段的 token 消耗增加，但执行阶段的鲁棒性显著提升。</li>
                     <li><strong>实践经验：</strong>完全避免规划错误是不可能的。关键是<strong>快速检测失败 + 低成本重规划</strong>。将每步执行结果的检查做成标准化流程（如校验 API 返回码、检查中间结果的合理性），以便第一时间触发重规划。</li>
                 </ul>
+            </article>
+
+            <article class="article-content" id="rag-retrieval-fails">
+                <h1>RAG 检索失败模式</h1>
+                <div class="meta">AI Agent 面经 · RAG 实战问题</div>
+
+                <p><strong>Q1：内容缺失问题是什么？</strong></p>
+                <p><strong>A：</strong>内容缺失，指的是用户问题明明有答案，但检索阶段没有把真正相关的文档召回出来，最后模型拿到的上下文不完整，回答自然就缺信息。这类问题在 RAG 里特别常见，因为很多时候不是模型不会答，而是它根本没看到关键内容。</p>
+                <p><strong>常见原因：</strong></p>
+                <ul>
+                    <li><strong>切块切坏了：</strong>关键信息被切到了两个 chunk 的边界上，两边都不完整。</li>
+                    <li><strong>向量化效果一般：</strong>Embedding 模型对领域术语、缩写、别名的理解不够。</li>
+                    <li><strong>召回 Top-K 太小：</strong>只取 Top-3 时相关文档可能在第 5、6 位。</li>
+                    <li><strong>查询改写不到位：</strong>用户的口语化表述与知识库中正式表述差异大。</li>
+                    <li><strong>知识库本身缺数据：</strong>最根本的问题——知识库里就没有这个信息。</li>
+                </ul>
+                <p><strong>解决思路：</strong>扩大 Top-K → 加 Reranker 精排 → 混合检索（向量+BM25）→ Query Rewriting → 知识库定期审计补充。生产环境中，90% 的 RAG 失败源自检索问题而非 LLM 问题，但团队往往把精力放在调 Prompt 上。</p>
+
+                <p><strong>Q2：为什么会错过排名靠前的文档？</strong></p>
+                <p><strong>A：</strong>这个问题本质上是<strong>检索排序问题</strong>。有些文档明明相关，但因为向量检索只看语义相似度，或者 BM25 只看关键词匹配，结果真正有价值的文档没排到前面。</p>
+                <p><strong>高频场景：</strong></p>
+                <ul>
+                    <li><strong>用户问题太短/太模糊：</strong>"怎么用？"——Embedding 向量信息量不足。</li>
+                    <li><strong>专业术语/别名多：</strong>"K8s" vs "Kubernetes"，"RDS" vs "关系型数据库服务"。</li>
+                    <li><strong>长文档 vs 短查询：</strong>Embedding 模型对长短文本的表示空间不一致（这是一个隐性杀手）。</li>
+                    <li><strong>向量检索的"语义漂移"：</strong>语义相近但答案无关的文档排在前面。</li>
+                </ul>
+                <p><strong>解决方案：</strong>线上系统一般不会只靠单路召回：混合检索（向量语义 + BM25 关键词）→ Cross-Encoder Reranker 精排 → Reciprocal Rank Fusion 融合多路排序 → 适当扩大初始召回量再精筛。</p>
+
+                <p><strong>Q3：什么叫脱离上下文？</strong></p>
+                <p><strong>A：</strong>脱离上下文，就是模型虽然拿到了检索结果，但生成回答时<strong>没有严格基于这些内容</strong>，而是凭自己已有的参数知识或语言习惯往外发挥。结果就是答案看上去很完整，但和检索内容不一致，甚至出现幻觉。</p>
+                <p><strong>为什么会发生：</strong></p>
+                <ul>
+                    <li><strong>Prompt 不够严格：</strong>没有明确要求"只基于以下内容回答，如果内容中没有则回答不知道"。</li>
+                    <li><strong>检索内容与模型已有知识冲突：</strong>模型倾向于输出它"更确信"的答案。</li>
+                    <li><strong>上下文窗口中噪声太多：</strong>无关 chunk 分散了模型注意力。</li>
+                    <li><strong>"Lost in the Middle"效应：</strong>关键内容在中间位置被忽略。</li>
+                </ul>
+                <p><strong>缓解策略：</strong>Prompt 中强制要求引用来源；使用 NLI（自然语言推理）模型检测答案与检索内容是否一致；减少注入的无关 chunk；将最关键的检索结果放在 Prompt 开头和结尾。RAG 不是只要"检索到了"就行，关键还得让模型"基于检索内容回答"。</p>
+
+                <p><strong>面试追问：如何系统性地诊断一个 RAG 系统"回答错了"到底错在哪一步？</strong></p>
+                <p><strong>A：</strong>分层排查：① 先看知识库里有没有这个信息（数据层）→ ② 检索有没有召回它（检索层）→ ③ 召回的排在第几位（排序层）→ ④ 最终注入 Prompt 里了吗（拼接层）→ ⑤ 模型有没有基于它回答（生成层）。每层都可能出错，需要逐层打日志、看中间结果。</p>
+            </article>
+
+            <article class="article-content" id="rag-generation-fails">
+                <h1>RAG 生成失败模式</h1>
+                <div class="meta">AI Agent 面经 · RAG 实战问题</div>
+
+                <p><strong>Q4：整合策略的限制是什么？</strong></p>
+                <p><strong>A：</strong>RAG 里检索回来往往不是一段，而是多段内容。整合策略的限制，指的是这些内容在拼接、筛选、排序、压缩时处理得不够好。</p>
+                <ul>
+                    <li><strong>相关内容被截断：</strong>上下文窗口有限，塞不下所有检索结果，重要的被截掉了。</li>
+                    <li><strong>证据分散在不同 chunk 里：</strong>答案需要综合三段话才能得出，但模型只看了其中一段。</li>
+                    <li><strong>顺序错乱：</strong>时间线、逻辑链被打乱，模型理解困难。</li>
+                    <li><strong>冲突内容没有消解：</strong>不同版本文档给出矛盾信息，模型不知道该信哪个。</li>
+                </ul>
+                <p>说白了，不是检索回来越多越好，而是要把真正相关、能组合成答案的内容<strong>组织好</strong>。实践中需要：压缩冗余内容（LLMLingua）、去重、按相关度排序、冲突检测。</p>
+
+                <p><strong>Q5：为什么会出现"未能提取答案"？</strong></p>
+                <p><strong>A：</strong>有时候文档已经检索到了，但模型还是没把答案抽出来。这通常不是召回问题，而是<strong>阅读理解和信息抽取</strong>的问题。</p>
+                <ul>
+                    <li>答案藏在<strong>表格</strong>里（模型对表格理解较弱）。</li>
+                    <li>答案<strong>跨段落</strong>分布，需要综合多处信息。</li>
+                    <li>表达方式特别绕，需要做一定程度的<strong>推理</strong>。</li>
+                    <li>Prompt 没有明确要求"只提取答案不要发挥"，导致模型自由发挥。</li>
+                    <li>上下文中噪声太多，关键信息被"淹没"。</li>
+                </ul>
+                <p>所以 RAG 后面那一步并不只是"喂上下文"，而是要让模型知道自己到底是做<strong>抽取、总结还是推理</strong>。Prompt 设计要明确任务类型。</p>
+
+                <p><strong>Q6：格式错误一般指什么？</strong></p>
+                <p><strong>A：</strong>格式错误通常是输出格式不符合要求。比如明明要求返回 JSON，结果模型多说了一段解释；明明要求列表，结果返回散文；明明要求字段齐全，结果少键、错键、嵌套层级也不对。这类问题在 RAG + 工具调用、RAG + 工作流里尤其常见。</p>
+                <p><strong>解决方案（不只是"请返回 JSON"）：</strong></p>
+                <ul>
+                    <li><strong>JSON Schema 约束：</strong>在 Prompt 中给出精确的 Schema 定义。</li>
+                    <li><strong>Function Calling：</strong>用 OpenAI 等原生函数调用能力，强制结构化输出。</li>
+                    <li><strong>解析失败重试：</strong>输出后 <code>json.loads()</code> 解析，失败则带错误信息重试。</li>
+                    <li><strong>Structured Output 模式：</strong>如 OpenAI 的 response_format=json_object。</li>
+                </ul>
+
+                <p><strong>Q7：特异性错误是什么？</strong></p>
+                <p><strong>A：</strong>特异性错误，就是回答看上去和问题相关，但<strong>不够具体</strong>，或者答错了用户真正问的那个细节。比如用户问"v3.2 版本的接口超时原因"，结果回答成了"系统性能优化的一般方法"；用户问"北京地区政策"，结果回答成全国通用政策。</p>
+                <p><strong>本质：</strong>检索粒度和答案粒度没对齐。文档太粗、chunk 太大、query 太泛，最后出来的答案就容易"似是而非"。解决方向：更细粒度的 chunk、metadata 过滤（版本号/地区/时间）、query 中提取关键实体做精确匹配。</p>
+
+                <p><strong>Q8：回答不全面一般怎么理解？</strong></p>
+                <p><strong>A：</strong>回答不全面，就是答案只覆盖了问题的一部分。这在多条件、多约束、多步骤问题里特别常见。比如用户问"RAG 的优点、缺点和适用场景"，结果只答了优点。</p>
+                <p><strong>原因通常有两个：</strong>一是检索到的证据分散在不同文档里，模型只抓住了一个；二是模型注意力有限，只关注到第一个要点就开始生成了。</p>
+                <p><strong>解决：</strong>复杂问题先做 <strong>Query Decomposition</strong>——把"优点、缺点和适用场景"拆成三个子问题分别检索，再合并答案。或者在 Prompt 中显式列出"请确保覆盖以下方面：1.优点 2.缺点 3.适用场景"。</p>
+
+                <p><strong>面试追问：RAG 的七大失败点中，你认为哪个在生产中最难排查？为什么？</strong></p>
+                <p><strong>A：</strong>"脱离上下文"最难排查。因为检索层面看起来没问题（相关文档确实召回了），但模型生成时"偷偷"用了自己的参数知识。这种错误不看中间日志很难发现，而且复现不稳定（同一个问题多问几次可能有时对有时错）。需要通过 NLI 一致性检测或对比"有无检索结果时的输出差异"来系统性定位。</p>
+            </article>
+
+            <article class="article-content" id="rag-data-challenges">
+                <h1>RAG 数据与安全挑战</h1>
+                <div class="meta">AI Agent 面经 · RAG 实战问题</div>
+
+                <p><strong>Q9：RAG 在数据处理上会遇到哪些挑战？</strong></p>
+                <p><strong>A：</strong>RAG 的难点很多时候不在模型，而在数据。原始数据可能来自 PDF、网页、Word、表格、图片、数据库，格式乱、结构杂、噪声大。如果清洗不好，后面切块、建索引、检索、生成都会一起出问题。</p>
+                <p><strong>典型坑点：</strong></p>
+                <ul>
+                    <li>扫描件 OCR 识别错误，文字乱码。</li>
+                    <li>表格被抽成一行行文字，结构信息丢失。</li>
+                    <li>页眉页脚、水印、目录页混在正文里。</li>
+                    <li>重复内容（同一份文档多个版本）导致检索结果冗余。</li>
+                    <li>历史版本和最新版本混杂，模型不知道该信哪个。</li>
+                </ul>
+                <p>所以实际项目里，数据处理往往比"接一个大模型 API"麻烦得多。数据质量 = RAG 质量的天花板。</p>
+
+                <p><strong>Q10：为什么结构化数据查询更难？</strong></p>
+                <p><strong>A：</strong>因为结构化数据不是纯自然语言文本，它更像表、字段、关系、条件。你让模型去查数据库，本质上不是"语义检索"，而是<strong>"把用户问题转成结构化查询"</strong>。</p>
+                <p>普通 RAG 对结构化数据的常见问题：字段理解错、条件漏掉、聚合算错、JOIN 关系搞混。所以结构化数据更适合：</p>
+                <ul>
+                    <li><strong>Text-to-SQL：</strong>LLM 生成 SQL 查询，数据库执行后返回结果。</li>
+                    <li><strong>知识图谱查询：</strong>将问题转为图查询语言（Cypher/SPARQL）。</li>
+                    <li><strong>规则约束 + 工具调用：</strong>预定义 API，LLM 选择调用哪个。</li>
+                </ul>
+                <p>关键认知：<strong>不是所有问题都适合向量检索</strong>。结构化问题用结构化方法。</p>
+
+                <p><strong>Q11：从复杂 PDF 提取数据为什么难？</strong></p>
+                <p><strong>A：</strong>复杂 PDF 最大的问题是"看起来像文档，机器看起来像一堆布局"。文字、图片、表格、页眉、页脚、脚注、双栏排版、扫描页混在一起时，直接抽出来的文本顺序经常是乱的。一旦文本顺序乱了，后面切块和检索质量就会明显下降。</p>
+                <p><strong>正确流程：</strong>版面分析（Layout Analysis）→ OCR / 文本抽取 → 块级重建（按阅读顺序重组）→ 表格单独处理（表格转 Markdown/CSV）→ 图片用 VLM 生成描述 → 再进入 RAG 流水线。工具推荐：Unstructured.io、LlamaParse、Docling。</p>
+
+                <p><strong>Q12：什么是备用模型？</strong></p>
+                <p><strong>A：</strong>备用模型就是主模型不可用或效果不稳定时用来兜底的模型。比如主模型是 GPT-4 级别，超时了、限流了、价格太高了，就临时切到 GPT-3.5 或开源小模型。</p>
+                <p><strong>常见策略：</strong></p>
+                <ul>
+                    <li><strong>级联（Cascading）：</strong>简单问题用小模型，复杂问题才调大模型（先用分类器判断复杂度）。</li>
+                    <li><strong>降级（Fallback）：</strong>主模型超时/报错时自动切换到备用。</li>
+                    <li><strong>路由（Routing）：</strong>根据任务类型分发到不同模型（摘要用小模型，推理用大模型）。</li>
+                </ul>
+                <p>线上系统一般不会只押一个模型，因为 RAG 不只是效果问题，还有<strong>稳定性和成本</strong>问题。</p>
+
+                <p><strong>Q13：大语言模型在 RAG 场景里有哪些安全挑战？</strong></p>
+                <p><strong>A：</strong>主要有五类：</p>
+                <ol>
+                    <li><strong>提示词注入：</strong>用户在提问里夹带"忽略之前规则"，劫持模型行为。</li>
+                    <li><strong>间接注入（RAG 投毒）：</strong>知识库文档本身藏了恶意指令，模型检索到后照单全收。</li>
+                    <li><strong>敏感信息泄露：</strong>模型把 system prompt、内部文档内容、其他用户数据带出来。</li>
+                    <li><strong>越权访问：</strong>权限隔离没做好，用户 A 检索到了用户 B 的私有文档。</li>
+                    <li><strong>不可靠输出：</strong>幻觉+RAG 让用户更容易相信错误信息（因为"看起来有依据"）。</li>
+                </ol>
+                <p><strong>防御原则：</strong>RAG 的安全不是只做输出过滤，而是从<strong>检索前</strong>（权限过滤、文档审核）、<strong>检索中</strong>（注入检测）、<strong>生成后</strong>（输出审核、敏感词过滤）三层都要控。</p>
+
+                <p><strong>面试追问：如何在 RAG 系统中实现文档级的权限控制？</strong></p>
+                <p><strong>A：</strong>在向量数据库中为每个文档/chunk 存储 metadata（如 owner_id, department, access_level），检索时在查询条件中加入当前用户的权限过滤（metadata filtering），确保只返回该用户有权查看的文档。千万不能"先检索再过滤"，必须"检索时就过滤"，否则权限信息可能通过语义相似度泄露。</p>
+            </article>
+
+            <article class="article-content" id="rag-pros-cons">
+                <h1>RAG 优缺点与 RAG-Fusion</h1>
+                <div class="meta">AI Agent 面经 · RAG 实战问题</div>
+
+                <p><strong>Q14：RAG 有哪些优点？</strong></p>
+                <p><strong>A：</strong>RAG 最大的优点就是让模型回答时不完全依赖参数记忆，而是可以临时去查外部知识。</p>
+                <ul>
+                    <li><strong>知识更新快：</strong>更新知识库即生效，不用每次都重新训练模型。传统微调改一个知识点可能需要重新训几小时，RAG 只需更新文档。</li>
+                    <li><strong>贴近私有数据：</strong>企业内部文档、最新法规、产品手册都可以直接接入，不需要泄露给模型训练。</li>
+                    <li><strong>可解释性强：</strong>回答可以附带引用来源（"根据《XX手册》第3章…"），用户可以验证。</li>
+                    <li><strong>成本更低：</strong>通常比频繁做大规模微调便宜得多，尤其是知识频繁变化的场景。</li>
+                    <li><strong>减少幻觉：</strong>有外部事实依据后，模型"胡说八道"的概率下降（但不能完全消除）。</li>
+                </ul>
+                <p>对企业来说，RAG 是把通用模型和私有知识连接起来<strong>最实用的一条路</strong>。</p>
+
+                <p><strong>Q15：RAG 有哪些局限性？</strong></p>
+                <p><strong>A：</strong>RAG 不是万能的：</p>
+                <ul>
+                    <li><strong>依赖检索质量：</strong>检索不到就答不好，"Garbage In, Garbage Out"。</li>
+                    <li><strong>依赖切块质量：</strong>切坏了就容易丢语义，答案残缺。</li>
+                    <li><strong>依赖知识库质量：</strong>数据脏了效果一定差，清洗成本高。</li>
+                    <li><strong>多跳推理弱：</strong>需要综合多个文档才能回答的问题，单次检索很难搞定。</li>
+                    <li><strong>结构化查询弱：</strong>表格计算、SQL 查询、复杂条件筛选不是 RAG 擅长的。</li>
+                    <li><strong>链路长，排查难：</strong>最后看到的是"回答错了"，但错在检索、重排、拼接、Prompt 还是模型本身，经常要一层层查。</li>
+                    <li><strong>延迟增加：</strong>多了检索步骤，端到端延迟比直接 LLM 调用多 200-500ms。</li>
+                </ul>
+
+                <p><strong>Q16：为什么需要 RAG-Fusion？</strong></p>
+                <p><strong>A：</strong>因为用户问题的表达方式和知识库里的写法经常不完全一致。RAG-Fusion 的核心思想是：</p>
+                <ol>
+                    <li><strong>多角度查询生成：</strong>LLM 将用户的原始问题改写为多个不同角度的查询（通常 3-5 个）。例如"RAG 怎么优化？"→"RAG 检索质量提升方法"+"RAG 生成阶段优化"+"RAG 常见问题及解决方案"。</li>
+                    <li><strong>多路检索：</strong>每个查询独立检索，得到多组结果。</li>
+                    <li><strong>Reciprocal Rank Fusion (RRF)：</strong>将多组结果通过 RRF 公式融合排序：<code>score = Σ 1/(k + rank_i)</code>，在多个查询中都排名靠前的文档会获得更高分数。</li>
+                    <li><strong>精选后生成：</strong>取融合排序后的 Top 文档喂给 LLM。</li>
+                </ol>
+                <p><strong>效果：</strong>比单一查询检索的召回率显著提升，尤其对模糊、多义、复杂问题效果明显。代价是检索次数增加（3-5 倍），但通常可以并行。</p>
+
+                <p><strong>面试追问：RAG-Fusion 和 HyDE（Hypothetical Document Embeddings）有什么区别？</strong></p>
+                <p><strong>A：</strong>RAG-Fusion 是多角度改写查询 → 多路检索 → 融合排序。HyDE 是让 LLM 先"幻想"一个假设性的答案文档 → 用这个假设文档的 Embedding 去检索。HyDE 解决的是"查询和文档在 Embedding 空间不对齐"的问题（短查询 vs 长文档），但有幻觉风险。两者可以组合使用。</p>
+            </article>
+
+            <article class="article-content" id="rag-agentic">
+                <h1>Agentic RAG 模式</h1>
+                <div class="meta">AI Agent 面经 · RAG 进阶架构</div>
+
+                <p><strong>Q：什么是 Agentic RAG？有哪些主要模式？</strong></p>
+                <p><strong>A：</strong>Agentic RAG 将传统的"检索→生成"流水线包装在一个<strong>智能控制循环</strong>中，让 Agent 能够根据检索质量和生成质量动态决策——要不要重新检索、换个策略检索、还是直接回答。传统 RAG 是"一次检索定终身"，Agentic RAG 是"检索不好就再来"。</p>
+
+                <p><strong>三大生产验证模式：</strong></p>
+
+                <p><strong>1. Corrective RAG (CRAG) — 纠错式 RAG</strong></p>
+                <ul>
+                    <li>在检索和生成之间插入一个<strong>检索评估器</strong>（Retrieval Grader）。</li>
+                    <li>评估器对每个检索到的文档判断相关性，然后路由：
+                        <strong>全部相关</strong> → 直接生成；
+                        <strong>部分相关</strong> → 过滤掉不相关的再生成；
+                        <strong>全部不相关</strong> → 触发备用策略（Query Rewriting、Web Search 等）。</li>
+                    <li><strong>核心价值：</strong>避免"垃圾检索结果喂给 LLM"导致幻觉。</li>
+                </ul>
+
+                <p><strong>2. Self-RAG — 自反思 RAG</strong></p>
+                <ul>
+                    <li>将反思能力直接嵌入生成过程，使用<strong>"反思 token"</strong>（Retrieve、IsRel、IsSup、IsUse）让模型在生成时自我评估。</li>
+                    <li>工作流：模型先判断是否需要检索（Retrieve token）→ 评估检索结果是否相关（IsRel）→ 生成答案 → 评估答案是否被检索内容支持（IsSup）→ 评估答案是否有用（IsUse）。</li>
+                    <li><strong>核心价值：</strong>模型自己决定"要不要检索"和"检索结果够不够好"，减少不必要的检索开销。</li>
+                </ul>
+
+                <p><strong>3. Adaptive RAG — 自适应 RAG</strong></p>
+                <ul>
+                    <li>根据问题复杂度<strong>动态决定检索策略</strong>，而不是每个问题都走同一条流水线。</li>
+                    <li>简单事实性问题 → 直接 LLM 回答（无需检索）；中等问题 → 单次检索+生成；复杂问题 → 多次检索、查询分解、工具调用。</li>
+                    <li><strong>核心价值：</strong>平衡效果和成本，简单问题不浪费检索资源。</li>
+                </ul>
+
+                <p><strong>生产级实现：</strong>2025-2026 年，LangGraph 已成为构建 Agentic RAG 的标准框架。典型实现是一个 9 节点的状态图：Query Analysis → Route（简单/复杂）→ Retrieve → Grade → Decide（生成/重写/Web Search）→ Generate → Hallucination Check → Answer Grading → Output。</p>
+
+                <p><strong>Graph RAG 补充：</strong>对于需要多跳推理的问题（"A 的同事 B 参与了哪些项目？"），传统向量检索很难一次召回完整的关系链。Graph RAG 将知识组织为图结构（实体+关系），通过图遍历而非向量相似度来检索，适合关系密集型场景。Microsoft 的 GraphRAG 项目是代表性实现。</p>
+
+                <p><strong>面试追问：如何在一个 Agentic RAG 系统中防止无限循环（检索→评估不通过→重写→再检索→再不通过…）？</strong></p>
+                <p><strong>A：</strong>三重保护：① 最大重试次数限制（通常 max_retries=3）；② 重写策略递进（第一次同义词替换，第二次角度切换，第三次 fallback 到 web search）；③ 最终兜底策略（如果仍然失败，坦诚告知"当前知识库无法回答此问题"而不是强行生成）。</p>
             </article>
 
         </main>
