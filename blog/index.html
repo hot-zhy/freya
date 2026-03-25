@@ -320,6 +320,7 @@
                 <a href="#" class="toc-item" data-id="tencent-datadev-security">腾讯数据开发后台：安全与合规</a>
                 <a href="#" class="toc-item" data-id="tencent-datadev-project-grill">腾讯数据开发后台：项目追问与答法</a>
                 <a href="#" class="toc-item" data-id="tencent-datadev-real-sources">腾讯数据开发后台：真实面经来源</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-real-questions">腾讯数据开发后台：真实题目摘录</a>
                 <a href="#" class="toc-item" data-id="rag-agent-llm-real-sources">RAG/Agent/LLM：真实面经来源</a>
             </div>
 
@@ -3163,6 +3164,44 @@ chunks = splitter.split_text(document_text)</code></pre>
                     <li><a href="https://cloud.tencent.com/developer/article/2408013" target="_blank" rel="noopener noreferrer">Flink 实时流处理框架原理与面试必备知识点（腾讯云开发者社区）</a></li>
                 </ul>
                 <p><strong>怎么用这些来源备面：</strong>先按“SQL/数仓/离线/实时/质量/稳定性”分主题读帖，再把每个帖子里出现的题目抽成自己的“问题卡片”，每题写“标准答法 + 项目例子 + 量化指标”。如果你愿意，我可以继续把每条来源贴里的题目逐条抽取成“原题+参考答法”格式。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-real-questions">
+                <h1>腾讯数据开发后台：真实题目摘录</h1>
+                <div class="meta">真实面经题目（按公开帖子整理）</div>
+                <p><strong>说明：</strong>以下问题按公开面经原帖的提问风格整理，尽量保留“真实面试语气”。每组后附来源链接，便于你回看原帖。</p>
+
+                <p><strong>A 组：后台开发通用 + 数据开发交叉题</strong></p>
+                <ul>
+                    <li>讲讲你项目里的高并发场景，QPS、P99、峰值怎么扛住的？</li>
+                    <li>MySQL 索引失效有哪些典型场景？你怎么在线上排查慢 SQL？</li>
+                    <li>Redis 缓存一致性你怎么做？双删、延迟双删、binlog 方案怎么选？</li>
+                    <li>消息队列如何保证不丢、不重、顺序性？你项目里做到哪一步？</li>
+                    <li>如果线上指标突然掉了 30%，你第一步看什么？</li>
+                </ul>
+                <p><strong>来源：</strong> <a href="https://m.nowcoder.com/feed/main/detail/c82164eb9683473c89f3c25fb1469e7d?sourceSSR=post" target="_blank" rel="noopener noreferrer">腾讯后台开发一面（牛客）</a>、<a href="https://www.nowcoder.com/discuss/618788598543937536" target="_blank" rel="noopener noreferrer">腾讯后台开发面经（已 OC）</a></p>
+
+                <p><strong>B 组：腾讯大数据/数据开发高频题</strong></p>
+                <ul>
+                    <li>为什么数仓要分层？ODS/DWD/DWS/ADS 各层职责是什么？</li>
+                    <li>Flink 的 Watermark 机制怎么工作？如何处理乱序和迟到？</li>
+                    <li>Exactly-Once 是怎么保证的？哪些情况下会退化？</li>
+                    <li>Kafka 如何保证消息有序？分区策略怎么设计？</li>
+                    <li>实时数仓和离线数仓口径不一致，你怎么定位和修复？</li>
+                </ul>
+                <p><strong>来源：</strong> <a href="https://www.nowcoder.com/discuss/731658685147115520" target="_blank" rel="noopener noreferrer">腾讯 PCG 大数据平台一面面经（牛客）</a>、<a href="https://www.nowcoder.com/discuss/353158958661705728" target="_blank" rel="noopener noreferrer">腾讯微信部门大数据开发面试题（牛客）</a></p>
+
+                <p><strong>C 组：项目深挖/拷打题（真实面试最常见）</strong></p>
+                <ul>
+                    <li>你说做了数仓建模，为什么这个事实表要用这个粒度？改成更细/更粗会怎样？</li>
+                    <li>你说做了补数，补数如何做到幂等？会不会污染当日线上结果？</li>
+                    <li>你说做了性能优化，给我看优化前后指标，不要只讲“变快了”。</li>
+                    <li>你说做了数据质量，规则覆盖率多少？误报率多少？怎么降低告警疲劳？</li>
+                    <li>你线上出过什么事故？如果现在再来一次你会怎么设计防线？</li>
+                </ul>
+                <p><strong>来源：</strong> <a href="https://www.nowcoder.com/discuss/752187770059173888" target="_blank" rel="noopener noreferrer">腾讯面试全流程（已 Offer，牛客）</a>、<a href="https://www.nowcoder.com/feed/main/detail/149c1331fa15424aa7d5e61921f89e32" target="_blank" rel="noopener noreferrer">腾讯暑期实习后台开发凉经（牛客）</a></p>
+
+                <p><strong>面试追问（你可直接背）：</strong>“你这里说的是方法论，能不能落到你自己项目的一个真实 case？”<br><strong>建议答法：</strong>一定用“场景-动作-结果”三段式：问题是什么、你具体改了什么、指标提升了多少。没有量化就很容易被判定为“参与过但不深”。</p>
             </article>
 
             <article class="article-content" id="rag-agent-llm-real-sources">
