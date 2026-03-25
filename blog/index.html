@@ -307,6 +307,18 @@
                 <a href="#" class="toc-item" data-id="rag-data-challenges">RAG 数据与安全挑战</a>
                 <a href="#" class="toc-item" data-id="rag-pros-cons">RAG 优缺点与 RAG-Fusion</a>
                 <a href="#" class="toc-item" data-id="rag-agentic">Agentic RAG 模式</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-overview">腾讯数据开发后台：岗位画像与流程</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-sql">腾讯数据开发后台：SQL 深水区</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-modeling">腾讯数据开发后台：数仓建模</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-offline">腾讯数据开发后台：离线链路</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-realtime">腾讯数据开发后台：实时链路</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-quality">腾讯数据开发后台：数据质量体系</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-stability">腾讯数据开发后台：稳定性与性能治理</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-incident">腾讯数据开发后台：线上事故复盘</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-metrics">腾讯数据开发后台：指标口径治理</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-serving">腾讯数据开发后台：数据服务化</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-security">腾讯数据开发后台：安全与合规</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-project-grill">腾讯数据开发后台：项目追问与答法</a>
             </div>
 
             <div class="toc-category" data-tag="algorithm">
@@ -364,8 +376,8 @@
                 <ul style="margin-top:0.5rem;">
                     <li><strong>基础八股：</strong>计算机网络、操作系统、Redis、MySQL、Java、Spring、JVM 等</li>
                     <li><strong>AI Agent 面经：</strong>Agent 核心组件、ReAct、规划、记忆、RAG 进阶、多智能体、RLHF、MoE 等（来源：<a href="https://datawhalechina.github.io/hello-agents/" style="color:var(--accent-cyan)">Hello-Agents</a>）</li>
-                    <li><strong>技术面试模拟：</strong>项目深度拷打（小花狮/科研助手等）、八股详解、大厂专项、公司流程</li>
-                    <li><strong>系统设计、算法、运维排查、简历追问</strong></li>
+                    <li><strong>腾讯数据开发部后台专项：</strong>SQL 深水区、数仓建模、离线/实时链路、数据质量、稳定性治理、事故复盘、指标口径治理</li>
+                    <li><strong>系统设计、算法、运维排查</strong></li>
                 </ul>
                 <p style="margin-top:0.5rem; font-size:0.85rem; color:var(--text-muted);">💡 使用左侧标签筛选快速定位分类</p>
             </div>
@@ -1033,14 +1045,6 @@ void encode(Node root, String path, Map&lt;Character,String&gt; codes) {
                 <p>网关 Interceptor 统计，key=minuteBucket+apiKey（HTTP_METHOD+PATH_TEMPLATE）。本地 ConcurrentHashMap+LongAdder，定时每 10s 上报 Redis。Redis Hash：key=api:counter:{yyyyMMddHHmm}，field=apiKey，value=次数。定时聚合近 10 分钟桶，取 TopK（小根堆 O(NlogK)），写 Redis 供看板读取。</p>
             </article>
 
-            <article class="article-content" id="essay-async">
-                <h1>作文批改异步流程与消息不丢</h1>
-                <div class="meta">项目实战</div>
-                <p><strong>整体流程：</strong>用户提交作文 → 落库生成 taskId → 立即返回「提交成功」→ 投递 MQ → 消费者拉取并调用大模型批改 → 批改结果写回 DB → 通知用户（轮询或推送）。</p>
-                <p><strong>入口幂等：</strong>用户可能重复点击提交。用 Redis+Lua，key 为 userId+homeworkId+textHash，存在则直接返回「已提交」，避免重复落库和发 MQ。Guava 本地 5s 短缓存吸收瞬时重复请求。</p>
-                <p><strong>生产端消息不丢：</strong>开启 Publisher Confirm，Broker 收到消息后确认，生产者收到确认才算成功。若确认超时或失败，可重试或落补偿表，后台任务扫描补偿表重新投递。</p>
-                <p><strong>消费端消息不丢：</strong>① 版本校验：若 DB 中任务版本已高于消息中的版本（说明被更新的流程处理过），则 ACK 丢弃，避免覆盖；② 先执行业务（更新 DB）再 Manual ACK，保证业务成功才确认消费；③ 失败进延迟队列重试，重试 3 次后进死信队列（DLQ）；④ DLQ 中的消息可通过 replay_count 控制再重放一次，仍失败则进停车场队列并告警人工处理。</p>
-            </article>
 
             <article class="article-content" id="gzip-tradeoff">
                 <h1>GZIP 压缩与 CPU 权衡</h1>
@@ -2943,6 +2947,197 @@ chunks = splitter.split_text(document_text)</code></pre>
 
                 <p><strong>面试追问：如何在一个 Agentic RAG 系统中防止无限循环（检索→评估不通过→重写→再检索→再不通过…）？</strong></p>
                 <p><strong>A：</strong>三重保护：① 最大重试次数限制（通常 max_retries=3）；② 重写策略递进（第一次同义词替换，第二次角度切换，第三次 fallback 到 web search）；③ 最终兜底策略（如果仍然失败，坦诚告知"当前知识库无法回答此问题"而不是强行生成）。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-overview">
+                <h1>腾讯数据开发后台：岗位画像与流程</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 面经总览</div>
+                <p><strong>Q：腾讯数据开发后台岗位主要考什么？</strong></p>
+                <p><strong>A：</strong>核心是“数据工程能力 + 后台工程化能力 + 业务理解能力”三合一。不会只问 SQL，也会问链路稳定性、调度、成本、故障排查、权限合规。典型轮次：简历项目深挖 → SQL/数仓基础 → 离线/实时链路设计 → 线上问题定位与复盘。</p>
+                <ul>
+                    <li><strong>基础层：</strong>SQL（窗口函数、去重、增量、拉链表）、数仓分层（ODS/DWD/DWS/ADS）。</li>
+                    <li><strong>工程层：</strong>调度系统（依赖、重跑、补数、幂等）、任务稳定性、资源治理。</li>
+                    <li><strong>实时层：</strong>Kafka/Flink、Exactly-Once、乱序与迟到、水位线。</li>
+                    <li><strong>治理层：</strong>数据质量、指标口径一致性、权限审计、脱敏合规。</li>
+                    <li><strong>业务层：</strong>能把“指标变化”翻译成“业务原因与可执行动作”。</li>
+                </ul>
+                <p><strong>常见挂点：</strong>只会写 SQL 不会解释业务；只会讲框架不会讲线上故障；项目里没有量化指标（延迟、成功率、成本下降比例）。</p>
+                <p><strong>面试追问：</strong>“你认为数据开发和数据分析最大区别是什么？”<br><strong>答法：</strong>分析偏结论产出，开发偏体系建设。数据开发要保证“数据可持续稳定产出”，关注链路可靠性、口径一致性和长期可维护性。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-sql">
+                <h1>腾讯数据开发后台：SQL 深水区</h1>
+                <div class="meta">腾讯数据开发部后台专项 · SQL 高频考点</div>
+                <p><strong>Q：SQL 面试高频深水区有哪些？</strong></p>
+                <p><strong>A：</strong>窗口函数、去重策略、增量抽取、拉链表（SCD2）、多表 Join 性能与口径一致性。面试官通常会从一条“看似能跑的 SQL”追问到“是否可上线”。</p>
+                <ul>
+                    <li><strong>窗口函数：</strong><code>row_number()</code> 做 TopN；<code>sum() over(partition by ... order by ...)</code> 做累计值；<code>lag/lead</code> 做环比同比。</li>
+                    <li><strong>去重：</strong>不能只说 <code>distinct</code>。需说明“按业务主键 + 时间戳取最新一条”的规则，否则会误删。</li>
+                    <li><strong>增量抽取：</strong>按 <code>update_time</code> 或 CDC；要处理时钟回拨和晚到数据（例如回看最近 N 天）。</li>
+                    <li><strong>拉链表：</strong>维表历史追踪，字段常见 <code>start_dt/end_dt/is_current</code>；更新时要先失效旧记录再插入新记录。</li>
+                    <li><strong>Join 风险：</strong>一对多 Join 容易重复放大，必须明确聚合口径和去重位置。</li>
+                </ul>
+                <p><strong>线上可用标准：</strong>结果正确只是底线，还要有性能边界（扫描量、执行时长、shuffle 数据量）和回归验证（新旧口径对比）。</p>
+                <p><strong>面试追问：</strong>“为什么你的 SQL 结果和报表不一致？”<br><strong>答法：</strong>先排口径（时间范围、去重规则、维度过滤）再排链路（是否晚到、是否重跑、是否版本切换）。不要先怪系统。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-modeling">
+                <h1>腾讯数据开发后台：数仓建模</h1>
+                <div class="meta">腾讯数据开发部后台专项 · ODS/DWD/DWS/ADS</div>
+                <p><strong>Q：如何设计一个可落地的数仓模型？</strong></p>
+                <p><strong>A：</strong>先定业务过程，再定粒度，再定口径，最后定分层。通用分层：ODS（原始）→ DWD（明细标准化）→ DWS（主题汇总）→ ADS（应用服务）。核心目标是“复用、稳定、可解释”。</p>
+                <ul>
+                    <li><strong>ODS：</strong>只做轻清洗，保留原始字段，便于追溯。</li>
+                    <li><strong>DWD：</strong>统一主键、时间、状态枚举、维度映射，形成可复用明细层。</li>
+                    <li><strong>DWS：</strong>围绕主题域（用户、交易、内容等）做公共聚合，避免每个报表重复计算。</li>
+                    <li><strong>ADS：</strong>面向具体业务场景输出宽表或指标表，强调查询效率。</li>
+                </ul>
+                <p><strong>建模陷阱：</strong>过早做超宽表导致维护困难；维度变更缺版本管理导致历史不可解释；口径定义散落在 SQL 中导致“同名指标不同义”。</p>
+                <p><strong>面试追问：</strong>“为什么不能所有需求都直接查 DWD？”<br><strong>答法：</strong>DWD 灵活但成本高，重复计算多、稳定性差。DWS/ADS 是为了沉淀公共计算、降低查询成本并提升一致性与可维护性。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-offline">
+                <h1>腾讯数据开发后台：离线链路</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 调度/重跑/补数</div>
+                <p><strong>Q：离线链路最常见的工程问题是什么？</strong></p>
+                <p><strong>A：</strong>依赖错配、任务失败重试风暴、补数污染线上分区、重跑导致重复写入。离线链路稳定性的核心是“依赖正确 + 幂等写入 + 可控补数”。</p>
+                <ul>
+                    <li><strong>依赖治理：</strong>任务依赖按“数据就绪”而非“时间到点”触发，减少空跑。</li>
+                    <li><strong>重跑策略：</strong>区分单日重跑/区间重跑；下游是否联动重跑要有显式策略。</li>
+                    <li><strong>补数策略：</strong>补数窗口、回刷范围、业务冻结期（避免和线上写入冲突）。</li>
+                    <li><strong>幂等保障：</strong><code>insert overwrite partition</code> 或 merge upsert，避免重复累加。</li>
+                    <li><strong>失败处理：</strong>指数退避重试 + 熔断 + 告警分级（P0/P1）。</li>
+                </ul>
+                <p><strong>监控建议：</strong>任务成功率、平均时长、P95 时长、延迟分钟数、重跑率、依赖阻塞率。</p>
+                <p><strong>面试追问：</strong>“补数时如何避免影响线上报表？”<br><strong>答法：</strong>走隔离队列和隔离资源池；先写临时分区校验，再原子切换；对外口径在补数完成前保持旧版本。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-realtime">
+                <h1>腾讯数据开发后台：实时链路</h1>
+                <div class="meta">腾讯数据开发部后台专项 · Kafka/Flink</div>
+                <p><strong>Q：实时链路怎么保证准确性和低延迟？</strong></p>
+                <p><strong>A：</strong>准确性靠语义保障（Exactly-Once/At-Least-Once + 幂等），低延迟靠资源与算子优化。不要只背概念，要能说“在你项目里怎么落地”。</p>
+                <ul>
+                    <li><strong>Kafka：</strong>分区策略决定并行度与有序性；热点 key 需打散。</li>
+                    <li><strong>Flink Exactly-Once：</strong>checkpoint + 两阶段提交（2PC）到 sink。</li>
+                    <li><strong>乱序与迟到：</strong>event-time + watermark；迟到数据用 side output 单独修正。</li>
+                    <li><strong>状态管理：</strong>RocksDB state backend；TTL 防止状态无限膨胀。</li>
+                    <li><strong>回压定位：</strong>看算子链路水位、CPU、网络、反压比率，定位瓶颈算子。</li>
+                </ul>
+                <p><strong>常见错误：</strong>把处理时间当事件时间；迟到策略过短导致漏计；sink 幂等性不足导致重复落库。</p>
+                <p><strong>面试追问：</strong>“Exactly-Once 是否意味着绝对不重不漏？”<br><strong>答法：</strong>不是。它依赖端到端条件成立（source、计算、sink、checkpoint 都正确实现）。任一环节不满足都会退化。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-quality">
+                <h1>腾讯数据开发后台：数据质量体系</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 质量与告警</div>
+                <p><strong>Q：如何搭建一套可运营的数据质量体系？</strong></p>
+                <p><strong>A：</strong>从“规则库 + 检测任务 + 告警分级 + 处置闭环”四层建设。质量不是只做校验脚本，而是要可追踪、可归因、可恢复。</p>
+                <ul>
+                    <li><strong>规则维度：</strong>完整性（空值率）、准确性（范围/字典）、一致性（跨表对账）、唯一性（主键重复）、时效性（延迟）。</li>
+                    <li><strong>检测方式：</strong>离线批量校验 + 实时流式探针。</li>
+                    <li><strong>告警分级：</strong>P0（核心指标中断）、P1（明显偏差）、P2（趋势异常）。</li>
+                    <li><strong>归因链路：</strong>定位到任务、分区、字段、上游依赖，避免“只知道坏了不知道哪里坏”。</li>
+                    <li><strong>处置机制：</strong>自动重试、自动回滚、人工确认后恢复发布。</li>
+                </ul>
+                <p><strong>可量化指标：</strong>数据可用率、质量规则覆盖率、误报率、平均修复时长 MTTR。</p>
+                <p><strong>面试追问：</strong>“异常告警太多导致告警疲劳怎么办？”<br><strong>答法：</strong>分级+聚合+抑制。相同根因合并告警；低优先级按批次通知；阈值动态化（按历史分位数而非固定阈值）。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-stability">
+                <h1>腾讯数据开发后台：稳定性与性能治理</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 资源治理</div>
+                <p><strong>Q：数据任务慢、资源贵，怎么做系统性治理？</strong></p>
+                <p><strong>A：</strong>按“任务画像 -> 问题分型 -> 治理动作 -> 成本复盘”来做。不要泛泛说“加资源”，要先识别瓶颈：IO、CPU、Shuffle、数据倾斜还是小文件过多。</p>
+                <ul>
+                    <li><strong>热点任务治理：</strong>拆 DAG 关键路径、错峰调度、预计算热点中间层。</li>
+                    <li><strong>数据倾斜：</strong>salting 打散、两阶段聚合、倾斜 key 单独处理。</li>
+                    <li><strong>慢 SQL：</strong>分区裁剪、列裁剪、Join 顺序优化、广播/桶表策略。</li>
+                    <li><strong>资源治理：</strong>队列配额、并发上限、任务优先级、弹性伸缩。</li>
+                    <li><strong>小文件治理：</strong>定期 compaction，减少 metadata 开销和调度碎片。</li>
+                </ul>
+                <p><strong>结果表达模板：</strong>“P95 时长从 42 分钟降到 18 分钟，失败率从 3.1% 降到 0.4%，月成本下降 27%。”</p>
+                <p><strong>面试追问：</strong>“性能和成本冲突时怎么取舍？”<br><strong>答法：</strong>按业务 SLA 分层：核心链路优先时延，非核心链路优先成本；通过分层资源池和优先级队列实现差异化保障。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-incident">
+                <h1>腾讯数据开发后台：线上事故复盘</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 故障定位与止血</div>
+                <p><strong>Q：数据链路出线上事故时，你怎么处理？</strong></p>
+                <p><strong>A：</strong>按 SRE 思路：先止血再定位，再恢复，最后复盘。面试里重点是你是否有“结构化应急能力”。</p>
+                <ol>
+                    <li><strong>止血：</strong>暂停下游发布、切换到上一版稳定数据、关闭异常任务触发。</li>
+                    <li><strong>定位：</strong>从告警指标逆推到任务实例，再查日志、依赖、输入分区、代码变更。</li>
+                    <li><strong>恢复：</strong>修复后按最小范围补数，灰度校验通过再全量回刷。</li>
+                    <li><strong>复盘：</strong>5W1H（何时、何因、影响、发现方式、处置过程、预防措施）。</li>
+                </ol>
+                <p><strong>典型事故：</strong>上游字段变更未同步导致下游空值暴增；调度依赖变更导致任务提前运行；晚到数据窗口配置错误导致核心指标波动。</p>
+                <p><strong>面试追问：</strong>“如果业务方强催数据但你还没完全定位，你怎么沟通？”<br><strong>答法：</strong>给出“已知影响范围 + 临时口径 + 预计恢复时间 + 风险提示”，先保证业务可决策，再推进根因修复。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-metrics">
+                <h1>腾讯数据开发后台：指标口径治理</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 指标一致性</div>
+                <p><strong>Q：同一个指标在不同报表不一致，怎么治理？</strong></p>
+                <p><strong>A：</strong>核心是“指标定义中心化 + 计算逻辑复用化 + 版本管理可追溯化”。不能靠人工记忆口径。</p>
+                <ul>
+                    <li><strong>指标字典：</strong>统一定义口径、维度、时间粒度、更新频率、负责人。</li>
+                    <li><strong>指标服务：</strong>将公共指标沉淀为标准产出层（DWS/ADS），禁止下游私算。</li>
+                    <li><strong>版本治理：</strong>口径变更要有版本号和生效时间，历史报表可回放。</li>
+                    <li><strong>血缘可视化：</strong>能从报表追到 SQL、任务、上游字段，定位冲突来源。</li>
+                    <li><strong>灰度发布：</strong>新旧口径并跑对比，偏差可解释后再切换。</li>
+                </ul>
+                <p><strong>面试追问：</strong>“业务说‘我要今天就改口径’，你怎么做？”<br><strong>答法：</strong>可以快，但要可控：先新增口径版本并标注试运行，不直接覆盖旧口径；对外说明差异影响，次日再正式切换。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-serving">
+                <h1>腾讯数据开发后台：数据服务化</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 从数仓到 API</div>
+                <p><strong>Q：数据开发如何支撑后台业务实时查询？</strong></p>
+                <p><strong>A：</strong>通过“离线数仓 + 实时增量 + 服务层 API”组合。数仓负责准确性和历史沉淀，服务层负责低延迟对外提供。</p>
+                <ul>
+                    <li><strong>服务模式：</strong>预计算指标写入 KV/OLAP（如 ClickHouse/ES/Redis），API 直接查服务层。</li>
+                    <li><strong>一致性策略：</strong>T+1 主口径 + 实时快照口径双轨，页面展示“更新时间”。</li>
+                    <li><strong>缓存策略：</strong>热点缓存 + 失效订阅 + 回源限流，防止缓存击穿。</li>
+                    <li><strong>SLA 设计：</strong>按接口分级（核心接口 P99 < 200ms，普通接口 P99 < 500ms）。</li>
+                    <li><strong>审计可追溯：</strong>每次查询记录调用方、参数、版本、返回数据快照指纹。</li>
+                </ul>
+                <p><strong>面试追问：</strong>“为什么不让业务方直接连数仓查？”<br><strong>答法：</strong>直接查会导致口径分裂、性能不可控、权限难管。服务化把口径、性能、权限和审计统一收口。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-security">
+                <h1>腾讯数据开发后台：安全与合规</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 数据权限与审计</div>
+                <p><strong>Q：数据开发岗位常见安全合规题怎么答？</strong></p>
+                <p><strong>A：</strong>围绕“最小权限、分级分类、全链路审计、敏感数据脱敏”来答。不是单点加密，而是数据生命周期治理。</p>
+                <ul>
+                    <li><strong>分级分类：</strong>区分公开、内部、敏感、核心敏感数据，策略分层。</li>
+                    <li><strong>行列权限：</strong>按角色/部门控制可见范围（列脱敏、行级过滤）。</li>
+                    <li><strong>脱敏策略：</strong>静态脱敏（离线表）、动态脱敏（查询返回）、tokenization。</li>
+                    <li><strong>审计追踪：</strong>记录谁在什么时候以什么条件查询了什么数据。</li>
+                    <li><strong>越权防护：</strong>权限校验前置到查询网关，拒绝“先查后过滤”。</li>
+                </ul>
+                <p><strong>面试追问：</strong>“如果发现某账号疑似批量导出敏感数据怎么办？”<br><strong>答法：</strong>立即冻结高风险权限、保全审计日志、联合安全团队溯源、评估影响范围并做数据泄露应急流程，后续补齐策略（频控、异常行为检测、审批收敛）。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-project-grill">
+                <h1>腾讯数据开发后台：项目追问与答法</h1>
+                <div class="meta">腾讯数据开发部后台专项 · 项目拷打</div>
+                <p><strong>Q：项目深挖题最容易被问哪些？</strong></p>
+                <ul>
+                    <li><strong>你做了什么？</strong>强调你的模块边界，不要把团队成果全说成自己做。</li>
+                    <li><strong>难点是什么？</strong>用“业务复杂度 + 技术复杂度 + 工程复杂度”三段式。</li>
+                    <li><strong>怎么证明有效？</strong>必须给量化指标（时延、成功率、成本、稳定性）。</li>
+                    <li><strong>如果重来一次怎么优化？</strong>体现反思能力和工程判断。</li>
+                </ul>
+                <p><strong>高分答题模板（STAR + Metrics）：</strong></p>
+                <ol>
+                    <li><strong>S/T：</strong>背景与目标（例如“核心报表延迟 45 分钟，目标压到 20 分钟内”）。</li>
+                    <li><strong>A：</strong>你做的动作（拆链路、重构 SQL、倾斜治理、补监控）。</li>
+                    <li><strong>R：</strong>结果量化（“P95 从 42 分钟降到 18 分钟，失败率降 70%”）。</li>
+                    <li><strong>复盘：</strong>沉淀到平台能力（模板化、规则化、可复用）。</li>
+                </ol>
+                <p><strong>面试追问：</strong>“如果你和同事的方案冲突，怎么决策？”<br><strong>答法：</strong>先对齐目标和约束（SLA、成本、上线时间），再用小流量或历史数据做 A/B 验证，最后按证据而非资历拍板。</p>
             </article>
 
         </main>
