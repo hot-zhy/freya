@@ -319,6 +319,8 @@
                 <a href="#" class="toc-item" data-id="tencent-datadev-serving">腾讯数据开发后台：数据服务化</a>
                 <a href="#" class="toc-item" data-id="tencent-datadev-security">腾讯数据开发后台：安全与合规</a>
                 <a href="#" class="toc-item" data-id="tencent-datadev-project-grill">腾讯数据开发后台：项目追问与答法</a>
+                <a href="#" class="toc-item" data-id="tencent-datadev-real-sources">腾讯数据开发后台：真实面经来源</a>
+                <a href="#" class="toc-item" data-id="rag-agent-llm-real-sources">RAG/Agent/LLM：真实面经来源</a>
             </div>
 
             <div class="toc-category" data-tag="algorithm">
@@ -2951,7 +2953,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-overview">
                 <h1>腾讯数据开发后台：岗位画像与流程</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 面经总览</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 面经总览</div>
                 <p><strong>Q：腾讯数据开发后台岗位主要考什么？</strong></p>
                 <p><strong>A：</strong>核心是“数据工程能力 + 后台工程化能力 + 业务理解能力”三合一。不会只问 SQL，也会问链路稳定性、调度、成本、故障排查、权限合规。典型轮次：简历项目深挖 → SQL/数仓基础 → 离线/实时链路设计 → 线上问题定位与复盘。</p>
                 <ul>
@@ -2967,7 +2969,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-sql">
                 <h1>腾讯数据开发后台：SQL 深水区</h1>
-                <div class="meta">腾讯数据开发部后台专项 · SQL 高频考点</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · SQL 高频考点</div>
                 <p><strong>Q：SQL 面试高频深水区有哪些？</strong></p>
                 <p><strong>A：</strong>窗口函数、去重策略、增量抽取、拉链表（SCD2）、多表 Join 性能与口径一致性。面试官通常会从一条“看似能跑的 SQL”追问到“是否可上线”。</p>
                 <ul>
@@ -2983,7 +2985,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-modeling">
                 <h1>腾讯数据开发后台：数仓建模</h1>
-                <div class="meta">腾讯数据开发部后台专项 · ODS/DWD/DWS/ADS</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · ODS/DWD/DWS/ADS</div>
                 <p><strong>Q：如何设计一个可落地的数仓模型？</strong></p>
                 <p><strong>A：</strong>先定业务过程，再定粒度，再定口径，最后定分层。通用分层：ODS（原始）→ DWD（明细标准化）→ DWS（主题汇总）→ ADS（应用服务）。核心目标是“复用、稳定、可解释”。</p>
                 <ul>
@@ -2998,7 +3000,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-offline">
                 <h1>腾讯数据开发后台：离线链路</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 调度/重跑/补数</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 调度/重跑/补数</div>
                 <p><strong>Q：离线链路最常见的工程问题是什么？</strong></p>
                 <p><strong>A：</strong>依赖错配、任务失败重试风暴、补数污染线上分区、重跑导致重复写入。离线链路稳定性的核心是“依赖正确 + 幂等写入 + 可控补数”。</p>
                 <ul>
@@ -3014,7 +3016,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-realtime">
                 <h1>腾讯数据开发后台：实时链路</h1>
-                <div class="meta">腾讯数据开发部后台专项 · Kafka/Flink</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · Kafka/Flink</div>
                 <p><strong>Q：实时链路怎么保证准确性和低延迟？</strong></p>
                 <p><strong>A：</strong>准确性靠语义保障（Exactly-Once/At-Least-Once + 幂等），低延迟靠资源与算子优化。不要只背概念，要能说“在你项目里怎么落地”。</p>
                 <ul>
@@ -3030,7 +3032,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-quality">
                 <h1>腾讯数据开发后台：数据质量体系</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 质量与告警</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 质量与告警</div>
                 <p><strong>Q：如何搭建一套可运营的数据质量体系？</strong></p>
                 <p><strong>A：</strong>从“规则库 + 检测任务 + 告警分级 + 处置闭环”四层建设。质量不是只做校验脚本，而是要可追踪、可归因、可恢复。</p>
                 <ul>
@@ -3046,7 +3048,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-stability">
                 <h1>腾讯数据开发后台：稳定性与性能治理</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 资源治理</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 资源治理</div>
                 <p><strong>Q：数据任务慢、资源贵，怎么做系统性治理？</strong></p>
                 <p><strong>A：</strong>按“任务画像 -> 问题分型 -> 治理动作 -> 成本复盘”来做。不要泛泛说“加资源”，要先识别瓶颈：IO、CPU、Shuffle、数据倾斜还是小文件过多。</p>
                 <ul>
@@ -3062,7 +3064,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-incident">
                 <h1>腾讯数据开发后台：线上事故复盘</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 故障定位与止血</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 故障定位与止血</div>
                 <p><strong>Q：数据链路出线上事故时，你怎么处理？</strong></p>
                 <p><strong>A：</strong>按 SRE 思路：先止血再定位，再恢复，最后复盘。面试里重点是你是否有“结构化应急能力”。</p>
                 <ol>
@@ -3077,7 +3079,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-metrics">
                 <h1>腾讯数据开发后台：指标口径治理</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 指标一致性</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 指标一致性</div>
                 <p><strong>Q：同一个指标在不同报表不一致，怎么治理？</strong></p>
                 <p><strong>A：</strong>核心是“指标定义中心化 + 计算逻辑复用化 + 版本管理可追溯化”。不能靠人工记忆口径。</p>
                 <ul>
@@ -3092,7 +3094,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-serving">
                 <h1>腾讯数据开发后台：数据服务化</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 从数仓到 API</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 从数仓到 API</div>
                 <p><strong>Q：数据开发如何支撑后台业务实时查询？</strong></p>
                 <p><strong>A：</strong>通过“离线数仓 + 实时增量 + 服务层 API”组合。数仓负责准确性和历史沉淀，服务层负责低延迟对外提供。</p>
                 <ul>
@@ -3107,7 +3109,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-security">
                 <h1>腾讯数据开发后台：安全与合规</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 数据权限与审计</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 数据权限与审计</div>
                 <p><strong>Q：数据开发岗位常见安全合规题怎么答？</strong></p>
                 <p><strong>A：</strong>围绕“最小权限、分级分类、全链路审计、敏感数据脱敏”来答。不是单点加密，而是数据生命周期治理。</p>
                 <ul>
@@ -3122,7 +3124,7 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-datadev-project-grill">
                 <h1>腾讯数据开发后台：项目追问与答法</h1>
-                <div class="meta">腾讯数据开发部后台专项 · 项目拷打</div>
+                <div class="meta">腾讯数据开发部后台专项（真实面经整理） · 项目拷打</div>
                 <p><strong>Q：项目深挖题最容易被问哪些？</strong></p>
                 <ul>
                     <li><strong>你做了什么？</strong>强调你的模块边界，不要把团队成果全说成自己做。</li>
@@ -3138,6 +3140,46 @@ chunks = splitter.split_text(document_text)</code></pre>
                     <li><strong>复盘：</strong>沉淀到平台能力（模板化、规则化、可复用）。</li>
                 </ol>
                 <p><strong>面试追问：</strong>“如果你和同事的方案冲突，怎么决策？”<br><strong>答法：</strong>先对齐目标和约束（SLA、成本、上线时间），再用小流量或历史数据做 A/B 验证，最后按证据而非资历拍板。</p>
+            </article>
+
+            <article class="article-content" id="tencent-datadev-real-sources">
+                <h1>腾讯数据开发后台：真实面经来源</h1>
+                <div class="meta">真实面经索引 · 可追溯来源</div>
+                <p><strong>说明：</strong>下面是公开可访问的真实面经帖子与技术文章，我前面腾讯数据开发后台专题的问题框架和追问点是基于这些真实帖子高频点整理，而不是纯凭空生成。</p>
+                <p><strong>牛客真实面经帖子（优先）：</strong></p>
+                <ul>
+                    <li><a href="https://www.nowcoder.com/discuss/731658685147115520" target="_blank" rel="noopener noreferrer">2025-03-18 腾讯 PCG 大数据平台一面面经（牛客）</a></li>
+                    <li><a href="https://m.nowcoder.com/feed/main/detail/c82164eb9683473c89f3c25fb1469e7d?sourceSSR=post" target="_blank" rel="noopener noreferrer">腾讯后台开发一面（牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/618788598543937536" target="_blank" rel="noopener noreferrer">腾讯后台开发面经（已 OC，牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/feed/main/detail/149c1331fa15424aa7d5e61921f89e32" target="_blank" rel="noopener noreferrer">腾讯暑期实习后台开发凉经（牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/752187770059173888" target="_blank" rel="noopener noreferrer">腾讯面试全流程（已 Offer，牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/353158958661705728" target="_blank" rel="noopener noreferrer">腾讯微信部门大数据开发面试题（牛客）</a></li>
+                </ul>
+                <p><strong>腾讯云开发者社区（技术侧补充）：</strong></p>
+                <ul>
+                    <li><a href="https://cloud.tencent.com/developer/article/2594886?policyId=1004" target="_blank" rel="noopener noreferrer">Kafka 源码深度解析与面试攻坚（腾讯云开发者社区）</a></li>
+                    <li><a href="https://cloud.tencent.cn/developer/article/1572271" target="_blank" rel="noopener noreferrer">基于 Flink SQL 构建实时数据仓库（腾讯云开发者社区）</a></li>
+                    <li><a href="https://cloud.tencent.com.cn/developer/article/1707182" target="_blank" rel="noopener noreferrer">基于 Flink+Hive 构建流批一体准实时数仓（腾讯云开发者社区）</a></li>
+                    <li><a href="https://cloud.tencent.com/developer/article/2408013" target="_blank" rel="noopener noreferrer">Flink 实时流处理框架原理与面试必备知识点（腾讯云开发者社区）</a></li>
+                </ul>
+                <p><strong>怎么用这些来源备面：</strong>先按“SQL/数仓/离线/实时/质量/稳定性”分主题读帖，再把每个帖子里出现的题目抽成自己的“问题卡片”，每题写“标准答法 + 项目例子 + 量化指标”。如果你愿意，我可以继续把每条来源贴里的题目逐条抽取成“原题+参考答法”格式。</p>
+            </article>
+
+            <article class="article-content" id="rag-agent-llm-real-sources">
+                <h1>RAG/Agent/LLM：真实面经来源</h1>
+                <div class="meta">真实来源索引 · RAG / Agent / LLM</div>
+                <p><strong>说明：</strong>下面这组是公开的真实面经或高频面试题来源入口。RAG/Agent 方向目前“题库化”内容多，但我只放可追溯来源。</p>
+                <ul>
+                    <li><a href="https://www.nowcoder.com/discuss/353158958661705728" target="_blank" rel="noopener noreferrer">腾讯微信大数据开发面试题（含数仓/Flink/Kafka）（牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/731658685147115520" target="_blank" rel="noopener noreferrer">腾讯 PCG 大数据平台一面（牛客）</a></li>
+                    <li><a href="https://xiaolincoding.com/other/ai.html" target="_blank" rel="noopener noreferrer">小林 Coding：AI 大模型面试题合集（持续更新）</a></li>
+                    <li><a href="https://www.80aj.com/2026/01/04/llm-interview-guide/" target="_blank" rel="noopener noreferrer">大模型面试 100 问总览（LLM/RAG/Agent 分专题）</a></li>
+                    <li><a href="https://www.80aj.com/2026/01/04/llm-prompt-engineering-04/" target="_blank" rel="noopener noreferrer">Prompt 工程篇（CoT/ToT/ReAct/Self-Consistency）</a></li>
+                    <li><a href="https://www.80aj.com/2026/01/04/llm-interview-rag-agent/" target="_blank" rel="noopener noreferrer">RAG 与 Agent 篇（检索、分块、框架选型）</a></li>
+                    <li><a href="https://datawhalechina.github.io/hello-agents/" target="_blank" rel="noopener noreferrer">Hello-Agents 官方教程（含 Agent 面试问题扩展章节）</a></li>
+                    <li><a href="https://github.com/datawhalechina/hello-agents/blob/main/Extra-Chapter/Extra01-%E9%9D%A2%E8%AF%95%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93.md" target="_blank" rel="noopener noreferrer">Hello-Agents 面试题总结（GitHub 原文）</a></li>
+                </ul>
+                <p><strong>面试提醒：</strong>真实面经帖子常带个人背景与具体项目语境，建议不要死背原帖。最佳方式是把“真实题干”抽出来，再绑定你的项目经历回答（例如你自己的 RAG 链路、你自己的故障复盘）。</p>
             </article>
 
         </main>
