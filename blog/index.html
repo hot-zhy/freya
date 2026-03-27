@@ -243,6 +243,7 @@
                 <a href="#" class="toc-item" data-id="bean-lifecycle">Spring Bean 生命周期</a>
                 <a href="#" class="toc-item" data-id="jvm-gc">JVM 垃圾回收机制</a>
                 <a href="#" class="toc-item" data-id="java-gc-workflow">Java GC 是什么与工作流程</a>
+                <a href="#" class="toc-item" data-id="jvm-gc-collectors">JVM 垃圾回收器类型与对比</a>
                 <a href="#" class="toc-item" data-id="jvm-memory">JVM 内存区域</a>
                 <a href="#" class="toc-item" data-id="jvm-oom">OOM 排查</a>
                 <a href="#" class="toc-item" data-id="threadlocal-leak">ThreadLocal 内存泄漏</a>
@@ -818,6 +819,7 @@
                 <p><strong>回收算法：</strong>标记-清除（有碎片）；复制（新生代 Eden+S0+S1，8:1:1）；标记-整理（老年代）。</p>
                 <p><strong>回收器：</strong>Serial/ParNew、Parallel、CMS（已废弃）、G1（JDK9+ 默认，分区）、ZGC（超低停顿）。</p>
                 <p><strong>分代：</strong>Minor GC（新生代）、Major/Full GC（老年代/整堆）。对象晋升：年龄达阈值（默认 15）或 S 区装不下。</p>
+                <p><strong>延展：</strong>各收集器（Serial、Parallel、G1、ZGC 等）的实现差异与选型见「JVM 垃圾回收器类型与对比」。</p>
             </article>
 
             <article class="article-content" id="java-gc-workflow">
@@ -861,6 +863,70 @@
 
                 <p><strong>五、小结</strong></p>
                 <p>面试可概括为：<strong>GC = 自动回收堆中不可达对象</strong>；核心步骤是<strong>从 GC Roots 做可达性分析 → 标记存活 → 按算法清除/复制/整理</strong>；新生代以复制为主、老年代以标记-整理或标记-清除为主；具体收集器（Serial、Parallel、G1、ZGC 等）在停顿时间、并发程度、适用堆大小上各有取舍。</p>
+            </article>
+
+            <article class="article-content" id="jvm-gc-collectors">
+                <h1>JVM 垃圾回收器类型与对比</h1>
+                <div class="meta">Java / JVM · 大厂高频</div>
+                <p>HotSpot 提供多种<strong>垃圾回收器（Garbage Collector）</strong>，可通过 <code>-XX:+UseSerialGC</code>、<code>-XX:+UseG1GC</code> 等参数选择（JDK 9+ 默认 G1）。下面按「新生代 + 老年代」组合或独立收集器说明<strong>怎么做</strong>以及<strong>优缺点</strong>。</p>
+
+                <p><strong>一、Serial / Serial Old（串行）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>新生代用<strong>复制算法</strong>，单线程 STW；老年代用<strong>标记-整理</strong>，同样单线程 STW。全程只有一条 GC 线程。</li>
+                    <li><strong>优点：</strong>实现简单、无线程切换开销、额外内存占用极小；适合堆很小（如几十 MB）或客户端程序。</li>
+                    <li><strong>缺点：</strong>停顿时间长，无法利用多核；不适合服务端大堆、高吞吐。</li>
+                </ul>
+
+                <p><strong>二、Parallel Scavenge + Parallel Old（吞吐量优先，JDK 8 常用默认之一）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>新生代<strong>多线程复制</strong>；老年代<strong>多线程标记-整理</strong>。目标是在<strong>限定停顿时间</strong>或<strong>最大停顿</strong>约束下，尽可能提高<strong>吞吐量</strong>（用户代码时间 / 总时间）。</li>
+                    <li><strong>优点：</strong>多核并行回收，整体吞吐高，适合<strong>批处理、科学计算</strong>等可容忍较长 STW 的场景。</li>
+                    <li><strong>缺点：</strong>停顿时间可能仍较长；更关心「平均/总吞吐」而非单次延迟。</li>
+                </ul>
+
+                <p><strong>三、ParNew + CMS（已淘汰，了解即可）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>新生代 ParNew 为<strong>多线程复制</strong>，与 Serial 新生代算法相同但并行；老年代 <strong>CMS（Concurrent Mark Sweep）</strong>：<strong>初始标记、并发标记、重新标记、并发清除</strong>，大部分标记与清除与应用并发，减少 STW。</li>
+                    <li><strong>优点：</strong>老年代停顿相对短，曾是低延迟首选之一。</li>
+                    <li><strong>缺点：</strong>标记-清除产生<strong>碎片</strong>；并发阶段占用 CPU；<strong>JDK 9 标记废弃，JDK 14 移除 CMS</strong>。</li>
+                </ul>
+
+                <p><strong>四、G1（Garbage First，JDK 9+ 默认服务端收集器）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>堆划分为多个<strong>Region</strong>（新生代、老年代逻辑上由若干 Region 组成）。维护<strong>回收价值优先</strong>的 Region 列表。一次 GC 常包含：初始标记（STW）→ 并发标记 → 最终标记（STW）→ <strong>筛选回收</strong>（复制存活对象到空 Region，类似整理）。可设<strong>期望停顿时间</strong>（<code>-XX:MaxGCPauseMillis</code>），优先回收收益高的 Region。</li>
+                    <li><strong>优点：</strong>在吞吐与延迟间平衡较好；适合<strong>大堆（数 GB～数十 GB）</strong>；可预测停顿上界（不保证每次都很短，但可调参）。</li>
+                    <li><strong>缺点：</strong>调参与行为比 Serial 复杂；小堆上优势不明显；Remembered Set 等结构有额外内存开销。</li>
+                </ul>
+
+                <p><strong>五、ZGC（JDK 15+ 正式可用，超低停顿）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>采用<strong>着色指针（Colored Pointers）</strong>、<strong>读屏障</strong>等技术，在并发阶段做<strong>并发整理/重映射</strong>，把停顿控制在<strong>亚毫秒级</strong>（与堆大小基本解耦）。</li>
+                    <li><strong>优点：</strong>停顿极短，适合<strong>超大堆（TB 级）</strong>、对延迟极敏感的业务。</li>
+                    <li><strong>缺点：</strong>JDK 版本要求高；在部分场景下吞吐可能略低于 G1；需要平台支持（Linux x64 等较成熟）。</li>
+                </ul>
+
+                <p><strong>六、Shenandoah（红帽主导，OpenJDK）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>以<strong>并发压缩</strong>为核心，多数阶段与应用并发，STW 极短。</li>
+                    <li><strong>优点：</strong>低停顿、开源；与 ZGC 同为「大堆 + 低延迟」方向。</li>
+                    <li><strong>缺点：</strong>生态与默认选型上不如 G1/ZGC 普及；同样对 JDK 版本有要求。</li>
+                </ul>
+
+                <p><strong>七、Epsilon（无操作收集器）</strong></p>
+                <ul>
+                    <li><strong>怎么做：</strong>几乎不回收内存，堆耗尽即 OOM。</li>
+                    <li><strong>用途：</strong>性能基准测试、极短生命周期任务，排除 GC 干扰。</li>
+                    <li><strong>缺点：</strong>不能用于正常业务。</li>
+                </ul>
+
+                <p><strong>八、选型小结（面试口径）</strong></p>
+                <ul>
+                    <li><strong>小堆、客户端、嵌入式：</strong>Serial。</li>
+                    <li><strong>吞吐优先、批处理：</strong>Parallel。</li>
+                    <li><strong>通用服务端、大堆、平衡延迟与吞吐：</strong><strong>G1</strong>（默认）。</li>
+                    <li><strong>极低停顿、超大堆：</strong><strong>ZGC</strong> 或 Shenandoah。</li>
+                </ul>
+                <p>与「<strong>JVM 垃圾回收机制</strong>」「<strong>Java GC 是什么与工作流程</strong>」配合记忆：算法（复制/标记-整理）是「怎么做回收」，收集器是「用几条线程、是否与用户线程并发、优化目标是什么」。</p>
             </article>
 
             <article class="article-content" id="thread-pool">
