@@ -870,6 +870,14 @@
                 <div class="meta">Java / JVM · 大厂高频</div>
                 <p>HotSpot 提供多种<strong>垃圾回收器（Garbage Collector）</strong>，可通过 <code>-XX:+UseSerialGC</code>、<code>-XX:+UseG1GC</code> 等参数选择（JDK 9+ 默认 G1）。下面按「新生代 + 老年代」组合或独立收集器说明<strong>怎么做</strong>以及<strong>优缺点</strong>。</p>
 
+                <p><strong>零、垃圾回收算法详解（先理解算法，再看收集器）</strong></p>
+                <ul>
+                    <li><strong>标记-清除（Mark-Sweep）：</strong>先从 GC Roots 做可达性分析，标记所有存活对象；再清除未标记对象。<strong>优点：</strong>实现简单、速度快；<strong>缺点：</strong>会产生内存碎片，分配大对象时可能触发 Full GC。</li>
+                    <li><strong>复制算法（Copying）：</strong>把内存分成两块，每次只使用一块；回收时把存活对象复制到另一块，再整体清空旧区域。<strong>优点：</strong>无碎片、分配快（指针碰撞）；<strong>缺点：</strong>需要额外空间。HotSpot 在新生代用 Eden+S0+S1（典型 8:1:1）降低空间浪费。</li>
+                    <li><strong>标记-整理（Mark-Compact）：</strong>标记存活对象后，把对象向一端移动，再清理边界外空间。<strong>优点：</strong>无碎片，适合老年代；<strong>缺点：</strong>对象移动成本高，停顿相对更长。</li>
+                    <li><strong>分代收集思想：</strong>新生代对象存活率低，适合复制算法；老年代对象存活率高，适合标记-整理或标记-清除。现代收集器本质上是这些算法的工程化组合。</li>
+                </ul>
+
                 <p><strong>一、Serial / Serial Old（串行）</strong></p>
                 <ul>
                     <li><strong>怎么做：</strong>新生代用<strong>复制算法</strong>，单线程 STW；老年代用<strong>标记-整理</strong>，同样单线程 STW。全程只有一条 GC 线程。</li>
@@ -879,9 +887,13 @@
 
                 <p><strong>二、Parallel Scavenge + Parallel Old（吞吐量优先，JDK 8 常用默认之一）</strong></p>
                 <ul>
-                    <li><strong>怎么做：</strong>新生代<strong>多线程复制</strong>；老年代<strong>多线程标记-整理</strong>。目标是在<strong>限定停顿时间</strong>或<strong>最大停顿</strong>约束下，尽可能提高<strong>吞吐量</strong>（用户代码时间 / 总时间）。</li>
-                    <li><strong>优点：</strong>多核并行回收，整体吞吐高，适合<strong>批处理、科学计算</strong>等可容忍较长 STW 的场景。</li>
-                    <li><strong>缺点：</strong>停顿时间可能仍较长；更关心「平均/总吞吐」而非单次延迟。</li>
+                    <li><strong>核心目标：</strong>吞吐量优先（Throughput First）。即让应用线程运行时间占比最大，常用于离线计算、批任务、可接受较长停顿但追求总体处理能力的服务。</li>
+                    <li><strong>怎么做：</strong>新生代用 Parallel Scavenge（多线程复制）；老年代用 Parallel Old（多线程标记-整理）。与 G1/CMS 不同，它更少做复杂并发标记，主要依赖 STW 并行回收换取高吞吐。</li>
+                    <li><strong>一次 Young GC 步骤：</strong>① STW 停止应用线程；② 多条 GC 线程并行扫描 Eden+From Survivor，复制存活对象到 To Survivor；③ 达到年龄阈值或 To 空间不足则晋升老年代；④ 清空 Eden/From，交换 Survivor 角色。</li>
+                    <li><strong>一次 Full GC 步骤（Parallel Old）：</strong>① 并行标记老年代存活对象；② 并行压缩/整理对象，消除碎片；③ 更新引用并恢复应用线程。</li>
+                    <li><strong>常见参数：</strong><code>-XX:+UseParallelGC</code>、<code>-XX:+UseParallelOldGC</code>、<code>-XX:MaxGCPauseMillis</code>（目标最大停顿）、<code>-XX:GCTimeRatio</code>（GC 时间占比目标）、<code>-XX:+UseAdaptiveSizePolicy</code>（自适应调整新生代比例、Survivor、晋升阈值）。</li>
+                    <li><strong>优点：</strong>多核利用率高、吞吐强、实现稳定；对 CPU 资源充足且延迟不敏感的任务非常合适。</li>
+                    <li><strong>缺点：</strong>停顿通常比 G1/ZGC 长；对在线低延迟业务（如接口 RT 严格）不友好。</li>
                 </ul>
 
                 <p><strong>三、ParNew + CMS（已淘汰，了解即可）</strong></p>
@@ -893,9 +905,13 @@
 
                 <p><strong>四、G1（Garbage First，JDK 9+ 默认服务端收集器）</strong></p>
                 <ul>
-                    <li><strong>怎么做：</strong>堆划分为多个<strong>Region</strong>（新生代、老年代逻辑上由若干 Region 组成）。维护<strong>回收价值优先</strong>的 Region 列表。一次 GC 常包含：初始标记（STW）→ 并发标记 → 最终标记（STW）→ <strong>筛选回收</strong>（复制存活对象到空 Region，类似整理）。可设<strong>期望停顿时间</strong>（<code>-XX:MaxGCPauseMillis</code>），优先回收收益高的 Region。</li>
-                    <li><strong>优点：</strong>在吞吐与延迟间平衡较好；适合<strong>大堆（数 GB～数十 GB）</strong>；可预测停顿上界（不保证每次都很短，但可调参）。</li>
-                    <li><strong>缺点：</strong>调参与行为比 Serial 复杂；小堆上优势不明显；Remembered Set 等结构有额外内存开销。</li>
+                    <li><strong>核心思想：</strong>把整个堆切成很多等大小 <strong>Region</strong>，不再固定物理上的“连续新生代/老年代”。通过统计每个 Region 的回收收益（可回收字节 / 预计停顿成本），优先回收收益最高的一批 Region，这就是 Garbage First 的来源。</li>
+                    <li><strong>工作步骤（一次标记-回收周期）：</strong>① 初始标记（STW）：标记 GC Roots 直接可达对象；② 并发标记：与应用并发遍历对象图；③ 最终标记（STW）：修正并发期间变更；④ 筛选回收（Evacuation，STW）：选择若干高收益 Region，把存活对象复制到新 Region，原 Region 整体回收。</li>
+                    <li><strong>为何停顿可控：</strong>G1 会根据 <code>-XX:MaxGCPauseMillis</code> 目标，动态决定这次回收多少个 Region。回收 Region 越多，回收量越大但停顿越长；反之停顿更短但回收更少。</li>
+                    <li><strong>关键机制：</strong><strong>Remembered Set（RSet）</strong> 记录跨 Region 引用，避免全堆扫描；<strong>Card Table</strong> 记录脏卡片；Mixed GC 会在完成并发标记后，年轻代回收时顺带回收部分老年代 Region。</li>
+                    <li><strong>常见参数：</strong><code>-XX:+UseG1GC</code>、<code>-XX:MaxGCPauseMillis=200</code>、<code>-XX:InitiatingHeapOccupancyPercent</code>（触发并发标记阈值）、<code>-XX:G1HeapRegionSize</code>（Region 大小，1MB~32MB）。</li>
+                    <li><strong>优点：</strong>吞吐与延迟平衡好；适合大堆在线服务；相对 CMS 更好地解决碎片问题。</li>
+                    <li><strong>缺点：</strong>实现复杂、调参门槛较高；RSet 带来额外内存和写屏障开销；在极低停顿目标下可能不如 ZGC。</li>
                 </ul>
 
                 <p><strong>五、ZGC（JDK 15+ 正式可用，超低停顿）</strong></p>
