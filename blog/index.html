@@ -242,6 +242,7 @@
                 <a href="#" class="toc-item" data-id="array-vs-list">数组 vs 链表（内存有限）</a>
                 <a href="#" class="toc-item" data-id="bean-lifecycle">Spring Bean 生命周期</a>
                 <a href="#" class="toc-item" data-id="jvm-gc">JVM 垃圾回收机制</a>
+                <a href="#" class="toc-item" data-id="java-gc-workflow">Java GC 是什么与工作流程</a>
                 <a href="#" class="toc-item" data-id="jvm-memory">JVM 内存区域</a>
                 <a href="#" class="toc-item" data-id="jvm-oom">OOM 排查</a>
                 <a href="#" class="toc-item" data-id="threadlocal-leak">ThreadLocal 内存泄漏</a>
@@ -817,6 +818,49 @@
                 <p><strong>回收算法：</strong>标记-清除（有碎片）；复制（新生代 Eden+S0+S1，8:1:1）；标记-整理（老年代）。</p>
                 <p><strong>回收器：</strong>Serial/ParNew、Parallel、CMS（已废弃）、G1（JDK9+ 默认，分区）、ZGC（超低停顿）。</p>
                 <p><strong>分代：</strong>Minor GC（新生代）、Major/Full GC（老年代/整堆）。对象晋升：年龄达阈值（默认 15）或 S 区装不下。</p>
+            </article>
+
+            <article class="article-content" id="java-gc-workflow">
+                <h1>Java GC 是什么与工作流程</h1>
+                <div class="meta">Java / JVM · 大厂高频</div>
+                <p><strong>GC（Garbage Collection）是什么：</strong>Java 堆上的对象由 JVM 自动分配，程序员不能像 C/C++ 那样手动 free。当对象不再被使用时，GC 负责**自动识别**这些「垃圾」并**回收**其占用的内存，避免堆被无限占满。GC 只针对堆（及方法区中的元数据）；栈上的局部变量随栈帧结束自动释放，无需 GC。</p>
+                <p><strong>为什么需要 GC：</strong>降低内存泄漏、避免野指针；代价是 GC 会停顿（Stop-The-World）或占用 CPU，需要调优与选择合适的回收器。</p>
+
+                <p><strong>一、整体工作流程（抽象三步）</strong></p>
+                <ol>
+                    <li><strong>标记（Mark）：</strong>从 <strong>GC Roots</strong>（栈引用、静态变量、常量、JNI 等）出发，遍历引用链，给所有「仍可达」的对象打标记。未被标记的对象视为垃圾。</li>
+                    <li><strong>清除（Sweep）或 复制 / 整理：</strong>根据收集器采用的算法，回收未标记空间或把存活对象挪到另一块区域。</li>
+                    <li><strong>可选：压缩（Compact）：</strong>标记-整理算法会把存活对象向一端移动，消除碎片，便于后续分配大对象。</li>
+                </ol>
+
+                <p><strong>二、与「回收算法」对应的关系</strong></p>
+                <ul>
+                    <li><strong>标记-清除：</strong>标记 → 清除未标记空间；快，但会产生碎片。</li>
+                    <li><strong>复制（复制算法）：</strong>将存活对象从 From 区复制到 To 区，然后清空 From；无碎片，适合新生代（Eden + Survivor）。</li>
+                    <li><strong>标记-整理：</strong>标记 → 把存活对象向一端移动 → 整理边界；常用于老年代、减少碎片。</li>
+                </ul>
+
+                <p><strong>三、分代与典型一次 Minor GC 的步骤</strong></p>
+                <p>HotSpot 默认使用<strong>分代收集</strong>：新生代（Eden + Survivor）、老年代。新对象大多在 Eden 分配；Eden 满时触发 <strong>Minor GC / Young GC</strong>：</p>
+                <ol>
+                    <li>标记 Eden 和当前使用的 Survivor 中的存活对象。</li>
+                    <li>将存活对象复制到另一块 Survivor（或晋升到老年代）；若年龄超过阈值或 Survivor 放不下则晋升。</li>
+                    <li>清空 Eden 和已用 Survivor，交换 Survivor 角色。</li>
+                </ol>
+                <p>老年代空间不足或元数据触发等会触发 <strong>Major / Full GC</strong>，一般使用标记-清除或标记-整理，停顿可能更长。</p>
+
+                <p><strong>四、现代收集器（如 G1）的工作阶段（概念）</strong></p>
+                <p>G1 把堆划成多个 Region，整体仍是「标记 + 回收」，但分阶段执行，部分阶段可与应用并发：</p>
+                <ul>
+                    <li><strong>初始标记（Initial Mark）：</strong>STW，只标记 GC Roots 直接关联的对象，很快。</li>
+                    <li><strong>并发标记（Concurrent Mark）：</strong>与应用线程并行，遍历对象图。</li>
+                    <li><strong>最终标记（Remark）：</strong>STW，处理并发阶段遗漏的引用变化。</li>
+                    <li><strong>筛选回收（Cleanup / Evacuation）：</strong>根据各 Region 回收价值，选择部分 Region 回收并复制存活对象。</li>
+                </ul>
+                <p>ZGC、Shenandoah 等更强调低停顿，流程上仍是「标记 + 回收」，但实现细节不同。</p>
+
+                <p><strong>五、小结</strong></p>
+                <p>面试可概括为：<strong>GC = 自动回收堆中不可达对象</strong>；核心步骤是<strong>从 GC Roots 做可达性分析 → 标记存活 → 按算法清除/复制/整理</strong>；新生代以复制为主、老年代以标记-整理或标记-清除为主；具体收集器（Serial、Parallel、G1、ZGC 等）在停顿时间、并发程度、适用堆大小上各有取舍。</p>
             </article>
 
             <article class="article-content" id="thread-pool">
