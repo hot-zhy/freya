@@ -18,6 +18,34 @@
             --text-muted: #8888aa;
             --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.3);
             --sidebar-width: 280px;
+            --bg-nav: rgba(10, 10, 15, 0.95);
+            --bg-sidebar: rgba(8, 8, 12, 0.98);
+            --grid-line: rgba(0, 245, 255, 0.02);
+            --border-soft: rgba(255,255,255,0.06);
+            --hover-bg: rgba(0,245,255,0.05);
+            --active-bg: rgba(0,245,255,0.08);
+            --article-text: rgba(232,232,240,0.92);
+            --code-bg: rgba(0,245,255,0.1);
+            --pre-bg: rgba(0,0,0,0.4);
+        }
+        [data-theme="light"] {
+            --bg-dark: #f6f8fc;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --accent-cyan: #0f6fff;
+            --accent-magenta: #b0008f;
+            --accent-purple: #6d4aff;
+            --text-primary: #1f2937;
+            --text-muted: #5b6475;
+            --glow-cyan: 0 0 16px rgba(15, 111, 255, 0.2);
+            --bg-nav: rgba(246, 248, 252, 0.95);
+            --bg-sidebar: rgba(255, 255, 255, 0.98);
+            --grid-line: rgba(15, 111, 255, 0.07);
+            --border-soft: rgba(24, 39, 75, 0.12);
+            --hover-bg: rgba(15,111,255,0.08);
+            --active-bg: rgba(15,111,255,0.13);
+            --article-text: #2b3445;
+            --code-bg: rgba(15,111,255,0.1);
+            --pre-bg: rgba(241, 245, 255, 0.9);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; height: 100%; }
@@ -25,22 +53,33 @@
 
         .bg-grid {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(rgba(0, 245, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 245, 255, 0.02) 1px, transparent 1px);
+            background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
             background-size: 40px 40px; pointer-events: none; z-index: 0;
         }
 
         nav {
             position: fixed; top: 0; left: 0; right: 0; height: 56px; padding: 0 2rem;
             display: flex; justify-content: space-between; align-items: center; z-index: 200;
-            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: var(--bg-nav); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-soft);
         }
         .logo { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.2rem;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;
         }
-        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
         .nav-links a:hover { color: var(--accent-cyan); }
+        .theme-toggle {
+            border: 1px solid var(--border-soft);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-radius: 16px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover { border-color: var(--accent-cyan); color: var(--accent-cyan); }
 
         /* 主布局：左侧目录 + 右侧内容 */
         .blog-layout {
@@ -51,7 +90,7 @@
         .sidebar {
             width: var(--sidebar-width); min-width: var(--sidebar-width);
             position: fixed; top: 56px; left: 0; bottom: 0;
-            background: rgba(8, 8, 12, 0.98); border-right: 1px solid rgba(255,255,255,0.06);
+            background: var(--bg-sidebar); border-right: 1px solid var(--border-soft);
             overflow-y: auto; padding: 1.5rem 0;
         }
         .sidebar-title {
@@ -64,8 +103,8 @@
             display: block; padding: 0.5rem 1.25rem; color: var(--text-muted); text-decoration: none;
             font-size: 0.9rem; transition: all 0.2s; border-left: 3px solid transparent;
         }
-        .toc-item:hover { color: var(--accent-cyan); background: rgba(0,245,255,0.05); }
-        .toc-item.active { color: var(--accent-cyan); background: rgba(0,245,255,0.08); border-left-color: var(--accent-cyan); }
+        .toc-item:hover { color: var(--accent-cyan); background: var(--hover-bg); }
+        .toc-item.active { color: var(--accent-cyan); background: var(--active-bg); border-left-color: var(--accent-cyan); }
 
         /* 右侧阅读区 */
         .reader {
@@ -87,16 +126,16 @@
             padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,245,255,0.2);
         }
         .article-content .meta { font-size: 0.85rem; color: var(--accent-magenta); margin-bottom: 1.5rem; }
-        .article-content p { margin-bottom: 1rem; color: rgba(232,232,240,0.9); font-size: 0.95rem; }
+        .article-content p { margin-bottom: 1rem; color: var(--article-text); font-size: 0.98rem; line-height: 1.92; }
         .article-content ul, .article-content ol { margin: 1rem 0 1rem 1.5rem; color: var(--text-muted); }
         .article-content li { margin-bottom: 0.5rem; }
         .article-content code {
-            background: rgba(0,245,255,0.1); padding: 0.2rem 0.5rem; border-radius: 4px;
+            background: var(--code-bg); padding: 0.2rem 0.5rem; border-radius: 4px;
             font-size: 0.9em; color: var(--accent-cyan);
         }
         .article-content pre {
-            background: rgba(0,0,0,0.4); padding: 1rem; border-radius: 8px; overflow-x: auto;
-            margin: 1rem 0; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.06);
+            background: var(--pre-bg); padding: 1rem; border-radius: 8px; overflow-x: auto;
+            margin: 1rem 0; font-size: 0.85rem; border: 1px solid var(--border-soft);
         }
         .company-tag { display: inline-block; padding: 0.2rem 0.5rem; background: rgba(255,0,170,0.2); border-radius: 4px; font-size: 0.75rem; color: var(--accent-magenta); margin-left: 0.5rem; }
 
@@ -117,7 +156,7 @@
         .toc-toggle { display: none; }
 
         /* 标签筛选 */
-        .tag-filter { padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .tag-filter { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-soft); }
         .tag-filter-label {
             font-size: 0.75rem; color: var(--accent-magenta); letter-spacing: 1px;
             margin-bottom: 0.5rem; font-family: 'Orbitron', sans-serif;
@@ -141,6 +180,7 @@
     <nav>
         <a href="../" class="logo">PORTFOLIO</a>
         <div class="nav-links">
+            <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换主题">🌙 暗色</button>
             <a href="../#about">关于</a>
             <a href="../#experience">经历</a>
             <a href="../#skills">技能</a>
@@ -1618,119 +1658,130 @@ public int lengthOfLIS(int[] nums) {
             <article class="article-content" id="sim-mem0">
                 <h1>某互联网公司：Mem0 与用户画像</h1>
                 <div class="meta">技术面试模拟 · 智慧大师</div>
-                <p><strong>Mem0 的作用：</strong>智慧大师是具备长期记忆的 AI 陪伴产品。用户与 AI 持续对话后，需把对话里提取的「用户画像」（偏好、主题、关键事件）存下来作为长期记忆。Mem0 即存这些记忆的底座：① 异步链路做特征抽取；② 抽取结果写入 Mem0；③ 同时向量化写入 Milvus；④ 下次提问时从 Mem0/Milvus 拉取相关记忆注入 Prompt。</p>
-                <p><strong>为何选 Mem0 而非 MySQL：</strong>Mem0 专为 LLM 记忆设计，支持按 user_id 组织、语义去重与合并、时间衰减。用 MySQL 需自建向量索引、自研去重与衰减，成本高。Mem0 与 Milvus 配合，分工清晰。</p>
-                <p><strong>用户画像存储结构：</strong>方案一：用户主表 + 多维子表（偏好、主题、事件），子表内容 Embedding 后写入 Milvus，检索时按 user_id 做 scalar 过滤 + 向量相似度排序。方案二：文档型 JSON 存灵活字段。分层：高频访问的「最近 7 天」放 Redis，全量放 Mem0/Milvus。</p>
+                <p><strong>这题面试官真正想听什么：</strong>不是“你用过 Mem0”这么一句，而是你能不能把「记忆系统」讲成一条完整的数据链路：<strong>怎么抽取、怎么存、怎么检索、怎么保障一致性</strong>。</p>
+                <p><strong>Mem0 在项目中的职责：</strong>我们把它当做“长期记忆层”。用户每次对话后，异步任务会提取偏好（例如偏爱历史内容）、主题（例如近期关注求职）、关键事件（例如刚换工作）。这些结构化结果先写 Mem0，作为后续个性化回答的基础事实来源（source of truth）。</p>
+                <p><strong>为什么不是只用 MySQL：</strong>MySQL 非常适合强结构化事务数据，但在“语义记忆”场景需要额外做向量检索、相似去重、时间衰减。Mem0 在这些能力上更贴近 LLM 场景，工程投入更小。我们通常是 Mem0 + Milvus 组合：Mem0 管记忆对象，Milvus 管向量召回。</p>
+                <p><strong>存储结构建议：</strong>每条记忆统一为 <code>{user_id, type, content, weight, timestamp, source}</code>。其中 type 可取 preference/theme/event；weight 表示重要程度；timestamp 用于时间衰减。检索时先按 user_id + type 做过滤，再做向量相似度排序，最后按「相关性+新鲜度」混合打分。</p>
+                <p><strong>一致性与更新：</strong>推荐顺序是“先写 Mem0，再写 Milvus”。若写 Milvus 失败，记录到重试队列补偿。这样即使短暂不一致，也能保证记忆主数据不丢。</p>
             </article>
 
             <article class="article-content" id="sim-zhihui">
                 <h1>某互联网公司：智慧大师架构与 Dify</h1>
                 <div class="meta">技术面试模拟 · 智慧大师</div>
-                <p><strong>整体架构：</strong>用户 → API Gateway → 对话服务 → Dify Agent（带 MCP 工具）→ Agent 从 Mem0/MCP 拉取画像 → 向量召回 → 注入 Prompt → LLM 生成回复。异步链路：对话服务投递 MQ → 消费者调 Dify 工作流做特征抽取 → 写 Mem0 → 向量化写 Milvus。</p>
-                <p><strong>Dify 工作流角色：</strong>特征抽取拆成多节点：输入(user_id, message) → LLM 节点（提取偏好/主题/事件）→ 条件分支 → 输出结构化 JSON。与主对话链路解耦，主链路用 Agent 对话，异步用工作流抽取。</p>
-                <p><strong>特征抽取：</strong>偏好（喜欢/感兴趣）；主题（工作、家庭、健康）；关键事件（换工作、孩子上学）。用 Prompt 约束输出 JSON，或两阶段：LLM 抽取 + 规则/NER 后处理。</p>
+                <p><strong>建议回答结构：</strong>先讲“主链路”，再讲“异步链路”，最后讲“为什么这样拆”。这样面试官会觉得你有架构思维，不是只会堆组件名词。</p>
+                <p><strong>主链路（面向实时回复）：</strong>用户请求进入 Gateway 后到对话服务，对话服务调用 Dify Agent。Agent 会按需通过 MCP 拉取用户画像和历史记忆，再做向量召回，把结果拼到 Prompt 里，最后由 LLM 生成个性化回复返回用户。</p>
+                <p><strong>异步链路（面向持续学习）：</strong>主链路返回前把消息投到 MQ，消费者调用 Dify 工作流做结构化抽取（偏好/主题/事件），写入 Mem0 并更新向量库。这样不会阻塞用户当前回答，但下一次对话会更“懂你”。</p>
+                <p><strong>Dify 工作流为什么适合抽取：</strong>抽取是固定流水线，输入输出可控；而对话是动态决策，更适合 Agent。两者拆开后，系统可维护性和稳定性更高。</p>
             </article>
 
             <article class="article-content" id="sim-rabbitmq">
                 <h1>某互联网公司：RabbitMQ 链路稳定性</h1>
                 <div class="meta">技术面试模拟 · 智慧大师</div>
-                <p><strong>异步化链路：</strong>同步：用户请求 → 对话服务 → Dify Agent（拉画像）→ LLM 生成 → 返回。异步：主链路返回前投递 <code>{user_id, session_id, message}</code> 到 RabbitMQ，立即返回；消费者拉取后调 Dify 工作流抽取 → 写 Mem0 → Embedding 写 Milvus。画像更新允许秒级延迟。</p>
-                <p><strong>失败与堆积：</strong>① 重试：消费失败不 requeue，而是投递到延迟队列，指数退避（1s、2s、4s…）再重试；② 死信队列 DLX：重试 N 次仍失败进死信，落库审计、人工排查后批量重放；③ 监控：队列深度、消费速率、消费延迟、死信数量；堆积超阈值告警，可扩容消费者或限流生产端。</p>
-                <p><strong>ack 时机：</strong>生产用「处理后 ack」——先执行业务再 basicAck，宕机未 ack 会重投，需业务幂等。处理前 ack 会丢消息，不推荐。</p>
+                <p><strong>异步化的核心价值：</strong>把“慢操作”（抽取、向量化、写库）从用户同步请求里拆出去。用户链路只做“回复所需最小闭环”，其余通过 MQ 慢慢消化，接口 RT 和 P99 会明显更稳。</p>
+                <p><strong>消息体设计：</strong>建议包含 <code>message_id</code>、<code>user_id</code>、<code>session_id</code>、<code>timestamp</code>、<code>version</code>。其中 message_id 用于幂等去重，version 用于乱序保护。</p>
+                <p><strong>失败处理策略：</strong>消费失败不要立即 requeue 反复打下游，应该转延迟重试（指数退避），达到重试上限后进死信队列。死信落库后支持人工重放和定时补偿。</p>
+                <p><strong>ack 时机与可靠性：</strong>必须“处理成功后 ack”。如果先 ack 再处理，进程中途挂掉会造成消息丢失；处理后 ack 可能重投，但可通过幂等机制解决重复，不会丢。</p>
+                <p><strong>监控指标：</strong>队列堆积量、消费延迟、失败率、死信量、重试次数。面试时最好补一句“我们设置了阈值告警 + 自动扩容策略”。</p>
             </article>
 
             <article class="article-content" id="sim-milvus">
                 <h1>某互联网公司：Milvus 向量召回</h1>
                 <div class="meta">技术面试模拟 · 智慧大师</div>
-                <p><strong>ANN vs 精确：</strong>精确遍历 O(n) 百万级需秒级；ANN 通过索引近似搜索，O(log n) 级，召回率 95%+，延迟 &lt;10ms。召回场景选 ANN：数据量大、延迟敏感、下游有精排/LLM 兜底。</p>
-                <p><strong>Milvus 索引：</strong>IVF_FLAT 精度高、内存大，适合百万级；IVF_SQ8 量化省内存；HNSW 查询快、适合高维。选型：百万级用 IVF_FLAT/SQ8；千万级或 &lt;5ms 用 HNSW。可加 scalar 过滤（如 user_id）缩小搜索空间。</p>
-                <p><strong>Embedding 与 topK：</strong>常用 bge-large-zh、m3e；topK 通常 5–20，可 A/B 测试。可对 topK 做 Reranker 精排再注入 Prompt。</p>
+                <p><strong>为什么必须 ANN：</strong>记忆量上来后（百万级），精确 KNN 逐条算距离太慢。在线对话通常要求 100ms 级召回，ANN 用“少量精度换数量级速度”，更符合业务现实。</p>
+                <p><strong>索引怎么选：</strong>IVF_FLAT 精度高但内存更大；IVF_SQ8 用量化换空间；HNSW 延迟低但构建与内存成本更高。真实项目不是只看某个指标，通常要同时看 Recall@K、P95 延迟、内存占用三条线。</p>
+                <p><strong>检索流程：</strong>query Embedding → 先按 user_id 或业务域做 scalar 过滤 → ANN 召回 topK → 可选 Reranker 精排 → 输出 topN 给 LLM。这样既保证相关性，也控制 token 成本。</p>
+                <p><strong>面试可补充的实验口径：</strong>“我们做过参数对比，比如 nprobe 从 16 提到 64，Recall 提升但延迟上升，最后按线上 SLA 选折中点。”这句话很加分。</p>
             </article>
 
             <article class="article-content" id="sim-xiaohuashi">
                 <h1>小花狮：高并发混合 AI 架构</h1>
                 <div class="meta">技术面试模拟 · 小花狮</div>
-                <p><strong>大模型+小模型分离：</strong>大模型负责「生成建议」——语义理解、创造性；小模型负责「评分」——字迹、语法、结构等，规则固定、可批量推理。优势：评分延迟低(10–50ms)、成本低；大模型专注生成；评分维度可独立迭代。总延迟可控制在 3–5s。</p>
-                <p><strong>Redisson 锁粒度：</strong>锁 <code>correct:${userId}:${jobId}</code>，保证同一作业全局只被一消费者处理。设置 leaseTime 略大于 P99，配合看门狗续期。避免死锁：持锁时尽量不调外部服务；多锁按固定顺序。</p>
-                <p><strong>作文批改流程：</strong>提交 → 落库 pending → 投 MQ → 消费拉取 → 获取锁 → 查 DB 确认 pending → 更新 running → 小模型评分 → 大模型生成建议 → 合并写 DB → 更新 done → 释放锁 → ACK。</p>
+                <p><strong>为什么“大模型+小模型”分离：</strong>大模型擅长生成高质量建议，但贵且慢；小模型擅长结构化评分，快且便宜。拆分后，复杂理解交给大模型，规则化评分交给小模型，整体性能和成本更可控。</p>
+                <p><strong>典型 trade-off：</strong>纯大模型方案开发快，但单次调用成本高、RT 不稳定；分离方案需要维护两套链路，但可显著降低成本并提升可观测性（每个维度分数可追踪）。</p>
+                <p><strong>幂等与锁：</strong>消费端按 <code>jobId</code> 加锁，且结合状态机（pending → running → done）。即使锁偶发失效，状态机与唯一约束还能兜底，避免重复批改写脏数据。</p>
+                <p><strong>完整流程建议回答：</strong>入口防重（短 TTL + 幂等 key）→ 入队削峰 → 消费端抢占任务并标记 running → 小模型评分 + 大模型生成（串行或并行）→ 落库并更新 done → 推送结果。最后补一句失败重试、死信和人工补偿，面试官会认为你考虑过线上稳定性。</p>
             </article>
 
             <article class="article-content" id="sim-keyan">
                 <h1>科研助手：Redis Stream + SSE</h1>
                 <div class="meta">技术面试模拟 · 科研助手</div>
-                <p><strong>选 Redis Stream 原因：</strong>项目已有 Redis、任务量万级、无需 Kafka 复杂分区与长期回溯。Consumer Group 支持 ACK、Pending，满足至少一次语义。</p>
-                <p><strong>断点续传：</strong>offset 存 Redis <code>offset:${userId}:${taskId}</code> 或 MySQL；客户端重连带 last_id，从该位点 XREADGROUP 继续。防重：SETNX 锁 <code>lock:task:${taskId}</code>，保证同任务只执行一次；与 Consumer Group 配合——CG 管消息分配，SETNX 管业务幂等。</p>
-                <p><strong>思维导图解析：</strong>LLM 输出约束为 JSON（nodes、edges）；后端校验、补全、转为前端库所需结构。解析失败可重试或降级为线性列表。</p>
+                <p><strong>选型逻辑：</strong>我们不是“Kafka 一定比 Redis 好”，而是按场景选。项目规模在万级、已有 Redis 基础设施、对长期回溯要求不高，用 Redis Stream 更轻更快落地。</p>
+                <p><strong>断点续传关键点：</strong>客户端断线后重连必须携带 last_id；服务端保存 offset 并从该位置继续推送。要注意 offset 更新时机，推荐“推送成功后更新位点”，并做 message_id 去重，避免重复展示。</p>
+                <p><strong>SETNX 和消费组的分工：</strong>Consumer Group 保证“消息分配”，SETNX 保证“业务执行唯一”。这两个都要有，才能同时解决重投和并发抢占问题。</p>
+                <p><strong>导图解析容错：</strong>LLM 输出 JSON 可能格式不合法，生产上要做解析失败重试、字段补全、兜底降级（至少输出线性大纲），不能让前端直接吃原始模型输出。</p>
             </article>
 
             <article class="article-content" id="sim-nvpunish">
                 <h1>NVPunish：Django 与 SQLite 优化</h1>
                 <div class="meta">技术面试模拟 · 某科技公司</div>
-                <p><strong>技术选型：</strong>Django 适合内部工具——Admin、ORM、认证开箱即用；SQLite 为 NVPunish 框架侧本地存储，无需独立 DB；Plotly Gantt 展示 Job 时间线。</p>
-                <p><strong>SQLite 加载优化：</strong>核心思路——请求路径不直接读 SQLite。方案一（推荐）：定时任务后台读 SQLite、聚合写 Redis/MySQL，API 只查缓存，首屏几十 ms。方案二（必须读文件时）：建索引、只查必要列、WAL 模式、首屏与详情分离（懒加载）。</p>
-                <p><strong>多机多 Job：</strong>Job 表存 dut_id、status、config；Execution 表存 event_type、timestamp、metrics。定时任务读各机 SQLite 或中心汇总，更新 Redis；前端 10s 轮询或 WebSocket 订阅。</p>
+                <p><strong>业务背景：</strong>这是内部压测平台，核心诉求是“多机多 Job 状态可视化”和“可追溯报表”。Django 的 Admin、ORM、权限体系能快速支撑后台管理，比从零拼装更稳。</p>
+                <p><strong>页面慢的根因：</strong>如果每次请求都现读 SQLite 文件 + 现聚合，首屏一定慢。正确做法是把重 IO 放到后台定时任务，请求只读缓存或聚合表。</p>
+                <p><strong>推荐架构：</strong>后台任务每 5~10s 拉取增量事件并写 Redis；前端请求直接读 Redis，或通过 WebSocket 收增量更新。这样既保留准实时，又避免高并发下文件 IO 打满。</p>
+                <p><strong>可操作优化：</strong>SQLite 侧建索引、开启 WAL、限制查询时间窗口；接口侧首屏只返摘要，详情懒加载；图表侧做增量渲染避免每次全量重绘。</p>
             </article>
 
             <article class="article-content" id="sim-rego">
                 <h1>某公司：Rego 策略生成系统</h1>
                 <div class="meta">技术面试模拟 · 某公司</div>
-                <p><strong>Rego 与场景：</strong>OPA 的策略语言，声明式，用于 RBAC、合规、保单规则等。输入输出均 JSON。</p>
-                <p><strong>NL→Rego 链路：</strong>端到端：LLM 直接生成 → OPA parse 校验 → 失败则重试（带错误反馈）。分步：NL → 意图解析 → 结构化 JSON → 模板填充。混合：简单用模板，复杂用 LLM。</p>
-                <p><strong>语料与评估：</strong>从历史策略、文档抽取 (NL, Rego) 对；人工标注；格式约束输出 JSON。评估：语法正确率（OPA parse）、语义一致性（执行结果对比）、A/B 测试。兜底：OPA 报错反馈给 LLM 重试；正则修复常见错误。</p>
+                <p><strong>Rego 是什么：</strong>OPA 的策略语言，核心是“策略即代码”。在权限、合规、风控这类规则密集场景，用 Rego 可以把规则显式化、可测试、可版本化。</p>
+                <p><strong>NL→Rego 的两条路线：</strong>端到端生成最灵活，但语法和边界条件容易错；分步生成（先结构化语义再模板）可控性更强。线上一般采用混合方案：高频规则走模板，长尾规则走 LLM。</p>
+                <p><strong>质量保障：</strong>生成后必须过三关：语法校验（OPA parse）、语义回归（测试样例比对）、人工抽检（高风险策略）。否则“看起来像对的”策略很容易线上出事故。</p>
+                <p><strong>微调重点：</strong>语料不是越多越好，要重质量。建议按规则类型分桶，保证训练集覆盖典型边界；失败样例持续回流，形成闭环迭代。</p>
             </article>
 
             <!-- 技术面试模拟 · 八股详解 -->
             <article class="article-content" id="sim-cache-detail">
                 <h1>缓存三大问题（详细版）</h1>
                 <div class="meta">技术面试模拟 · 八股详解</div>
-                <p><strong>穿透：</strong>查不存在的数据直打 DB。布隆过滤器（预先加载合法 key，任一 bit 为 0 则一定不存在）；空值缓存（不存在也缓存，TTL 短）；参数校验。布隆误判为存在会多一次 DB 查，无数据错误。</p>
-                <p><strong>击穿：</strong>热点 key 过期瞬间打穿。互斥锁（首个回源加锁，其他等待）；逻辑过期（缓存存 {value, expireTime}，过期时异步刷新、立即返回旧值）；热点永不过期。</p>
-                <p><strong>雪崩：</strong>大量 key 同时失效。过期时间随机化 baseTTL+random；多级缓存（本地+Redis）；限流降级。</p>
-                <p><strong>缓存一致性：</strong>Cache-Aside + 先更新 DB 再删缓存；删失败重试或 MQ 异步；延迟双删（更新后延迟 500ms 再删）缓解并发脏读。</p>
+                <p><strong>穿透：</strong>请求查的是“压根不存在”的 key，会直接打 DB。常见解决是布隆过滤器 + 空值缓存 + 参数校验三层防线。布隆误判为存在只会多一次 DB 查询，不会返回错误数据。</p>
+                <p><strong>击穿：</strong>一个极热 key 在过期瞬间被大量并发回源。推荐互斥重建（singleflight）或逻辑过期：过期时先返回旧值，再异步刷新，保证服务稳定不抖动。</p>
+                <p><strong>雪崩：</strong>大量 key 同时过期或 Redis 故障，流量瞬间压到 DB。应对策略是“错峰过期 + 多级缓存 + 限流熔断 + 高可用”。</p>
+                <p><strong>面试加分点：</strong>除了讲方案，还要讲 trade-off：例如逻辑过期会短暂返回旧数据，适合对强一致要求不高的读场景。</p>
             </article>
 
             <article class="article-content" id="sim-mq-reliable">
                 <h1>RabbitMQ 消息可靠性</h1>
                 <div class="meta">技术面试模拟 · 八股详解</div>
-                <p><strong>不丢：</strong>生产者 Publisher Confirm；exchange/queue/message 持久化；消费者手动 ack，处理后再 ack。</p>
-                <p><strong>不重：</strong>业务幂等——唯一业务 ID、分布式锁、DB 唯一约束。</p>
-                <p><strong>Exchange 类型：</strong>direct 精确 routing key；topic 通配符 *、#；fanout 广播；headers 按 header 匹配。</p>
-                <p><strong>死信队列 DLX：</strong>nack 且 requeue=false、TTL 过期、队列满时，消息路由到 DLX。用途：失败隔离、人工排查、批量重放。延迟队列：TTL+死信实现，消息到期变死信投递到消费队列。</p>
+                <p><strong>端到端可靠性要分三段讲：</strong>生产端不丢、Broker 不丢、消费端不丢。生产端用 Publisher Confirm，Broker 做持久化，消费端手动 ack 且“业务成功后 ack”。</p>
+                <p><strong>重复消费是常态，不是异常：</strong>MQ 天然是至少一次语义，必须业务幂等（唯一业务键、状态机、唯一索引）。面试不要说“我保证不重复”，要说“我保证重复也不会出错”。</p>
+                <p><strong>DLX 与重试：</strong>消费失败先进延迟重试队列，达到阈值后入 DLX。DLX 不是“垃圾桶”，而是故障可观测与补偿入口。</p>
+                <p><strong>选 Exchange：</strong>direct 适合点对点任务分发；topic 适合按业务标签路由；fanout 适合广播通知。</p>
             </article>
 
             <article class="article-content" id="sim-cache-db">
                 <h1>缓存与数据库一致性</h1>
                 <div class="meta">技术面试模拟 · 八股详解</div>
-                <p><strong>先更新 DB 再删缓存（推荐）：</strong>删缓存前有读会写旧缓存，删后即消除。删缓存失败会长期脏读，需重试或 Canal 订阅 binlog 异步删。</p>
-                <p><strong>先删缓存再更新 DB（不推荐）：</strong>删后、更新前，读请求回源得到旧值写入缓存，长期脏读。延迟双删：更新 DB 后延迟 500ms 再删一次，清除脏缓存。</p>
-                <p><strong>延迟双删：</strong>延迟略大于「读 DB+写缓存」P99，太短可能脏缓存未写入，太长脏读窗口延长。</p>
+                <p><strong>推荐顺序：</strong>先更新 DB，再删除缓存。因为“先删缓存再更新 DB”会在并发读写下产生更长时间脏数据。</p>
+                <p><strong>核心风险：</strong>更新 DB 成功但删缓存失败。工程上通常用“重试 + 消息补偿 + binlog 订阅”三重保障，确保最终一致。</p>
+                <p><strong>延迟双删怎么讲：</strong>更新 DB 后删一次，延迟一段时间再删一次，清理可能被并发读回填的旧缓存。延迟值一般取“读链路 P99 再加缓冲”。</p>
+                <p><strong>面试加分点：</strong>明确说“缓存一致性通常追求最终一致，不是强一致；要按业务可接受性设计”。</p>
             </article>
 
             <!-- 技术面试模拟 · 大厂专项 -->
             <article class="article-content" id="sim-byte">
                 <h1>大厂A专项：线程池 / redo / 零拷贝 / ThreadLocal</h1>
                 <div class="meta">技术面试模拟 · 大厂A</div>
-                <p><strong>线程池：</strong>核心参数 core/max/队列/拒绝策略。流程：先核心→入队→队列满则扩容到 max→拒绝。必须用有界队列，Executors 无界易 OOM。submit 异常在 Future 中，不 get() 会吞掉。</p>
-                <p><strong>redo/undo：</strong>redo 保证持久性，WAL 先写 redo 再写数据页；undo 保证原子性、支持 MVCC，存旧值用于回滚和版本链。</p>
-                <p><strong>零拷贝：</strong>sendfile 省用户态拷贝，mmap 映射到用户空间。DMA 让外设直连内存。Kafka 用 sendfile 提升吞吐。</p>
-                <p><strong>ThreadLocal：</strong>每线程独立 map，key 弱引用可被 GC，value 强引用；线程池场景线程不销毁会导致泄漏，用完须 remove()。</p>
+                <p><strong>线程池高频追问：</strong>除了七参数，要能讲“为什么不用 Executors 默认工厂”（无界队列风险）、“任务异常如何捕获”（Future.get/afterExecute）、“拒绝策略如何业务化”。</p>
+                <p><strong>redo / undo：</strong>redo 解决宕机后“已提交数据不丢”；undo 解决事务回滚与 MVCC 可见性。面试里把这两个和 binlog 的职责区分清楚，基本就稳了。</p>
+                <p><strong>零拷贝：</strong>重点是“减少用户态/内核态拷贝次数和上下文切换”，sendfile 是最常见工程实践。再补一句 DMA/软中断，面试官会判断你不是背八股。</p>
+                <p><strong>ThreadLocal：</strong>最容易翻车点是线程池复用导致脏数据和泄漏。标准答法：finally 里 remove，并配合链路日志验证。</p>
             </article>
 
             <article class="article-content" id="sim-mihoyo">
                 <h1>大厂B专项：C++ / TCP / 排行榜设计</h1>
                 <div class="meta">技术面试模拟 · 大厂B</div>
-                <p><strong>C++ 引用 vs 指针：</strong>引用必须初始化、不能为空、不能改绑；指针可为空、可改。虚函数：vtable+vptr，多态通过查表跳转。</p>
-                <p><strong>TCP keep-alive vs HTTP keep-alive：</strong>TCP 是传输层探测连接存活；HTTP 是复用同一 TCP 连接发多个请求。半连接：SYN 发出未收到 SYN+ACK；全连接：三次握手完成。</p>
-                <p><strong>排行榜设计：</strong>Redis ZSet，score 为战力。每小时刷新可批量 ZADD；实时更新则写时更新 ZSet。历史快照：定时存 ZSet 到 <code>rank:snapshot:日期</code>。主线程+工作线程：排行榜更新放工作线程，主线程不阻塞。</p>
+                <p><strong>C++ 题要点：</strong>引用/指针区别要结合“可空性、可重绑定、底层开销”讲；虚函数最好补一句 vptr/vtable 的调用路径。</p>
+                <p><strong>网络题要点：</strong>TCP keep-alive 是连接存活探测；HTTP keep-alive 是连接复用。再加半连接队列和全连接队列，能体现你对服务端连接管理有理解。</p>
+                <p><strong>排行榜设计要点：</strong>不仅要说 ZSet，还要讲同分规则、历史快照、分服隔离、热点榜读写策略（本地缓存 + Redis + 持久化）。这才是游戏后端风格回答。</p>
             </article>
 
             <!-- 技术面试模拟 · 公司流程 -->
             <article class="article-content" id="sim-flow">
                 <h1>大厂面试流程汇总</h1>
                 <div class="meta">技术面试模拟 · 公司流程</div>
-                <p><strong>大厂A（广告/推荐方向）：</strong>3–4 轮技术 + HR，约 1–2 周。一面算法+缓存/DB/MQ；二面网络、源码、场景题；三面项目深度+系统设计。八股重点：线程池、redo/undo、零拷贝、死锁/ThreadLocal、缓存一致性。</p>
-                <p><strong>大厂B（游戏服务端）：</strong>2–3 轮技术 + 未来领导 + HR。重点：C++（虚函数、引用指针、智能指针）、epoll LT/ET、TCP/HTTP keep-alive、进程间通信、MySQL MVCC/索引。特色：排行榜设计、主线程+工作线程、游戏网络同步。</p>
-                <p><strong>大厂C（后台开发）：</strong>3–4 轮，一周内可完成。一面数据结构、网络、Redis、语言；二面项目+深度八股；三面系统设计、问题定位、操作系统。</p>
+                <p><strong>大厂A（广告/推荐方向）：</strong>通常 3–4 轮技术 + HR。节奏是“先基础 + 算法，再项目深挖，再系统设计/稳定性”。建议把每个项目准备成“场景-动作-结果-指标”四段式。</p>
+                <p><strong>大厂B（游戏服务端）：</strong>通常 2–3 轮技术 + 领导面。偏底层与实时系统：C++、网络模型、并发、排行榜/匹配等场景题。回答要强调性能和稳定性，不只讲功能实现。</p>
+                <p><strong>大厂C（后台开发）：</strong>流程快、覆盖广。常见组合是：网络+数据库+缓存+Java 基础 + 一道系统设计。项目追问很细，建议提前准备“你做过最难的故障处理案例”。</p>
             </article>
             <!-- AI Agent 面经 -->
             <article class="article-content" id="agent-definition">
@@ -3351,6 +3402,26 @@ chunks = splitter.split_text(document_text)</code></pre>
     </div>
 
     <script>
+        const THEME_KEY = 'site-theme';
+        const themeToggle = document.getElementById('themeToggle');
+        const applyTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            if (themeToggle) {
+                themeToggle.textContent = theme === 'light' ? '☀️ 亮色' : '🌙 暗色';
+            }
+        };
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(savedTheme || (prefersLight ? 'light' : 'dark'));
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme') || 'dark';
+                const next = current === 'dark' ? 'light' : 'dark';
+                localStorage.setItem(THEME_KEY, next);
+                applyTheme(next);
+            });
+        }
+
         document.querySelectorAll('.toc-item').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();

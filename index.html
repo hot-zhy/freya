@@ -19,6 +19,26 @@
             --text-muted: #8888aa;
             --glow-cyan: 0 0 30px rgba(0, 245, 255, 0.4);
             --glow-magenta: 0 0 30px rgba(255, 0, 170, 0.3);
+            --bg-nav: rgba(10, 10, 15, 0.95);
+            --bg-nav-scrolled: rgba(10, 10, 15, 0.9);
+            --border-soft: rgba(255, 255, 255, 0.06);
+            --grid-line: rgba(0, 245, 255, 0.03);
+        }
+        [data-theme="light"] {
+            --bg-dark: #f6f8fc;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --accent-cyan: #0f6fff;
+            --accent-magenta: #b0008f;
+            --accent-purple: #6d4aff;
+            --accent-green: #008a5b;
+            --text-primary: #1f2937;
+            --text-muted: #5b6475;
+            --glow-cyan: 0 0 24px rgba(15, 111, 255, 0.25);
+            --glow-magenta: 0 0 20px rgba(176, 0, 143, 0.18);
+            --bg-nav: rgba(246, 248, 252, 0.95);
+            --bg-nav-scrolled: rgba(246, 248, 252, 0.98);
+            --border-soft: rgba(24, 39, 75, 0.12);
+            --grid-line: rgba(15, 111, 255, 0.07);
         }
 
         * {
@@ -47,8 +67,8 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
             background-size: 50px 50px;
             pointer-events: none;
             z-index: 0;
@@ -78,14 +98,15 @@
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
+            background: linear-gradient(to bottom, var(--bg-nav), transparent);
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
 
         nav.scrolled {
-            background: rgba(10, 10, 15, 0.9);
+            background: var(--bg-nav-scrolled);
             box-shadow: 0 4px 30px rgba(0, 245, 255, 0.1);
+            border-bottom: 1px solid var(--border-soft);
         }
 
         .logo {
@@ -101,6 +122,7 @@
         .nav-links {
             display: flex;
             gap: 2.5rem;
+            align-items: center;
         }
 
         .nav-links a {
@@ -129,6 +151,20 @@
 
         .nav-links a:hover::after {
             width: 100%;
+        }
+        .theme-toggle {
+            border: 1px solid var(--border-soft);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-radius: 16px;
+            padding: 0.25rem 0.7rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
         }
 
         /* Hero Section */
@@ -557,6 +593,7 @@
     <nav>
         <div class="logo">PORTFOLIO</div>
         <div class="nav-links">
+            <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换主题">🌙 暗色</button>
             <a href="#about">关于</a>
             <!-- <a href="#experience">经历</a> -->
             <a href="#skills">技能</a>
@@ -733,6 +770,26 @@
     </section>
 
     <script>
+        const THEME_KEY = 'site-theme';
+        const themeToggle = document.getElementById('themeToggle');
+        const applyTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            if (themeToggle) {
+                themeToggle.textContent = theme === 'light' ? '☀️ 亮色' : '🌙 暗色';
+            }
+        };
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+        applyTheme(savedTheme || (prefersLight ? 'light' : 'dark'));
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme') || 'dark';
+                const next = current === 'dark' ? 'light' : 'dark';
+                localStorage.setItem(THEME_KEY, next);
+                applyTheme(next);
+            });
+        }
+
         // Nav scroll effect
         window.addEventListener('scroll', () => {
             document.querySelector('nav').classList.toggle('scrolled', window.scrollY > 50);
