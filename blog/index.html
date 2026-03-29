@@ -6,9 +6,11 @@
     <title>面经 / 面试准备</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
+            --font-body: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+            --font-title: "Noto Serif SC", "Noto Sans SC", "PingFang SC", serif;
             --bg-dark: #0a0a0f;
             --bg-card: rgba(15, 15, 25, 0.9);
             --accent-cyan: #00f5ff;
@@ -49,7 +51,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; height: 100%; }
-        body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg-dark); color: var(--text-primary); line-height: 1.8; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-dark); color: var(--text-primary); line-height: 1.8; height: 100%; }
 
         .bg-grid {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -64,6 +66,7 @@
         }
         .logo { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.2rem;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            background-clip: text;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;
         }
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
@@ -114,7 +117,7 @@
         .reader-welcome {
             padding: 2rem 0; color: var(--text-muted);
         }
-        .reader-welcome h2 { font-size: 1.5rem; color: var(--accent-cyan); margin-bottom: 0.5rem; }
+        .reader-welcome h2 { font-family: var(--font-title); font-size: 1.5rem; color: var(--accent-cyan); margin-bottom: 0.5rem; }
         .reader-welcome p { font-size: 0.95rem; }
 
         .article-content { display: none; }
@@ -122,6 +125,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .article-content h1 {
+            font-family: var(--font-title);
             font-size: 1.6rem; color: var(--accent-cyan); margin-bottom: 1rem;
             padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,245,255,0.2);
         }
@@ -363,6 +367,11 @@
                 <a href="#" class="toc-item" data-id="tencent-datadev-project-grill">腾讯数据开发后台：项目追问与答法</a>
                 <a href="#" class="toc-item" data-id="tencent-datadev-real-sources">腾讯数据开发后台：真实面经来源</a>
                 <a href="#" class="toc-item" data-id="tencent-datadev-real-questions">腾讯数据开发后台：真实题目摘录</a>
+                <a href="#" class="toc-item" data-id="tencent-teg-stack-plus">腾讯TEG数据平台：技术栈与岗位追问</a>
+                <a href="#" class="toc-item" data-id="tencent-teg-realtime-plus">腾讯TEG数据平台：实时链路高频追问</a>
+                <a href="#" class="toc-item" data-id="tencent-teg-sql-plus">腾讯TEG数据平台：SQL/数仓深挖题</a>
+                <a href="#" class="toc-item" data-id="tencent-teg-project-plus">腾讯TEG数据平台：项目拷打题库</a>
+                <a href="#" class="toc-item" data-id="tencent-teg-sources-plus">腾讯TEG数据平台：补充来源</a>
                 <a href="#" class="toc-item" data-id="rag-agent-llm-real-sources">RAG/Agent/LLM：真实面经来源</a>
             </div>
 
@@ -421,7 +430,7 @@
                 <ul style="margin-top:0.5rem;">
                     <li><strong>基础八股：</strong>计算机网络、操作系统、Redis、MySQL、Java、Spring、JVM 等</li>
                     <li><strong>AI Agent 面经：</strong>Agent 核心组件、ReAct、规划、记忆、RAG 进阶、多智能体、RLHF、MoE 等（来源：<a href="https://datawhalechina.github.io/hello-agents/" style="color:var(--accent-cyan)">Hello-Agents</a>）</li>
-                    <li><strong>腾讯数据开发部后台专项：</strong>SQL 深水区、数仓建模、离线/实时链路、数据质量、稳定性治理、事故复盘、指标口径治理</li>
+                    <li><strong>腾讯TEG / 数据平台开发部专项：</strong>SQL 深水区、数仓建模、离线/实时链路、数据质量、稳定性治理、事故复盘、指标口径治理、项目拷打题库</li>
                     <li><strong>系统设计、算法、运维排查</strong></li>
                 </ul>
                 <p style="margin-top:0.5rem; font-size:0.85rem; color:var(--text-muted);">💡 使用左侧标签筛选快速定位分类</p>
@@ -3331,7 +3340,7 @@ chunks = splitter.split_text(document_text)</code></pre>
                     <li><a href="https://www.nowcoder.com/discuss/618788598543937536" target="_blank" rel="noopener noreferrer">腾讯后台开发面经（已 OC，牛客）</a></li>
                     <li><a href="https://www.nowcoder.com/feed/main/detail/149c1331fa15424aa7d5e61921f89e32" target="_blank" rel="noopener noreferrer">腾讯暑期实习后台开发凉经（牛客）</a></li>
                     <li><a href="https://www.nowcoder.com/discuss/752187770059173888" target="_blank" rel="noopener noreferrer">腾讯面试全流程（已 Offer，牛客）</a></li>
-                    <li><a href="https://www.nowcoder.com/discuss/353158958661705728" target="_blank" rel="noopener noreferrer">腾讯微信部门大数据开发面试题（牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/858371307048611840" target="_blank" rel="noopener noreferrer">腾讯 WXG 面经（牛客，补充）</a></li>
                 </ul>
                 <p><strong>腾讯云开发者社区（技术侧补充）：</strong></p>
                 <ul>
@@ -3379,6 +3388,82 @@ chunks = splitter.split_text(document_text)</code></pre>
                 <p><strong>来源：</strong> <a href="https://www.nowcoder.com/discuss/752187770059173888" target="_blank" rel="noopener noreferrer">腾讯面试全流程（已 Offer，牛客）</a>、<a href="https://www.nowcoder.com/feed/main/detail/149c1331fa15424aa7d5e61921f89e32" target="_blank" rel="noopener noreferrer">腾讯暑期实习后台开发凉经（牛客）</a></p>
 
                 <p><strong>面试追问（你可直接背）：</strong>“你这里说的是方法论，能不能落到你自己项目的一个真实 case？”<br><strong>建议答法：</strong>一定用“场景-动作-结果”三段式：问题是什么、你具体改了什么、指标提升了多少。没有量化就很容易被判定为“参与过但不深”。</p>
+            </article>
+
+            <article class="article-content" id="tencent-teg-stack-plus">
+                <h1>腾讯TEG数据平台：技术栈与岗位追问</h1>
+                <div class="meta">腾讯TEG专项 · 数据平台开发部</div>
+                <p><strong>高频题 1：</strong>“你理解的数据平台开发是做什么？”</p>
+                <p><strong>答题框架：</strong>数据平台开发不是只写 ETL，而是覆盖<strong>数据接入、建模治理、任务调度、质量监控、服务化输出</strong>的全链路工程岗位。业务目标是“让数据可用、可信、可复用、可追责”。</p>
+                <p><strong>高频题 2：</strong>“TEG 侧和业务侧数据开发有什么差异？”</p>
+                <p><strong>答题要点：</strong>TEG 平台侧更重通用能力（调度平台、血缘、质量、权限、成本治理），业务侧更重某条业务线的指标落地和效率。面试时可强调你既能做业务交付，也能抽象平台能力。</p>
+                <p><strong>常见追问：</strong>“如果你负责一条新业务线接入，第一周做什么？”</p>
+                <ul>
+                    <li>先拉清业务口径和核心指标定义，冻结版本。</li>
+                    <li>梳理上游数据源稳定性、延迟、字段质量。</li>
+                    <li>先打最小可用链路（ODS→DWD→核心 ADS），再补质量和治理。</li>
+                    <li>上线前给出 SLA、告警阈值、回滚预案。</li>
+                </ul>
+            </article>
+
+            <article class="article-content" id="tencent-teg-realtime-plus">
+                <h1>腾讯TEG数据平台：实时链路高频追问</h1>
+                <div class="meta">腾讯TEG专项 · Flink / Kafka</div>
+                <p><strong>高频题 1：</strong>“Exactly-Once 你怎么落地？”</p>
+                <p><strong>可答版本：</strong>Kafka source + Flink checkpoint + 两阶段提交 sink（或幂等 sink）实现端到端一致。重点要讲清：checkpoint 成功才提交外部事务，失败时可回滚或重放。</p>
+                <p><strong>高频题 2：</strong>“乱序和迟到数据怎么处理？”</p>
+                <p><strong>可答版本：</strong>事件时间 + watermark 控制窗口关闭时机；超窗口迟到数据可走 side output 做补算或丢弃策略。要补一句“策略取决于业务对时效与准确的取舍”。</p>
+                <p><strong>高频题 3：</strong>“实时任务背压怎么查？”</p>
+                <ul>
+                    <li>先看 source/sink 吞吐和 checkpoint 时长。</li>
+                    <li>定位是算子 CPU、网络 shuffle 还是 sink 写入瓶颈。</li>
+                    <li>针对性处理：并行度调整、算子拆分、状态优化、sink 批写。</li>
+                </ul>
+                <p><strong>追问常见坑：</strong>只会说“加机器”。面试更希望你先定位瓶颈，再做结构性优化。</p>
+            </article>
+
+            <article class="article-content" id="tencent-teg-sql-plus">
+                <h1>腾讯TEG数据平台：SQL/数仓深挖题</h1>
+                <div class="meta">腾讯TEG专项 · SQL / 数仓建模</div>
+                <p><strong>高频题 1：</strong>“为什么要分层（ODS/DWD/DWS/ADS）？”</p>
+                <p><strong>答题要点：</strong>分层的本质是<strong>解耦变化</strong>。ODS 保留原始可追溯，DWD 做清洗标准化，DWS 做主题聚合复用，ADS 面向应用输出。这样需求变更不需要层层重改。</p>
+                <p><strong>高频题 2：</strong>“指标口径不一致怎么治理？”</p>
+                <p><strong>答题要点：</strong>建立指标字典（定义、负责人、版本、SQL 口径），统一引用公共层；发布前做口径评审，发布后做自动对账，避免“同名不同义”。</p>
+                <p><strong>高频题 3：</strong>“SQL 怎么做性能优化？”</p>
+                <ul>
+                    <li>先看执行计划，定位全表扫描、数据倾斜、无效 join。</li>
+                    <li>分区裁剪、列裁剪、预聚合、减少 shuffle。</li>
+                    <li>大表 join 优先广播小表或做 map-side join（按引擎能力）。</li>
+                </ul>
+                <p><strong>面试加分句：</strong>“优化不只看耗时，还要看资源成本（CPU/内存/IO）和稳定性。”</p>
+            </article>
+
+            <article class="article-content" id="tencent-teg-project-plus">
+                <h1>腾讯TEG数据平台：项目拷打题库</h1>
+                <div class="meta">腾讯TEG专项 · 项目深挖</div>
+                <p><strong>这类题目的底层逻辑：</strong>面试官会用连续追问判断你是否真的做过。建议统一用「场景-动作-结果-复盘」四段式回答。</p>
+                <p><strong>高频追问模板（可直接练）：</strong></p>
+                <ul>
+                    <li>这个项目里最难的故障是什么？你如何定位到根因？</li>
+                    <li>你说优化了性能，优化前后指标是多少？如何保证不是偶然波动？</li>
+                    <li>你说做了质量治理，误报率和漏报率怎么平衡？</li>
+                    <li>如果今天重做一次，你会在哪个设计点改方案？为什么？</li>
+                </ul>
+                <p><strong>示例答法：</strong>“某次实时链路延迟从 2min 飙到 15min。我们先看 Flink backpressure 和 checkpoint 指标，定位 sink 写入抖动；随后改为批量写 + 并行度拆分 + 熔断重试，延迟恢复到 3min 内，后续又加了写入 SLA 告警防复发。”</p>
+            </article>
+
+            <article class="article-content" id="tencent-teg-sources-plus">
+                <h1>腾讯TEG数据平台：补充来源</h1>
+                <div class="meta">真实来源补充 · 持续更新</div>
+                <p><strong>建议优先看：</strong>牛客真实面经（岗位语境强）+ 腾讯云开发者文章（技术细节深）。你可以按“离线/实时/质量/稳定性”四组做题卡。</p>
+                <ul>
+                    <li><a href="https://www.nowcoder.com/discuss/731658685147115520" target="_blank" rel="noopener noreferrer">腾讯 PCG 大数据平台一面面经（牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/353158958661705728" target="_blank" rel="noopener noreferrer">腾讯微信部门大数据开发面试题（牛客）</a></li>
+                    <li><a href="https://www.nowcoder.com/discuss/618788598543937536" target="_blank" rel="noopener noreferrer">腾讯后台开发面经（已 OC，牛客）</a></li>
+                    <li><a href="https://cloud.tencent.cn/developer/article/1572271" target="_blank" rel="noopener noreferrer">基于 Flink SQL 构建实时数仓（腾讯云）</a></li>
+                    <li><a href="https://cloud.tencent.com/developer/article/2408013" target="_blank" rel="noopener noreferrer">Flink 实时流处理框架原理（腾讯云）</a></li>
+                </ul>
+                <p><strong>实战建议：</strong>每篇面经至少提炼 3 个“可迁移问法”，并写上你的项目映射。面试时不要背帖子原文，要讲你自己的指标、决策和复盘。</p>
             </article>
 
             <article class="article-content" id="rag-agent-llm-real-sources">
