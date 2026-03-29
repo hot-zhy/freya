@@ -619,18 +619,91 @@
             <article class="article-content" id="process-schedule">
                 <h1>进程调度算法</h1>
                 <div class="meta">操作系统</div>
-                <p><strong>FCFS（先来先服务）：</strong>按到达顺序调度，非抢占。简单但护航效应（长作业阻塞短作业）。</p>
-                <p><strong>SJF（短作业优先）：</strong>选估计运行时间最短的进程。平均等待时间最优，但长作业可能饥饿，且需预知运行时间。</p>
-                <p><strong>RR（时间片轮转）：</strong>抢占式，按 FCFS 排队，每进程执行一个时间片后回队尾。公平、响应快；时间片过大退化为 FCFS，过小增加上下文切换。一般 10~100ms。</p>
-                <p><strong>延展：</strong>多级反馈队列：结合 FCFS、RR、优先级；Linux CFS 调度器基于红黑树、虚拟运行时间。</p>
+                <p><strong>先建立目标感：</strong>调度算法本质是在做“<strong>吞吐量、响应时间、公平性、切换开销</strong>”四者的平衡。没有“绝对最优”算法，只有在当前场景更合适的策略。</p>
+                <p><strong>核心指标（面试常问）：</strong></p>
+                <ul>
+                    <li><strong>周转时间：</strong>提交到完成总耗时（批处理更关注）。</li>
+                    <li><strong>等待时间：</strong>进程在就绪队列里等待 CPU 的时间。</li>
+                    <li><strong>响应时间：</strong>从提交到第一次得到 CPU 的时间（交互系统更关注）。</li>
+                    <li><strong>吞吐量：</strong>单位时间完成的作业数。</li>
+                    <li><strong>公平性：</strong>是否长期饿死某类任务。</li>
+                </ul>
+                <p><strong>1) FCFS（先来先服务）：</strong></p>
+                <ul>
+                    <li>按到达顺序执行，非抢占，逻辑最简单。</li>
+                    <li><strong>优点：</strong>实现容易，几乎无调度复杂度。</li>
+                    <li><strong>缺点：</strong>护航效应明显（长任务在前面会拖垮后续短任务）。</li>
+                    <li><strong>适用：</strong>对交互响应不敏感的简单批处理场景。</li>
+                </ul>
+                <p><strong>2) SJF / SRTF（短作业优先 / 最短剩余时间优先）：</strong></p>
+                <ul>
+                    <li>SJF 非抢占：每次选预计执行时间最短的任务。</li>
+                    <li>SRTF 抢占：新来的更短任务可抢占当前任务。</li>
+                    <li><strong>优点：</strong>平均等待时间通常最好。</li>
+                    <li><strong>缺点：</strong>需要估计运行时长；长任务可能长期饥饿。</li>
+                    <li><strong>工程补救：</strong>配合“老化（aging）”提高等待久任务优先级。</li>
+                </ul>
+                <p><strong>3) RR（时间片轮转）：</strong></p>
+                <ul>
+                    <li>抢占式，每个任务执行一个时间片后回队尾。</li>
+                    <li><strong>优点：</strong>公平、响应快，是分时系统基础。</li>
+                    <li><strong>缺点：</strong>时间片太小会导致上下文切换开销高；太大又接近 FCFS。</li>
+                    <li><strong>实践经验：</strong>时间片常在 10-100ms 区间按负载调优。</li>
+                </ul>
+                <p><strong>4) 优先级调度：</strong></p>
+                <ul>
+                    <li>系统按任务优先级分配 CPU，可抢占或非抢占。</li>
+                    <li><strong>风险：</strong>低优先级任务可能饥饿。</li>
+                    <li><strong>常用解决：</strong>动态优先级 + 老化机制。</li>
+                </ul>
+                <p><strong>5) 多级反馈队列（MLFQ）：</strong></p>
+                <ul>
+                    <li>多个优先级队列叠加：高优先级短时间片，低优先级长时间片。</li>
+                    <li>新任务先进入高优先级队列，用完时间片没完成则下沉。</li>
+                    <li><strong>优势：</strong>兼顾交互任务响应和批任务吞吐，是工程中常见折中。</li>
+                </ul>
+                <p><strong>Linux 里的主流做法（CFS）：</strong>Linux CFS 不直接用固定时间片轮转，而是给每个任务维护“虚拟运行时间 vruntime”，谁的 vruntime 最小谁先运行；底层常用红黑树维护可运行任务，目标是“尽量公平地分享 CPU”。</p>
+                <p><strong>面试可直接背的选型结论：</strong>交互系统优先考虑响应时间（RR/MLFQ/CFS 思路），批处理更关心吞吐与平均等待（SJF 思路），线上最终通常采用“动态优先级 + 公平机制 + 抢占”。</p>
             </article>
 
             <article class="article-content" id="virtual-memory">
                 <h1>虚拟内存与页面置换</h1>
                 <div class="meta">操作系统</div>
-                <p><strong>虚拟内存：</strong>将物理内存和磁盘结合，为进程提供比物理内存更大的连续地址空间。通过页表映射虚拟地址到物理地址。</p>
-                <p><strong>页面置换：</strong>缺页时若物理页已满，需淘汰一页。OPT（最优，不可实现）→ FIFO（简单，可能 Belady 异常）→ LRU（基于局部性，需硬件支持）→ 时钟算法（改进 FIFO，用使用位）→ 改进型时钟（使用位+修改位，优先换未修改的）。</p>
-                <p><strong>延展：</strong>缺页时从磁盘调入约 25ms，远超其他操作，降低缺页率至关重要；TLB 加速地址转换。</p>
+                <p><strong>先说结论：</strong>虚拟内存的本质是“<strong>地址隔离 + 按需加载 + 以磁盘换空间</strong>”。它让每个进程都以为自己独占一段连续大内存，但真实数据只在“正在用”的部分才放进物理内存，其他页可以暂时放在磁盘（swap）里。</p>
+                <p><strong>为什么需要虚拟内存：</strong></p>
+                <ul>
+                    <li><strong>隔离性：</strong>进程 A 不能随便访问进程 B 的地址，提升安全性和稳定性。</li>
+                    <li><strong>连续视图：</strong>程序看到的是连续地址空间，内核可把它映射到离散物理页框，简化编程模型。</li>
+                    <li><strong>按需分配：</strong>程序申请了 2GB，不代表马上占用 2GB 物理内存，真正访问到某页时才分配。</li>
+                    <li><strong>扩容能力：</strong>当内存紧张时，可把不常用页换出到磁盘，提升系统可承载进程数。</li>
+                </ul>
+                <p><strong>地址转换流程（面试高频）：</strong></p>
+                <ol>
+                    <li>CPU 生成虚拟地址（通常拆成“页号 + 页内偏移”）。</li>
+                    <li>先查 <strong>TLB</strong>（快表，页表缓存）。命中则直接得到物理页框号。</li>
+                    <li>TLB 未命中时，硬件/内核去查多级页表，找到页表项（PTE）。</li>
+                    <li>若页表项标记“页不在内存”（present=0），触发<strong>缺页异常（page fault）</strong>，陷入内核。</li>
+                    <li>内核分配空闲页框，或触发页面置换淘汰旧页；再把目标页从磁盘读入，更新页表和 TLB，最后恢复指令继续执行。</li>
+                </ol>
+                <p><strong>页面置换是什么：</strong>发生缺页且物理页框已满时，内核必须选一个“牺牲页”换出。好坏标准是：尽量不影响后续命中率、减少磁盘写入、控制实现成本。</p>
+                <p><strong>常见页面置换算法对比：</strong></p>
+                <ul>
+                    <li><strong>OPT（最优）：</strong>淘汰“未来最长时间不会再访问”的页，理论最优，但需要知道未来访问序列，实际不可实现，常用于对比基线。</li>
+                    <li><strong>FIFO：</strong>先进入内存的页先淘汰。实现最简单，但可能出现 <strong>Belady 异常</strong>（页框增加反而缺页更多）。</li>
+                    <li><strong>LRU：</strong>淘汰“最长时间没用过”的页，符合时间局部性。效果通常好，但精确实现成本高（要维护访问顺序）。</li>
+                    <li><strong>Clock（时钟）：</strong>LRU 的工程化近似。每页有访问位 R，时钟指针扫描：R=1 先清零并跳过，R=0 则淘汰。</li>
+                    <li><strong>改进型 Clock：</strong>结合访问位 R + 修改位 M，优先淘汰“最近没访问且未修改”的页，减少脏页回写磁盘成本。</li>
+                </ul>
+                <p><strong>缺页为什么昂贵：</strong>一次普通内存访问是 ns 级；缺页要走异常处理 + 磁盘 IO，常是 ms 级（你提到约 25ms 是合理量级）。这就是为什么“降低缺页率”比微调 CPU 指令更关键。</p>
+                <p><strong>系统里常见优化手段：</strong></p>
+                <ul>
+                    <li><strong>TLB 命中优化：</strong>减少随机跳转、提升空间局部性，降低页表遍历开销。</li>
+                    <li><strong>工作集（Working Set）控制：</strong>让进程常驻页覆盖近期热点，避免抖动（thrashing）。</li>
+                    <li><strong>预取与顺序访问：</strong>顺序扫描比随机访问更容易被预读命中。</li>
+                    <li><strong>减少大对象抖动：</strong>避免频繁申请/释放超大内存块导致页频繁换入换出。</li>
+                    <li><strong>必要时用大页（HugePage）：</strong>减少页表层级与 TLB 压力（常见于数据库/高性能服务）。</li>
+                </ul>
+                <p><strong>面试可直接背的总结：</strong>虚拟内存解决的是“进程隔离和大内存视图”，页面置换解决的是“内存不够时淘汰谁”。核心目标永远是两件事：<strong>降低缺页率</strong>和<strong>降低换页代价</strong>。</p>
             </article>
 
             <article class="article-content" id="deadlock-theory">
@@ -644,10 +717,40 @@
             <article class="article-content" id="select-poll-epoll">
                 <h1>select / poll / epoll</h1>
                 <div class="meta">操作系统</div>
-                <p><strong>select：</strong>最多 1024 个 fd；每次调用拷贝 fd 集合到内核；O(n) 轮询所有 fd；可移植性好。</p>
-                <p><strong>poll：</strong>无 fd 数量限制；仍需每次拷贝；同样 O(n) 轮询。</p>
-                <p><strong>epoll：</strong>无 fd 限制；内核维护红黑树+就绪链表，无需每次拷贝；只关心就绪 fd，效率与连接总数无关；支持 ET/LT 两种触发模式。适合高并发。</p>
-                <p><strong>延展：</strong>epoll 是 Linux 特有；epoll_create 创建、epoll_ctl 注册、epoll_wait 等待；ET 边缘触发需一次读完，否则可能丢事件。</p>
+                <p><strong>先说本质区别：</strong>三者都是 I/O 多路复用，目标是“一个线程同时监听很多连接”。核心差异在于：<strong>事件集合怎么交给内核</strong>、<strong>内核如何通知就绪</strong>、<strong>每轮扫描成本</strong>。</p>
+                <p><strong>为什么需要多路复用：</strong>如果一个连接一个线程（BIO），连接多了会带来线程和上下文切换爆炸；多路复用让少量线程管理大量 socket，提高并发承载能力。</p>
+                <p><strong>1) select：</strong></p>
+                <ul>
+                    <li>用户态每次把 fd 集合传给内核，内核检查后再拷贝结果回用户态。</li>
+                    <li><strong>限制：</strong>fd 数量受 `FD_SETSIZE` 限制（常见 1024）。</li>
+                    <li><strong>复杂度：</strong>每次都线性扫描，O(n)。</li>
+                    <li><strong>优点：</strong>跨平台兼容性最好。</li>
+                </ul>
+                <p><strong>2) poll：</strong></p>
+                <ul>
+                    <li>用链表/数组结构表达监听集合，不受 1024 上限约束。</li>
+                    <li>但仍是“每次调用都传集合 + 内核线性扫描”，本质还是 O(n)。</li>
+                    <li>相比 select 主要是“去掉固定上限”，并未从根上改变扫描成本。</li>
+                </ul>
+                <p><strong>3) epoll（Linux）：</strong></p>
+                <ul>
+                    <li>通过 <code>epoll_ctl</code> 一次性注册 fd 到内核，后续 <code>epoll_wait</code> 只拿就绪事件。</li>
+                    <li>内核维护“兴趣集合 + 就绪队列”，避免每次全量拷贝和全量扫描。</li>
+                    <li>并发连接很多、活跃连接占比低时优势非常明显。</li>
+                </ul>
+                <p><strong>LT 与 ET（高频追问）：</strong></p>
+                <ul>
+                    <li><strong>LT（水平触发）：</strong>只要缓冲区还有数据，持续通知。更稳、更不容易写错。</li>
+                    <li><strong>ET（边缘触发）：</strong>状态从“无数据→有数据”时通知一次。性能更高，但要求你循环读到 <code>EAGAIN</code>，否则容易漏读。</li>
+                </ul>
+                <p><strong>为什么常说 epoll 更高效：</strong></p>
+                <ul>
+                    <li><strong>减少用户态/内核态拷贝：</strong>监听集合不必每轮重传。</li>
+                    <li><strong>减少无效扫描：</strong>返回的是就绪集合，而不是全量 fd。</li>
+                    <li><strong>更适合高并发长连接：</strong>例如网关、IM、推送、RPC 框架。</li>
+                </ul>
+                <p><strong>但要注意：</strong>epoll 不是所有场景都“绝对碾压”。如果连接数不大、业务逻辑重 CPU、或跨平台要求高，select/poll 也可能足够且更简单。</p>
+                <p><strong>面试可直接背的总结：</strong>select/poll/epoll 都是为了解决“等 I/O”问题；select/poll 是“每轮全量检查”，epoll 是“事件驱动只取就绪”，在高并发网络服务中通常首选 epoll + 非阻塞 socket。</p>
             </article>
 
             <article class="article-content" id="sync-async">
