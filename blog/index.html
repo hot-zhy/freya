@@ -3935,33 +3935,130 @@ int main() {
 
             <article class="article-content" id="tencent-nowcoder-bigdata">
                 <h1>腾讯面经 QA（Spark / 大数据）</h1>
-                <div class="meta">腾讯云后台方向高频题 · 完整版（参数估算 + 架构权衡 + 运维排障）</div>
-                <p><strong>Q1：Spark 提交作业常用参数有哪些？</strong><br><strong>A：</strong>先记 7 个核心：`--master`（跑在哪）、`--deploy-mode`（client/cluster）、`--num-executors`、`--executor-cores`、`--executor-memory`、`--driver-memory`、`spark.sql.shuffle.partitions`。<br><strong>例子：</strong>你有 20 台机器，每台 16 核，不可能把核全给一个作业，要按队列配额分配。<br><strong>延展：</strong>参数不是背值，而是“根据数据量和 SLA 调整”，面试官最看这个。</p>
-                <p><strong>Q2：如何估算 executor 数量和内存？</strong><br><strong>A：</strong>先估总可用资源，再按“每个 executor 3~5 核”切分，避免 executor 过大导致 GC 压力。内存要考虑缓存、shuffle、序列化开销。<br><strong>例子：</strong>任务经常 OOM，可先减小每 executor 核数、增大 executor 数量，让压力更分散。<br><strong>延展：</strong>最终配置要靠压测，不是一次拍脑袋定死。</p>
-                <p><strong>Q3：1TB Spark 作业大致怎么配？</strong><br><strong>A：</strong>先定目标时延，再反推并行度；分区别太少（跑不满）也别太多（调度开销高）。优先减少 shuffle、处理数据倾斜。<br><strong>例子：</strong>把 `groupByKey` 改成 `reduceByKey`，常能明显降网络传输。<br><strong>延展：</strong>内存紧张可用 Kryo、广播小表、预聚合和合理 `persist` 策略。</p>
-                <p><strong>Q4：YARN 资源管理机制？</strong><br><strong>A：</strong>你可记成“四角色”：RM 管全局、NM 管机器、AM 管该作业、Container 是资源盒子。<br><strong>例子：</strong>一个 Spark 作业启动后，先申请 AM，再由 AM 去申请 executor 的 container。<br><strong>延展：</strong>生产里常调队列容量、优先级、抢占策略来避免某个任务“霸占全场”。</p>
-                <p><strong>Q5：你对 ZooKeeper / Kafka 了解？</strong><br><strong>A：</strong>ZK 更像“协调中枢”（选主、配置、锁）；Kafka 是“高吞吐日志总线”。<br><strong>例子：</strong>业务日志先写 Kafka，再由多个下游系统各自消费。<br><strong>延展：</strong>Kafka 面试高频是分区、副本、ISR、消息堆积和重复消费。</p>
-                <p><strong>Q6：Spark 和 Hive 的场景区别？</strong><br><strong>A：</strong>Hive 偏离线 SQL 数仓，Spark 偏通用分布式计算与更灵活 DAG。<br><strong>例子：</strong>日报、月报批处理常用 Hive；复杂 ETL 或迭代计算更常用 Spark。<br><strong>延展：</strong>真实项目常是混用：Hive 管数据资产，Spark 执行复杂计算链路。</p>
-                <p><strong>Q7：Spark Streaming 怎么讲？</strong><br><strong>A：</strong>它本质是“微批”：把连续数据切成小批次处理。要会说无状态和有状态处理、窗口、checkpoint。<br><strong>例子：</strong>每 5 秒统计一次近 1 分钟内的访问量。<br><strong>延展：</strong>若追求更纯实时语义，通常会转 Flink。</p>
-                <p><strong>Q8：了解 Flink/Storm 吗，如何回答不熟题？</strong><br><strong>A：</strong>不熟就诚实说明，再说你知道的核心差异：Flink 事件时间和状态管理强，Storm 更轻。<br><strong>例子：</strong>“我主用 Spark，Flink 在 PoC 场景做过窗口聚合”。<br><strong>延展：</strong>面试最怕“硬编细节”，真实边界+学习路径更加分。</p>
-                <p><strong>Q9：给 1PB 日志，5 分钟出结果，怎么设计架构？</strong><br><strong>A：</strong>关键思想是“分层 + 预计算”：实时链路先产近实时指标，离线链路补齐完整明细。<br><strong>例子：</strong>Kafka 采集 -> Flink 实时聚合 -> ClickHouse 提供 5 分钟看板；夜间 Spark 回刷精确数据。<br><strong>延展：</strong>要主动提“准确性和时效性 trade-off”，这是架构题加分点。</p>
-                <p><strong>Q10：数据采集为什么常用 Flume？ES 怎么补答？</strong><br><strong>A：</strong>Flume 对日志采集和可靠投递成熟，接 Hadoop 生态顺手；ES 适合全文检索和多维查询。<br><strong>例子：</strong>日志检索系统常是 Flume/Kafka 入湖，ES 做检索服务。<br><strong>延展：</strong>ES 需要关注分片规划、写入放大、冷热分层和索引生命周期。</p>
-                <p><strong>扩展追问：</strong>为什么 `groupByKey` 往往不如 `reduceByKey`？<br><strong>答：</strong>`groupByKey` 把同 key 全量值都拉过网络，内存压力大；`reduceByKey` 会先在 map 端预聚合，网络和内存开销都更小。<br><strong>例子：</strong>统计词频时 `reduceByKey` 常比 `groupByKey` 快一截。</p>
-                <p><strong>逐题深挖补充（展开版）：</strong></p>
+                <div class="meta">文档化重构版：前置知识 + 逐题详解 + 参数估算 + 运维排障 + 30 秒答法</div>
+
+                <p><strong>这份文档怎么用：</strong>先看前置知识（执行模型、资源模型、实时/离线口径），再按 Q1~Q10 学。每题都按“背景 -> 定义 -> 原理 -> 工程例子 -> 常见坑/监控 -> 30 秒答法”组织。</p>
+
+                <h2>前置知识 A：Spark 执行模型（Driver / Executor / Task / Stage）</h2>
+                <ul>
+                    <li><strong>Driver：</strong>负责作业入口、DAG 切分、任务调度、汇总结果。</li>
+                    <li><strong>Executor：</strong>执行 Task 的工作进程，持有内存与 CPU。</li>
+                    <li><strong>Task：</strong>最小执行单元，通常对应一个分区上的计算。</li>
+                    <li><strong>Stage：</strong>按宽依赖（shuffle）切分出的任务阶段。</li>
+                </ul>
+                <p><strong>一句话：</strong>Driver 像“总调度”，Executor 像“施工队”，Task 是“工单”，Stage 是“施工阶段”。</p>
+
+                <h2>前置知识 B：YARN 资源模型（RM / NM / AM / Container）</h2>
+                <ul>
+                    <li><strong>ResourceManager (RM)：</strong>全局资源和队列调度。</li>
+                    <li><strong>NodeManager (NM)：</strong>单机资源管理与容器运行。</li>
+                    <li><strong>ApplicationMaster (AM)：</strong>单作业协调者，向 RM 申请资源。</li>
+                    <li><strong>Container：</strong>资源分配单位（内存 + CPU）。</li>
+                </ul>
+                <p><strong>工程重点：</strong>生产环境不是“全靠默认”，而是靠队列配额、优先级和隔离策略保障关键作业 SLA。</p>
+
+                <h2>前置知识 C：实时与离线口径（时效 vs 准确）</h2>
+                <ul>
+                    <li><strong>实时链路：</strong>秒级到分钟级，强调时效性，可能有迟到修正。</li>
+                    <li><strong>离线链路：</strong>T+1/T+0 批处理，强调完整性和准确性。</li>
+                </ul>
+                <p><strong>口径治理：</strong>面试里要主动说“实时看板口径”和“离线报表口径”如何对齐。</p>
+
+                <h2>Q1：Spark 提交作业常用参数有哪些？</h2>
+                <p><strong>背景：</strong>这题考你是否真做过资源配置，而不是只会跑默认参数。</p>
+                <p><strong>核心参数：</strong>`--master`、`--deploy-mode`、`--num-executors`、`--executor-cores`、`--executor-memory`、`--driver-memory`、`--conf spark.sql.shuffle.partitions`。</p>
+                <p><strong>原理：</strong>这些参数决定“能拿多少资源、并行度多大、shuffle 开销多高、Driver 是否稳定”。</p>
+                <pre><code>spark-submit \
+  --master yarn \
+  --deploy-mode cluster \
+  --num-executors 40 \
+  --executor-cores 4 \
+  --executor-memory 8g \
+  --driver-memory 4g \
+  --conf spark.sql.shuffle.partitions=800
+</code></pre>
+                <p><strong>常见坑：</strong>只背参数名字，不会说明“为什么设这个值”。</p>
+                <p><strong>30 秒答法：</strong>“我会先定 SLA，再按集群配额反推 executors/cores/memory，再根据数据量和 stage 复杂度定 shuffle 分区，最后压测闭环调优。”</p>
+
+                <h2>Q2：如何估算 executor 数量和内存？</h2>
+                <p><strong>背景：</strong>核心是“估算方法”，不是背固定数字。</p>
+                <p><strong>步骤：</strong>1）先算队列可用总核数/内存；2）每个 executor 先取中等粒度（常见 3~5 核）；3）估算并发 task 内存、shuffle、缓存占比；4）留 overhead 防 OOM。</p>
+                <p><strong>工程例子：</strong>作业频繁 Full GC/OOM，就减小每 executor 核数、提高 executor 数量，让单 executor 压力下降。</p>
+                <p><strong>监控指标：</strong>GC 时间占比、executor lost 次数、任务失败率、spill bytes。</p>
+                <p><strong>30 秒答法：</strong>“我按可用资源和目标并发先给初值，再看 GC、spill、失败率迭代。参数是调优结果，不是固定模板。”</p>
+
+                <h2>Q3：1TB Spark 作业大致怎么配？</h2>
+                <p><strong>背景：</strong>面试官想看你如何从数据规模推资源，而不是拍脑袋。</p>
+                <p><strong>原理：</strong>先定目标完成时间，再反推并行度和分区数；优先减少 shuffle 和倾斜。</p>
+                <p><strong>工程动作：</strong>`groupByKey` 改 `reduceByKey`、广播小表、map 端预聚合、热点 key 拆分。</p>
+                <p><strong>常见坑：</strong>分区过少跑不满；分区过多调度开销大；过度缓存导致 OOM。</p>
+                <p><strong>30 秒答法：</strong>“1TB 不会背固定配置。我先按 SLA 反推并行度，再用分区、预聚合、广播和反倾斜降低 shuffle，最后看指标迭代。”</p>
+
+                <h2>Q4：YARN 资源管理机制？</h2>
+                <p><strong>背景：</strong>考的是你能不能把 Spark 放进真实集群治理语境。</p>
+                <p><strong>定义：</strong>RM 管全局，NM 管节点，AM 管单应用，Container 是资源盒子。</p>
+                <p><strong>工程补充：</strong>生产常配 Capacity/Fair Scheduler、队列配额、优先级、抢占策略、资源隔离，防止“低优作业拖垮核心链路”。</p>
+                <p><strong>30 秒答法：</strong>“YARN 四角色我都能讲，但重点是队列治理：核心链路独立资源池+优先级+配额，保障 SLA。”</p>
+
+                <h2>Q5：你对 ZooKeeper / Kafka 了解？</h2>
+                <p><strong>背景：</strong>不只问概念，更多问消息可靠性和一致性边界。</p>
+                <p><strong>定义：</strong>ZK 偏协调（选主、配置、锁）；Kafka 偏日志总线（分区、副本、消费组）。</p>
+                <p><strong>语义：</strong>常见落地是“至少一次 + 业务幂等”；Exactly-once 需要幂等生产 + 事务 + 下游配合。</p>
+                <p><strong>监控：</strong>consumer lag、ISR 变化、replication 延迟、broker 磁盘与网络。</p>
+                <p><strong>30 秒答法：</strong>“Kafka 我重点讲分区副本和消费语义，工程上通常走 at-least-once + 幂等，EOS 需端到端条件满足。”</p>
+
+                <h2>Q6：Spark 和 Hive 的场景区别？</h2>
+                <p><strong>背景：</strong>这是“技术选型题”。</p>
+                <p><strong>结论：</strong>Hive 适合离线数仓与报表沉淀；Spark 适合复杂 DAG、迭代计算和更灵活性能调优。</p>
+                <p><strong>工程实践：</strong>很多团队是“Hive 管模型与资产，Spark 跑重计算，OLAP 服务层做低延迟查询”。</p>
+                <p><strong>30 秒答法：</strong>“不是二选一，而是分工协作：Hive 沉淀口径，Spark 处理复杂计算，服务层解决查询时延。”</p>
+
+                <h2>Q7：Spark Streaming 怎么讲？</h2>
+                <p><strong>背景：</strong>考你是否理解微批模型的边界。</p>
+                <p><strong>定义：</strong>Spark Structured Streaming 多数场景是微批执行模型。</p>
+                <p><strong>原理：</strong>延迟由 trigger interval、shuffle、状态管理、sink 吞吐共同决定；支持 watermark/checkpoint 做容错和迟到处理。</p>
+                <p><strong>工程指标：</strong>end-to-end latency、输入/处理速率、状态大小、checkpoint 时长。</p>
+                <p><strong>30 秒答法：</strong>“Spark Streaming 是微批，不是纯事件逐条执行。我要同时关注 trigger、状态、sink，才能把延迟压下来。”</p>
+
+                <h2>Q8：了解 Flink/Storm 吗，如何回答不熟题？</h2>
+                <p><strong>背景：</strong>考你的边界感和技术判断，不是逼你硬编。</p>
+                <p><strong>建议答法：</strong>先诚实说明深度，再说已知差异：Flink 事件时间、watermark、状态能力更强；Storm 更轻但生态弱。</p>
+                <p><strong>反例：</strong>硬编 checkpoint 细节很容易被追问击穿。</p>
+                <p><strong>30 秒答法：</strong>“我主战 Spark，Flink 做过 PoC。两者差异我能讲清，但没做过的深细节我会明确边界并给学习路径。”</p>
+
+                <h2>Q9：给 1PB 日志，5 分钟出结果，怎么设计架构？</h2>
+                <p><strong>背景：</strong>典型系统设计题，核心是时效/准确/成本的平衡。</p>
+                <p><strong>方案：</strong>采集层（Kafka/Flume）-> 实时计算层（Flink/Spark SS）-> 服务层（ClickHouse/ES/Redis）提供 5 分钟结果；离线层（Spark/Hive）回刷精确口径。</p>
+                <p><strong>工程关键：</strong>预聚合、分层口径、容灾、容量规划、SLA 分级。</p>
+                <p><strong>示例指标：</strong>P95 看板延迟、消费堆积、回刷成功率、每 TB 成本。</p>
+                <p><strong>30 秒答法：</strong>“PB 级 5 分钟结果必须走实时预聚合+服务层，离线补齐准确口径。设计重点是 SLA、口径一致性和成本治理。”</p>
+
+                <h2>Q10：数据采集为什么常用 Flume？ES 怎么补答？</h2>
+                <p><strong>背景：</strong>这题在考“链路角色分工”。</p>
+                <p><strong>定义：</strong>Flume 偏日志采集与可靠投递；ES 偏检索与多维查询，不是通用数仓替代品。</p>
+                <p><strong>工程补充：</strong>ES 写多场景关注分片、refresh、冷热分层、索引生命周期（ILM）。</p>
+                <p><strong>30 秒答法：</strong>“Flume 负责采集投递，ES 负责检索服务。ES 不是全能存储，写入压力下要重视分片、刷新周期和冷热策略。”</p>
+
+                <h2>扩展追问：为什么 `groupByKey` 往往不如 `reduceByKey`？</h2>
+                <p><strong>核心原因：</strong>`groupByKey` 把全量 value 跨网络聚到一处，shuffle 和内存压力都大；`reduceByKey` 可在 map 端预聚合，显著减少网络和内存开销。</p>
+                <p><strong>工程判据：</strong>看 shuffle read/write、spill、task skew、stage 耗时。统计词频、求和类任务优先 `reduceByKey`。</p>
+
+                <h2>逐题追问清单（速查）</h2>
                 <ol>
-                    <li><strong>Q1 参数：</strong>driver 负责 DAG 规划与任务调度，executor 负责执行；参数配置要围绕 SLA、吞吐和稳定性。</li>
-                    <li><strong>Q2 资源估算：</strong>executor 核数过大常导致 GC 暂停拉长和失败重试代价变高，实践中更偏中等粒度 executor。</li>
-                    <li><strong>Q3 1TB 配置：</strong>分区数建议按“目标 task 时长（如 1~3 分钟）”反推，而不是固定背一个数字。</li>
-                    <li><strong>Q4 YARN：</strong>队列抢占要谨慎，关键链路可单独资源池，避免低优先级作业拖垮核心任务。</li>
-                    <li><strong>Q5 Kafka/ZK：</strong>要能说清“至少一次 + 幂等消费”是常见工程落地，端到端 exactly-once 条件较苛刻。</li>
-                    <li><strong>Q6 Spark vs Hive：</strong>Hive 偏离线报表沉淀，Spark 偏通用计算；真正系统里常“湖仓 + Spark + OLAP”混合。</li>
-                    <li><strong>Q7 Streaming：</strong>微批模型下延迟由 batch interval、shuffle、sink 吞吐共同决定，不是只调一个参数。</li>
-                    <li><strong>Q8 Flink/Storm：</strong>Flink 核心追问常在 checkpoint、watermark、状态后端；不了解时要明确边界别硬答。</li>
-                    <li><strong>Q9 PB 架构：</strong>5 分钟结果通常靠预聚合和服务层，不可能每次全量扫 PB 原始数据。</li>
-                    <li><strong>Q10 Flume/ES：</strong>ES 在写多场景要关注分片数、refresh 周期、冷热分层和生命周期管理。</li>
+                    <li>Q1：`spark.executor.memoryOverhead` 怎么估？</li>
+                    <li>Q2：为什么 executor 不宜过大？</li>
+                    <li>Q3：如何识别并治理数据倾斜？</li>
+                    <li>Q4：队列抢占对核心作业有什么副作用？</li>
+                    <li>Q5：EOS 为什么很难端到端成立？</li>
+                    <li>Q6：Spark SQL 和 MPP 数据库边界在哪里？</li>
+                    <li>Q7：微批延迟高时先看哪三个指标？</li>
+                    <li>Q8：不了解 Flink 细节时怎么答才不扣分？</li>
+                    <li>Q9：5 分钟口径和 T+1 口径如何对齐？</li>
+                    <li>Q10：ES 写多场景如何做索引生命周期管理？</li>
                 </ol>
-                <p><strong>完整答题技巧：</strong>大数据题的高分点不是背组件，而是讲“资源预算、失败重试、数据倾斜、成本与时延权衡”。每题都尽量给一个你会监控的指标（如延迟、堆积、失败率、P95 时长）。</p>
-                <p><strong>来源：</strong>作者：提灯寻梦在南国，<a href="https://www.nowcoder.com/discuss/353155779471548416?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
+
+                <p><strong>答题总模板（建议背诵）：</strong>“这个问题的业务目标是 XXX（SLA）。我会先做资源/链路预算，再给方案与取舍（时效、准确、成本），最后用指标验证（延迟、堆积、失败率、成本）。”</p>
+                <p><strong>来源：</strong>作者：提灯寻梦在南国，<a href="https://www.nowcoder.com/discuss/353155779471548416?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>；并结合 Spark/Hadoop/YARN/Kafka 官方文档口径做技术补全。</p>
             </article>
 
             <article class="article-content" id="tencent-nowcoder-server">
