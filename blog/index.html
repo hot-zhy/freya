@@ -3879,32 +3879,63 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-nowcoder-cpp-os-net">
                 <h1>腾讯面经 QA（C++ / OS / 网络）</h1>
-                <div class="meta">基于你提供的牛客原题重编 · 0 基础友好版（每题含例子与延展）</div>
+                <div class="meta">基于你提供的牛客原题重编 · 完整版（定义 + 原理 + 例子 + 追问）</div>
                 <p><strong>Q1：虚函数原理是什么？</strong><br><strong>A：</strong>你可以把虚函数理解成“运行时再决定调用哪个版本的函数”。C++ 会给类放一张“函数地址表”（vtable），对象里有个指针（vptr）指向它。你拿“基类指针”调用时，会顺着这张表找到“真实对象”的函数。<br><strong>例子：</strong>`Animal* p = new Dog(); p->speak();` 最终执行的是 `Dog::speak()`。<br><strong>延展：</strong>虚函数带来动态扩展能力（开闭原则），但也有一点点性能开销（一次间接寻址）。</p>
                 <p><strong>Q2：const 如何保证变量不被修改？</strong><br><strong>A：</strong>`const` 主要是“编译器层面”保护：你写了修改代码，编译器就报错。它更像“合同”，告诉别人这个值不应该被改。<br><strong>例子：</strong>`void print(const string& s)` 表示函数不会改 `s`，调用方更放心。<br><strong>延展：</strong>面试可补一句：`const` 不是绝对安全（可被非常规手段绕过），但在工程规范里非常重要。</p>
                 <p><strong>Q3：map 和 unordered_map 区别？</strong><br><strong>A：</strong>`map` 是有序容器（底层红黑树），查找通常 O(log n)；`unordered_map` 无序（哈希表），平均 O(1)。<br><strong>例子：</strong>要“按 key 从小到大遍历”选 `map`；只想快速查用户 ID 选 `unordered_map`。<br><strong>延展：</strong>哈希冲突严重时 `unordered_map` 可能退化，所以要关注哈希函数和负载因子。</p>
-                <p><strong>Q4：map 的 insert() 和下标 [] 区别？</strong><br><strong>A：</strong>`insert` 不会覆盖已有 key，适合“只插一次”；`[]` 如果 key 不存在会自动创建。<br><strong>例子：</strong>`m["tom"]++` 会在没有 `tom` 时先建一个 `0` 再加 1。<br><strong>延展：</strong>只判断是否存在，优先 `find()` 或 `contains()`，避免误创建脏数据。</p>
+                <p><strong>Q4：map 的 insert() 和下标 [] 区别？</strong><br><strong>A（全面版）：</strong>两者都能“让 key 对应一个 value”，但语义差别很大。<br>1）<strong>是否会自动创建：</strong>`operator[]` 在 key 不存在时会“先插入一个默认值”再返回引用；`insert` 不会默认构造，它只尝试插入你给的键值对。<br>2）<strong>遇到已存在 key 时：</strong>`insert` 不会覆盖旧值；`[]` 取到的是旧值引用，你再赋值就会覆盖。<br>3）<strong>返回信息：</strong>`insert` 返回 `pair<iterator,bool>`，`bool` 告诉你“这次是否真的插入成功”；`[]` 只返回引用，不告诉你是“新建”还是“已存在”。<br>4）<strong>对 value 类型的要求：</strong>`[]` 需要 value 可默认构造（因为可能要先造一个默认值）；`insert` 不要求这点。<br>5）<strong>只读访问行为：</strong>想“只读不创建”不要用 `[]`，应该用 `find`/`contains`/`at`（`at` 不存在会抛异常）。<br><strong>例子：</strong>`m["tom"]++` 在 `tom` 不存在时会先插入 `("tom", 0)` 再变成 1，这在计数场景非常方便；但在配置读取场景可能误创建脏 key。<br><strong>工程建议：</strong>“只插一次”优先 `insert`/`emplace`/`try_emplace`；“存在就更新，不存在就插入”优先 `insert_or_assign`；“只查不改”优先 `find/contains/at`，避免无意写入。</p>
                 <p><strong>Q5：怎么查看某个进程的 CPU 利用率？</strong><br><strong>A：</strong>常用命令：`top -p PID`（实时看），`ps -p PID -o %cpu,cmd`（快照），`pidstat -p PID 1`（每秒趋势）。<br><strong>例子：</strong>服务卡顿时先 `top` 找到高 CPU 进程，再 `top -H -p PID` 看哪个线程最热。<br><strong>延展：</strong>线程 ID 可转十六进制后配合 `jstack`/`gdb` 定位到具体函数。</p>
                 <p><strong>Q6：malloc 的作用？申请的是物理内存还是虚拟内存？</strong><br><strong>A（先说结论）：</strong>`malloc` 申请到的是“进程可用的虚拟地址区间”，不等于立刻拿到同等大小的物理内存。操作系统通常采用按需分页：你真正读写到某个页时，才触发缺页中断，把物理页映射进来。<br><strong>例子：</strong>程序里 `malloc(1GB)` 后如果不访问这 1GB，`top` 看到的常驻内存（RES）不会马上涨 1GB；但你若 `memset` 全部 1GB，RES 会明显上升。<br><strong>技术补充：</strong>`malloc` 小块分配常来自进程堆（`brk/sbrk`），大块分配常走 `mmap`；释放时小块不一定立刻还给 OS，大块 `munmap` 更可能直接归还。<br><strong>延展：</strong>面试可顺带说内存问题排查：看“虚拟内存 VS 常驻内存”、看缺页次数、看是否存在内存碎片和泄漏。</p>
-                <p><strong>Q7：什么是僵尸进程？</strong><br><strong>A：</strong>把它想成“人已经走了，但档案还没销户”。子进程其实已经执行完了，但系统还保留了一小条记录，等父进程来“签收结果”（`wait/waitpid`）。如果父进程一直不签收，这条记录就一直挂着，这就是僵尸进程。<br><strong>例子：</strong>一个程序不停地创建很快结束的子进程，但代码里没写 `waitpid`。这时你执行 `ps -ef`，会看到很多状态是 `Z` 的进程。`Z` 就是 Zombie（僵尸）。<br><strong>延展：</strong>僵尸进程本身几乎不占 CPU，也不会继续干活，但它会占“进程编号（PID）和进程表名额”。如果积累太多，系统就可能出现“无法创建新进程”的严重问题。</p>
+                <p><strong>Q7：什么是僵尸进程？`waitpid` 在里面是什么意思？</strong><br><strong>A：</strong>把它想成“人已经走了，但档案还没销户”。子进程执行完后，内核会先保留一条退出记录（退出码、结束原因），等父进程来“签收”。父进程签收用的就是 `wait/waitpid`。如果父进程一直不签收，这条记录就一直挂着，这个状态就是僵尸进程。<br><strong>`waitpid` 的作用：</strong>父进程等待并回收子进程，拿到退出状态，释放子进程在进程表里的残留项。<br><strong>常见写法：</strong><code>waitpid(child_pid, &status, 0)</code>（阻塞等指定子进程结束）；如果不想阻塞可用 <code>WNOHANG</code>，例如 <code>waitpid(-1, &status, WNOHANG)</code> 表示“非阻塞地回收任意已退出子进程”。<br><strong>例子：</strong>一个程序不停创建短命子进程，但代码里没写 `waitpid`，`ps -ef` 会看到很多 `Z` 状态；补上 `waitpid` 后这些 `Z` 会被回收。<br><strong>延展：</strong>僵尸进程本身几乎不占 CPU，但会占 PID 和进程表名额。积累太多会导致“无法创建新进程”。线上常见做法是父进程显式回收，或在 `SIGCHLD` 处理中循环 `waitpid(-1, &status, WNOHANG)`。</p>
                 <p><strong>Q8：堆和栈区别？</strong><br><strong>A：</strong>栈是自动管理（函数进出自动分配释放），速度快但空间小；堆是手动或由运行时管理，灵活但容易泄漏和碎片。<br><strong>例子：</strong>函数局部变量在栈上，`new/malloc` 通常在堆上。<br><strong>延展：</strong>C++ 里建议优先 RAII 和智能指针，减少手动 `new/delete` 错误。</p>
-                <p><strong>Q9：select 和 epoll 区别？</strong><br><strong>A（先说直观）：</strong>`select` 像“每次都把全班名单交给老师，再一个个点名”；`epoll` 像“先登记名单，老师只通知今天到场的人”。<br><strong>技术差异：</strong>1）`select` 每次调用都要拷贝 fd 集合并线性扫描，复杂度接近 O(n)；2）`select` 有 fd 数量上限（常见 1024，和系统配置相关）；3）`epoll` 把关注的 fd 通过 `epoll_ctl` 预先注册，`epoll_wait` 直接返回就绪事件，适合高并发长连接。<br><strong>例子：</strong>1 万长连接里只有 30 个活跃，`select` 仍要扫 1 万，`epoll` 只处理那 30 个就绪事件。<br><strong>延展：</strong>并非所有场景都要 epoll。连接数少、实现简单优先时 `select/poll` 也可接受；高并发网络服务器通常选 `epoll`。</p>
-                <p><strong>Q10：epoll 的 ET 和 LT？</strong><br><strong>A（先记一句话）：</strong>LT（水平触发）是“缓冲区里还有数据就持续提醒”；ET（边沿触发）是“状态从无到有只提醒一次”。<br><strong>例子：</strong>某 socket 收到 10KB 数据：LT 下你这次只读了 2KB，下一轮还会提醒可读；ET 下如果你没读到 `EAGAIN` 就返回，后面可能不再提醒，导致应用层“看起来卡住”。<br><strong>技术要点：</strong>ET 必须配合非阻塞 fd，并在回调里循环 `read/write` 直到 `EAGAIN`；LT 容错更高、代码更稳。<br><strong>延展：</strong>工程上常见策略是“先 LT 跑通，再评估 ET 是否必要”。如果业务瓶颈不在事件通知次数，盲目切 ET 收益有限但复杂度上升。</p>
+                <p><strong>Q9：select 和 epoll 区别？</strong><br><strong>A（先讲背景）：</strong>这题的背景是“一个线程要同时管理很多网络连接”。早期做法是每次都遍历所有连接看谁可读可写，但连接数一多就很慢，所以才有 `select/poll/epoll` 这类 IO 多路复用方案。它们解决的核心问题是：<strong>少阻塞线程、减少无效遍历、提高高并发下的事件处理效率</strong>。<br><strong>直观理解：</strong>`select` 像“每次都把全班名单交给老师，再一个个点名”；`epoll` 像“先登记名单，老师只通知今天到场的人”。<br><strong>技术差异：</strong>1）`select` 每次调用都要拷贝 fd 集合并线性扫描，复杂度接近 O(n)；2）`select` 有 fd 数量上限（常见 1024，和系统配置相关）；3）`epoll` 把关注的 fd 通过 `epoll_ctl` 预先注册，`epoll_wait` 直接返回就绪事件，适合高并发长连接。<br><strong>例子：</strong>1 万长连接里只有 30 个活跃，`select` 仍要扫 1 万，`epoll` 只处理那 30 个就绪事件。<br><strong>延展：</strong>并非所有场景都要 epoll。连接数少、实现简单优先时 `select/poll` 也可接受；高并发网络服务器通常选 `epoll`。</p>
+                <p><strong>Q10：epoll 的 ET 和 LT？</strong><br><strong>A（先讲背景）：</strong>有了 `epoll` 后，还会遇到一个问题：<strong>内核该“提醒应用多少次”</strong>。如果提醒太频繁，事件风暴会增加开销；如果提醒太少，应用又可能漏处理数据。ET/LT 就是在解决这个“通知策略”问题。<br><strong>一句话记忆：</strong>LT（水平触发）是“缓冲区里还有数据就持续提醒”；ET（边沿触发）是“状态从无到有只提醒一次”。<br><strong>例子：</strong>某 socket 收到 10KB 数据：LT 下你这次只读了 2KB，下一轮还会提醒可读；ET 下如果你没读到 `EAGAIN` 就返回，后面可能不再提醒，导致应用层“看起来卡住”。<br><strong>技术要点：</strong>ET 必须配合非阻塞 fd，并在回调里循环 `read/write` 直到 `EAGAIN`；LT 容错更高、代码更稳。<br><strong>延展：</strong>工程上常见策略是“先 LT 跑通，再评估 ET 是否必要”。如果业务瓶颈不在事件通知次数，盲目切 ET 收益有限但复杂度上升。</p>
                 <p><strong>Q11：TCP 和 UDP 区别？</strong><br><strong>A：</strong>TCP 可靠、有序、先连接后传输；UDP 直接发、速度快、但不保证到达和顺序。<br><strong>例子：</strong>文件传输用 TCP，语音通话常用 UDP（允许少量丢包换低延迟）。<br><strong>延展：</strong>QUIC 就是在 UDP 之上实现“类似 TCP 的可靠能力”。</p>
                 <p><strong>Q12：Linux 如何按一列分组统计另一列（类似 SQL group by + sum）？</strong><br><strong>A：</strong>用 awk 做“键值累加”：<code>awk '{sum[$1]+=$2} END {for (k in sum) print k, sum[k]}' file</code>。<br><strong>例子：</strong>日志里 `$1` 是部门、`$2` 是销售额，就能输出各部门总额。<br><strong>延展：</strong>若文件有标题行可加 `NR>1` 跳过首行。</p>
                 <p><strong>Q13：TCP 数据没收到，如何判断应用层问题还是底层问题？</strong><br><strong>A（排查顺序）：</strong>按“发送端应用 -> 发送端内核 -> 网络 -> 接收端内核 -> 接收端应用”逐层证据化排查，不要凭感觉。<br><strong>实操步骤：</strong>1）先确认连接状态（`ss -tanp` 看是否 ESTABLISHED）；2）抓包（`tcpdump -i any host A and port P`）看数据包是否发出；3）看对端是否收到并回 ACK；4）看是否有重传、RST、零窗口（Window=0）；5）若 TCP 层都正常，再查应用日志、线程栈、协议解码。<br><strong>例子：</strong>抓包显示三次握手正常、数据段已到对端且 ACK 正常，但业务无响应，通常是应用层问题（线程卡死、消息队列堵塞、协议包长度解析错误）。<br><strong>延展：</strong>常见底层信号：大量重传（网络丢包/抖动）、持续零窗口（接收端消费慢）、RST 激增（连接被主动重置）。常见应用信号：TCP 正常但业务日志无消费记录或处理超时。</p>
                 <p><strong>Q14：MySQL 两个常见引擎和区别？</strong><br><strong>A：</strong>常答 InnoDB vs MyISAM。InnoDB 支持事务、行锁、崩溃恢复；MyISAM 不支持事务、以表锁为主。<br><strong>例子：</strong>电商下单这类要强一致和并发写，基本都用 InnoDB。<br><strong>延展：</strong>现在生产环境几乎默认 InnoDB，MyISAM 多在历史系统或特定只读场景。</p>
                 <p><strong>Q15：动态链接库和静态链接库区别？</strong><br><strong>A：</strong>静态库编译时打进程序，运行时不依赖外部库；动态库运行时再加载，程序体积更小、更新更灵活。<br><strong>例子：</strong>多个程序共享同一 `libssl.so` 就是动态库共享。<br><strong>延展：</strong>动态库要处理版本兼容，发布时常见“某机缺库启动失败”。</p>
                 <p><strong>Q16：如何编程判断字节序？x86 是大端还是小端？</strong><br><strong>A：</strong>把 `0x0102` 放入内存，读第一个字节：若是 `0x02` 就是小端。x86/x64 是小端。<br><strong>例子：</strong>网络协议解析常遇到端序不一致，必须转换。<br><strong>延展：</strong>跨平台二进制协议一定要明确字段端序，不能靠“默认”。</p>
-                <p><strong>Q17：网络序是什么？</strong><br><strong>A：</strong>网络序就是大端序，目的是让所有机器在网络上传输时有统一规则。<br><strong>例子：</strong>端口号 8080 在发送前常用 `htons(8080)` 转成网络序。<br><strong>延展：</strong>如果不转，异构机器之间会出现字段解析错位。</p>
+                <p><strong>Q17：网络序（Network Byte Order）是什么？</strong><br><strong>A（先讲背景）：</strong>不同 CPU 架构在内存里存放多字节整数的顺序可能不同。如果通信双方字节序不统一，接收方就会把同一串字节解析成错误数值。网络协议为了解决这个跨平台问题，规定传输时统一使用 <strong>网络序（大端序）</strong>。<br><strong>定义：</strong>网络序 = 大端字节序（高位字节放低地址，低位字节放高地址）。例如 `0x12345678` 在大端下按字节是 `12 34 56 78`，在小端下是 `78 56 34 12`。<br><strong>为什么要统一成网络序：</strong>核心不是“谁更先进”，而是“协议必须统一”。Internet 协议族（TCP/IP）约定了网络字节序，这样任意主机都能按同一规则解析报文。<br><strong>协议里的应用：</strong>IP 头、TCP/UDP 头中的多字节字段（如端口、长度、序号、地址）都按网络序传输。发送前从主机序转网络序，接收后从网络序转主机序。<br><strong>转换函数（C/C++ 常用）：</strong><code>htons</code>（16 位主机序 -> 网络序）、<code>htonl</code>（32 位）、<code>ntohs</code>（16 位网络序 -> 主机序）、<code>ntohl</code>（32 位）。<br><strong>示例代码：</strong></p>
+                <pre><code>#include &lt;arpa/inet.h&gt;
+#include &lt;stdio.h&gt;
+
+int main() {
+    unsigned short port_host = 8080;
+    unsigned short port_net = htons(port_host);
+    printf("host=%u, network=0x%x\n", port_host, port_net);
+    printf("back to host=%u\n", ntohs(port_net));
+    return 0;
+}</code></pre>
+                <p><strong>工程注意点：</strong>1）不要对“已经是网络序”的值再重复 `hton*`；2）`char` 数组按字节拷贝通常不需要转换，转换的是“多字节整数语义”；3）位字段（bitfield）在不同编译器上的布局可能不一致，协议解析更稳妥的方式是按字节读写并手动移位。<br><strong>面试追问可答：</strong>“x86 是什么字节序？”答：x86/x64 主机序通常是小端；“为什么网络序不用小端？”答：历史上 TCP/IP 规范统一选了大端，关键在于标准统一而不是某种端序绝对优越。</p>
                 <p><strong>Q18：.h 如何避免重复定义？</strong><br><strong>A：</strong>用头文件保护：`#ifndef/#define/#endif` 或 `#pragma once`。<br><strong>例子：</strong>同一个头被 A.cpp 和 B.cpp 多次间接包含时，不会重复展开。<br><strong>延展：</strong>大型工程里没有防重包含会导致大量“redefinition”编译错误。</p>
-                <p><strong>扩展高频：</strong>析构函数尽量不抛异常；向已关闭 socket 写通常会 `EPIPE`；`TIME_WAIT` 是为了防旧包污染新连接。</p>
+                <p><strong>逐题深挖补充（展开版）：</strong></p>
+                <ol>
+                    <li><strong>Q1 虚函数：</strong>构造/析构阶段调用虚函数时不会发生“完整多态”，因为对象尚未构造成最终派生类型；这是 C++ 面试高频陷阱题。</li>
+                    <li><strong>Q2 const：</strong>要区分“顶层 const（变量本身只读）”与“底层 const（指向内容只读）”，尤其在指针声明和函数参数里。</li>
+                    <li><strong>Q3 map vs unordered_map：</strong>`unordered_map` 在 rehash 后迭代器可能失效，且最坏复杂度会退化；工程上要关注负载因子和哈希函数质量。</li>
+                    <li><strong>Q4 insert 与 []：</strong>推荐掌握 `try_emplace`（避免不必要构造）和 `insert_or_assign`（存在更新，不存在插入）这两个现代接口。</li>
+                    <li><strong>Q5 CPU 排障：</strong>建议固定链路：进程 CPU -> 线程 CPU -> 调用栈 -> 热点函数，这样回答最有工程感。</li>
+                    <li><strong>Q6 malloc：</strong>高频追问是内存碎片与 OOM 区别，及为何某些释放后内存不立刻归还操作系统。</li>
+                    <li><strong>Q7 僵尸进程：</strong>要能区分“僵尸进程”和“孤儿进程”：孤儿会被 init/systemd 接管并回收，不等于僵尸。</li>
+                    <li><strong>Q8 堆栈：</strong>栈溢出常表现为深递归崩溃；堆泄漏常靠长时间运行后的内存持续增长定位。</li>
+                    <li><strong>Q9 select/epoll：</strong>补一句 `poll` 的意义：它去掉了 `select` 的固定 fd 位图上限，但仍是线性扫描。</li>
+                    <li><strong>Q10 ET/LT：</strong>ET 漏读复现方式是“只读一次就返回”；修复核心是非阻塞+循环读写到 `EAGAIN`。</li>
+                    <li><strong>Q11 TCP/UDP：</strong>追问常到“TCP 粘包怎么处理（长度字段/分隔符）”和“UDP 分片丢一片整包不可用”。</li>
+                    <li><strong>Q12 awk：</strong>若输入不是空格分隔，记得 `-F` 指定分隔符，例如 CSV 用 `-F,`。</li>
+                    <li><strong>Q13 抓包：</strong>抓包点选择很关键：客户端、服务端、网关三处抓包可快速定位“丢在哪里”。</li>
+                    <li><strong>Q14 MySQL 引擎：</strong>可补 InnoDB 事务基础（redo/undo + MVCC）来提升回答深度。</li>
+                    <li><strong>Q15 动静态库：</strong>动态库常见问题是 ABI 不兼容与版本地狱；静态库常见问题是体积和重复链接。</li>
+                    <li><strong>Q16/Q17 字节序：</strong>要能说清“主机序仅本机内存表示，网络序是传输规则”，并会用 `hton*/ntoh*`。</li>
+                    <li><strong>Q18 头文件：</strong>变量定义应放 `.cpp`，头文件通常用 `extern` 声明，避免多重定义链接错误。</li>
+                </ol>
+                <p><strong>完整答题技巧：</strong>每题尽量按“背景 -> 结论 -> 机制 -> 例子 -> 取舍”五段来讲，面试官会明显感到你不是背答案，而是能解决问题。</p>
                 <p><strong>来源：</strong>作者：超越护体，<a href="https://www.nowcoder.com/discuss/353156266354745344?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
             </article>
 
             <article class="article-content" id="tencent-nowcoder-bigdata">
                 <h1>腾讯面经 QA（Spark / 大数据）</h1>
-                <div class="meta">腾讯云后台方向高频题 · 入门友好版（每题含例子与延展）</div>
+                <div class="meta">腾讯云后台方向高频题 · 完整版（参数估算 + 架构权衡 + 运维排障）</div>
                 <p><strong>Q1：Spark 提交作业常用参数有哪些？</strong><br><strong>A：</strong>先记 7 个核心：`--master`（跑在哪）、`--deploy-mode`（client/cluster）、`--num-executors`、`--executor-cores`、`--executor-memory`、`--driver-memory`、`spark.sql.shuffle.partitions`。<br><strong>例子：</strong>你有 20 台机器，每台 16 核，不可能把核全给一个作业，要按队列配额分配。<br><strong>延展：</strong>参数不是背值，而是“根据数据量和 SLA 调整”，面试官最看这个。</p>
                 <p><strong>Q2：如何估算 executor 数量和内存？</strong><br><strong>A：</strong>先估总可用资源，再按“每个 executor 3~5 核”切分，避免 executor 过大导致 GC 压力。内存要考虑缓存、shuffle、序列化开销。<br><strong>例子：</strong>任务经常 OOM，可先减小每 executor 核数、增大 executor 数量，让压力更分散。<br><strong>延展：</strong>最终配置要靠压测，不是一次拍脑袋定死。</p>
                 <p><strong>Q3：1TB Spark 作业大致怎么配？</strong><br><strong>A：</strong>先定目标时延，再反推并行度；分区别太少（跑不满）也别太多（调度开销高）。优先减少 shuffle、处理数据倾斜。<br><strong>例子：</strong>把 `groupByKey` 改成 `reduceByKey`，常能明显降网络传输。<br><strong>延展：</strong>内存紧张可用 Kryo、广播小表、预聚合和合理 `persist` 策略。</p>
@@ -3916,12 +3947,26 @@ chunks = splitter.split_text(document_text)</code></pre>
                 <p><strong>Q9：给 1PB 日志，5 分钟出结果，怎么设计架构？</strong><br><strong>A：</strong>关键思想是“分层 + 预计算”：实时链路先产近实时指标，离线链路补齐完整明细。<br><strong>例子：</strong>Kafka 采集 -> Flink 实时聚合 -> ClickHouse 提供 5 分钟看板；夜间 Spark 回刷精确数据。<br><strong>延展：</strong>要主动提“准确性和时效性 trade-off”，这是架构题加分点。</p>
                 <p><strong>Q10：数据采集为什么常用 Flume？ES 怎么补答？</strong><br><strong>A：</strong>Flume 对日志采集和可靠投递成熟，接 Hadoop 生态顺手；ES 适合全文检索和多维查询。<br><strong>例子：</strong>日志检索系统常是 Flume/Kafka 入湖，ES 做检索服务。<br><strong>延展：</strong>ES 需要关注分片规划、写入放大、冷热分层和索引生命周期。</p>
                 <p><strong>扩展追问：</strong>为什么 `groupByKey` 往往不如 `reduceByKey`？<br><strong>答：</strong>`groupByKey` 把同 key 全量值都拉过网络，内存压力大；`reduceByKey` 会先在 map 端预聚合，网络和内存开销都更小。<br><strong>例子：</strong>统计词频时 `reduceByKey` 常比 `groupByKey` 快一截。</p>
+                <p><strong>逐题深挖补充（展开版）：</strong></p>
+                <ol>
+                    <li><strong>Q1 参数：</strong>driver 负责 DAG 规划与任务调度，executor 负责执行；参数配置要围绕 SLA、吞吐和稳定性。</li>
+                    <li><strong>Q2 资源估算：</strong>executor 核数过大常导致 GC 暂停拉长和失败重试代价变高，实践中更偏中等粒度 executor。</li>
+                    <li><strong>Q3 1TB 配置：</strong>分区数建议按“目标 task 时长（如 1~3 分钟）”反推，而不是固定背一个数字。</li>
+                    <li><strong>Q4 YARN：</strong>队列抢占要谨慎，关键链路可单独资源池，避免低优先级作业拖垮核心任务。</li>
+                    <li><strong>Q5 Kafka/ZK：</strong>要能说清“至少一次 + 幂等消费”是常见工程落地，端到端 exactly-once 条件较苛刻。</li>
+                    <li><strong>Q6 Spark vs Hive：</strong>Hive 偏离线报表沉淀，Spark 偏通用计算；真正系统里常“湖仓 + Spark + OLAP”混合。</li>
+                    <li><strong>Q7 Streaming：</strong>微批模型下延迟由 batch interval、shuffle、sink 吞吐共同决定，不是只调一个参数。</li>
+                    <li><strong>Q8 Flink/Storm：</strong>Flink 核心追问常在 checkpoint、watermark、状态后端；不了解时要明确边界别硬答。</li>
+                    <li><strong>Q9 PB 架构：</strong>5 分钟结果通常靠预聚合和服务层，不可能每次全量扫 PB 原始数据。</li>
+                    <li><strong>Q10 Flume/ES：</strong>ES 在写多场景要关注分片数、refresh 周期、冷热分层和生命周期管理。</li>
+                </ol>
+                <p><strong>完整答题技巧：</strong>大数据题的高分点不是背组件，而是讲“资源预算、失败重试、数据倾斜、成本与时延权衡”。每题都尽量给一个你会监控的指标（如延迟、堆积、失败率、P95 时长）。</p>
                 <p><strong>来源：</strong>作者：提灯寻梦在南国，<a href="https://www.nowcoder.com/discuss/353155779471548416?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
             </article>
 
             <article class="article-content" id="tencent-nowcoder-server">
                 <h1>腾讯面经 QA（服务端 / 并发 / 网络编程）</h1>
-                <div class="meta">Reactor、守护进程、协程、TCP 细节、手撕算法 · 0 基础友好版</div>
+                <div class="meta">Reactor、守护进程、协程、TCP 细节、手撕算法 · 完整版</div>
                 <p><strong>Q1：Reactor 模式是什么？你实现的服务器架构怎么说？</strong><br><strong>A：</strong>Reactor 是“有人来事件我再处理”，核心是 IO 多路复用 + 事件分发。常见结构：`Acceptor` 收连接，`Reactor` 监听可读可写，业务线程池处理逻辑。<br><strong>例子：</strong>聊天服务器中，一个线程就能监控成千上万个 socket 是否可读。<br><strong>延展：</strong>要补连接生命周期管理（超时踢除、心跳、背压），这才像真实工程。</p>
                 <p><strong>Q2：read 系统调用常见错误有哪些？</strong><br><strong>A：</strong>`EINTR`（被信号打断，可重试）、`EAGAIN`（非阻塞下暂时无数据）、`ECONNRESET`（连接被对端重置）。<br><strong>例子：</strong>非阻塞 socket `read` 返回 `EAGAIN` 不是故障，只是“现在没数据”。<br><strong>延展：</strong>面试可说“不同错误走不同策略”，别统一死循环重试。</p>
                 <p><strong>Q3：对关闭 socket 写会发生什么？</strong><br><strong>A：</strong>通常写失败并返回 `EPIPE`，还可能触发 `SIGPIPE`，默认会让进程退出。<br><strong>例子：</strong>线上服务偶发崩溃，根因是没屏蔽 `SIGPIPE`。<br><strong>延展：</strong>工程里常忽略 `SIGPIPE` 或使用 `MSG_NOSIGNAL`。</p>
@@ -3936,12 +3981,29 @@ chunks = splitter.split_text(document_text)</code></pre>
                 <p><strong>Q12：快排最坏复杂度？怎么优化？</strong><br><strong>A：</strong>最坏 O(n^2)，通常出现在每次选到很差 pivot。<br><strong>例子：</strong>数组已排序但每次都拿第一个元素做 pivot。<br><strong>延展：</strong>可用随机 pivot、三数取中、三路快排；工业实现常是 introsort。</p>
                 <p><strong>Q13：不用临时变量交换两个整数怎么做？</strong><br><strong>A：</strong>可用异或或加减，但可读性差且有风险（溢出、同地址）。<br><strong>例子：</strong>`a ^= b; b ^= a; a ^= b;`。<br><strong>延展：</strong>生产代码更推荐 `std::swap`，面试时说明取舍会加分。</p>
                 <p><strong>Q14：O(n) 时间、一个变量实现洗牌怎么理解？</strong><br><strong>A：</strong>标准是 Fisher-Yates：从后往前遍历，每次随机选 `[0,i]` 与当前位置交换。<br><strong>例子：</strong>扑克牌随机打乱就可以用这个算法。<br><strong>延展：</strong>若随机数不均匀，结果就不是真随机，这是追问点。</p>
+                <p><strong>逐题深挖补充（展开版）：</strong></p>
+                <ol>
+                    <li><strong>Q1 Reactor：</strong>要能比较 Reactor 与 Proactor：前者“就绪通知，应用读写”，后者“完成通知，内核主导异步 IO”。</li>
+                    <li><strong>Q2 read 错误：</strong>`read` 返回 0 代表对端正常关闭，这是比错误码更高频的“状态信号”。</li>
+                    <li><strong>Q3 关闭 socket 写：</strong>除了 `EPIPE`，还要知道默认 `SIGPIPE` 可能直接杀进程，线上必须显式处理。</li>
+                    <li><strong>Q4 守护进程：</strong>现代生产更常用 systemd 托管，守护化细节与部署规范要结合讲。</li>
+                    <li><strong>Q5/Q6 协程：</strong>追问常到公平调度和饥饿问题：某协程长期不让出会拖慢整体吞吐。</li>
+                    <li><strong>Q7 C 多态：</strong>函数指针表可实现灵活抽象，但可维护性和类型安全不如 C++ 语言级多态。</li>
+                    <li><strong>Q8 析构异常：</strong>异常安全等级（basic/strong/no-throw）是加分点，析构一般要求 no-throw。</li>
+                    <li><strong>Q9 Go 调度：</strong>Go 现在有抢占式调度，长时间 CPU 计算协程也能被打断调度。</li>
+                    <li><strong>Q10 流控：</strong>要能区分 rwnd（接收方能力）和 cwnd（网络拥塞控制）共同限制发送窗口。</li>
+                    <li><strong>Q11 TIME_WAIT：</strong>常见治理是连接池、长连接复用、端口规划，不是简单粗暴关掉机制。</li>
+                    <li><strong>Q12 快排：</strong>退化防护要有随机化或 introsort，避免在近有序数据上性能崩溃。</li>
+                    <li><strong>Q13 交换整数：</strong>异或交换在可读性和可维护性上都差，且同地址变量会出错。</li>
+                    <li><strong>Q14 洗牌：</strong>要强调“随机源质量”对结果公平性影响，伪随机偏差会影响业务可信度。</li>
+                </ol>
+                <p><strong>完整答题技巧：</strong>服务端题要体现“可落地排障能力”，建议每题补一条真实命令或日志指标（如 `ss -s`、`tcpdump`、错误码统计），这会明显拉开和纯八股的差距。</p>
                 <p><strong>来源：</strong>作者：特立独行MVP，<a href="https://www.nowcoder.com/discuss/353154871211794432" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
             </article>
 
             <article class="article-content" id="tencent-nowcoder-arch">
                 <h1>腾讯面经 QA（架构 / 二三面 / 系统设计）</h1>
-                <div class="meta">CRM、网关、Redis、K8s、WebSocket、数据库与项目深挖 · 0 基础友好版</div>
+                <div class="meta">CRM、网关、Redis、K8s、WebSocket、数据库与项目深挖 · 完整版</div>
                 <p><strong>Q1：项目架构瓶颈怎么答？</strong><br><strong>A：</strong>用“四步法”：现象（慢/挂）-> 指标（QPS、P99、错误率）-> 根因（数据库、缓存、网络）-> 改造结果。<br><strong>例子：</strong>“高峰 P99 1.2s，定位到 DB 热行锁冲突，改成异步削峰后降到 300ms。”<br><strong>延展：</strong>主管更看“你怎么思考和验证”，不只看术语。</p>
                 <p><strong>Q2：为什么 API Gateway 要尽量无状态？</strong><br><strong>A：</strong>无状态才好横向扩容，任意请求都可落到任意机器。状态放外部（Redis/鉴权服务）更易治理。<br><strong>例子：</strong>双十一临时加 20 台网关，不需要迁移会话。<br><strong>延展：</strong>无状态是云原生弹性扩缩容的前提之一。</p>
                 <p><strong>Q3：Redis 单机还是集群？备份恢复怎么说？</strong><br><strong>A：</strong>小场景可单机，大场景多用主从+哨兵或 Cluster。备份：RDB 恢复快，AOF 数据更新，常混合。<br><strong>例子：</strong>误删 key 后，如果有最近 RDB/AOF，就能回放恢复。<br><strong>延展：</strong>面试可补“备份演练”，只做备份不做恢复演练等于没做。</p>
@@ -3958,6 +4020,22 @@ chunks = splitter.split_text(document_text)</code></pre>
                 <p><strong>Q14：Lustre 元数据服务器瓶颈怎么优化？</strong><br><strong>A：</strong>关键是减少元数据热点和小文件风暴：目录分片、增加 MDT、冷热分离、缓存优化。<br><strong>例子：</strong>单目录百万小文件会把元数据服务拖垮，拆目录后性能明显改善。<br><strong>延展：</strong>存储系统题里“元数据”常是决定上限的关键点。</p>
                 <p><strong>Q15：三面主管的非技术题怎么答？</strong><br><strong>A：</strong>原则：真实、正向、和岗位对齐。按“过去经历 -> 学到什么 -> 为什么现在选这个方向”来讲。<br><strong>例子：</strong>“之前实习偏业务交付，我更想深耕基础平台，所以投你们后台方向。”<br><strong>延展：</strong>不要贬低前公司/前团队，主管面非常看职业成熟度。</p>
                 <p><strong>补充建议：</strong>主管面最看“稳定表达+真实经历”。不会的题先说明边界，再说你的思路和验证方法，比分散硬背更有效。</p>
+                <p><strong>逐题深挖补充（展开版）：</strong></p>
+                <ol>
+                    <li><strong>Q1 架构瓶颈：</strong>定位正确性要靠对照实验（压测前后、灰度对比），不是凭感觉下结论。</li>
+                    <li><strong>Q2 网关无状态：</strong>状态外置后要补一致性策略（token 刷新、缓存失效、会话续期）。</li>
+                    <li><strong>Q3 Redis 备份：</strong>真正高分点是“恢复演练频率”和“可恢复时间目标（RTO）”。</li>
+                    <li><strong>Q4 WebSocket：</strong>要补心跳、断线重连、消息重放去重，否则线上稳定性不够。</li>
+                    <li><strong>Q5 线程池：</strong>拒绝策略必须和业务降级联动，例如返回兜底数据或限流提示。</li>
+                    <li><strong>Q6/Q7 MySQL：</strong>慢查询常见根因是索引失效、回表过多、临时表/文件排序；要会用 `EXPLAIN`。</li>
+                    <li><strong>Q8 C++ 设计：</strong>`final` 是语法手段，架构上也可用组合优于继承来控制扩展边界。</li>
+                    <li><strong>Q9/Q10 TCP 握手：</strong>要能解释随机序列号、历史报文干扰和半开连接风险。</li>
+                    <li><strong>Q11/Q12 TopK：</strong>离线可分桶+堆，实时可近似结构；答题时给内存复杂度更显专业。</li>
+                    <li><strong>Q13 分布式产品：</strong>扩容题关键是“数据重平衡期间如何保证读写 SLA”。</li>
+                    <li><strong>Q14 元数据优化：</strong>小文件治理是存储系统永恒难点，必须讲目录设计和批量合并策略。</li>
+                    <li><strong>Q15 主管面：</strong>职业题强调“长期方向 + 当前岗位匹配 + 可交付能力”，避免空泛口号。</li>
+                </ol>
+                <p><strong>完整答题技巧：</strong>主管面不是考你背了多少技术词，而是看你“是否能把复杂问题拆解并落地”。尽量每题给一个量化指标（时延、失败率、成本变化）和一个复盘动作（如何防复发）。</p>
                 <p><strong>来源：</strong>作者：slamdunk1214，<a href="https://www.nowcoder.com/discuss/353154519850754048?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
             </article>
 
