@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 代码智能与 AI 编程</title>
+  <style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style>
+</head>
+<body><div class="wrap">
+  <p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+  <h1>AI 代码智能与 AI 编程</h1><p class="meta">Coding Agent / Code Intelligence（逐题 Q/A）</p>
+  <div class="qa"><p class="q"><strong>Q1：代码模型和通用聊天模型差异？</strong></p><p><strong>A1：</strong>代码模型更关注语法正确性、仓库上下文一致性和可执行通过率。评估也更偏工程指标，如 pass@k、编译通过率和单测通过率。</p></div>
+  <div class="qa"><p class="q"><strong>Q2：怎么设计“读仓库-改代码-提 PR”的 Agent？</strong></p><p><strong>A2：</strong>先检索相关代码，再规划改动点，生成补丁后执行测试，失败则自动回退并二次修复。必须加沙箱执行和变更审查，防止越权改动。</p></div>
+  <div class="qa"><p class="q"><strong>Q3：如何降低 AI 改代码引入回归？</strong></p><p><strong>A3：</strong>设置三层闸门：静态检查、自动化测试、变更范围限制。高风险目录加人工审核和灰度发布，保证可控上线。</p></div>
+  <div class="qa"><p class="q"><strong>Q4：为什么要语义检索 + 结构检索混合？</strong></p><p><strong>A4：</strong>语义检索擅长找“相似逻辑”，结构检索擅长找“准确符号依赖”。两者结合召回更稳，尤其适合大型代码库。</p></div>
+  <div class="qa"><p class="q"><strong>Q5：代码 Agent 如何评估？</strong></p><p><strong>A5：</strong>离线看任务基准，线上看真实研发效率，如修复时长、评审轮次、一次通过率。评估要按任务类型分桶，不能只看平均值。</p></div>
+  <div class="qa"><p class="q"><strong>Q6：主要安全风险与治理？</strong></p><p><strong>A6：</strong>风险包括提示词注入、敏感信息泄露、恶意依赖。治理要做最小权限、密钥扫描、依赖签名、审计追踪和隔离执行。</p></div>
+</div></body></html>

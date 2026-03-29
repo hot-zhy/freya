@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI 模型部署与推理优化</title>
+<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
+<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+<h1>AI 模型部署与推理优化</h1><p class="meta">Inference / Serving（逐题 Q/A）</p>
+<div class="qa"><p class="q"><strong>Q1：部署前最先定义什么？</strong></p><p><strong>A1：</strong>先定义 SLA：P95/P99 时延、可用性、并发和成本预算。没有 SLA，优化目标会失焦，难以取舍。</p></div>
+<div class="qa"><p class="q"><strong>Q2：常见推理优化手段？</strong></p><p><strong>A2：</strong>量化、KV Cache、连续批处理、算子融合、请求合并与并行策略。优化应结合模型规模和流量形态，不是全量堆技术。</p></div>
+<div class="qa"><p class="q"><strong>Q3：KV Cache 为什么重要？</strong></p><p><strong>A3：</strong>自回归生成会重复使用历史 token，KV Cache 避免重复计算，可显著降低 token 级时延与算力消耗。</p></div>
+<div class="qa"><p class="q"><strong>Q4：高并发下如何稳住服务？</strong></p><p><strong>A4：</strong>需要限流、排队、超时取消、熔断降级和优先级队列。监控 GPU 利用率、显存、队列长度并做自动扩缩容。</p></div>
+<div class="qa"><p class="q"><strong>Q5：推理框架怎么选？</strong></p><p><strong>A5：</strong>看吞吐时延、模型支持、可观测性、调度能力和生态成熟度。常见组合是 vLLM 或 TGI 配 K8s。</p></div>
+<div class="qa"><p class="q"><strong>Q6：如何控制推理成本？</strong></p><p><strong>A6：</strong>按价值分层路由模型、缓存高频回答、离峰批处理和弹性扩容。成本优化必须和效果指标联动看。</p></div>
+</div></body></html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI 分布式训练与大规模系统</title>
+<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
+<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+<h1>AI 分布式训练与大规模系统</h1><p class="meta">Distributed Training（逐题 Q/A）</p>
+<div class="qa"><p class="q"><strong>Q1：数据并行、张量并行、流水线并行怎么选？</strong></p><p><strong>A1：</strong>数据并行最通用；模型放不下单卡时用张量并行；网络深且算子链长时用流水线并行。实战多用混合并行。</p></div>
+<div class="qa"><p class="q"><strong>Q2：分布式训练最大瓶颈？</strong></p><p><strong>A2：</strong>通信开销和负载不均衡。常见优化是梯度压缩、通信与计算重叠、拓扑感知调度以及批大小调优。</p></div>
+<div class="qa"><p class="q"><strong>Q3：ZeRO 的价值？</strong></p><p><strong>A3：</strong>通过分片优化器状态、梯度和参数，把显存压力分散到多卡，从而支持更大模型训练。</p></div>
+<div class="qa"><p class="q"><strong>Q4：节点故障如何应对？</strong></p><p><strong>A4：</strong>依赖 checkpoint、自动重启和弹性恢复机制。大规模训练必须将容错作为默认能力而非应急方案。</p></div>
+<div class="qa"><p class="q"><strong>Q5：如何做训练可观测性？</strong></p><p><strong>A5：</strong>持续监控 loss、吞吐、GPU 利用率、通信时延、NaN 和梯度异常，并把关键快照落盘用于故障复盘。</p></div>
+<div class="qa"><p class="q"><strong>Q6：训练稳定性常见问题？</strong></p><p><strong>A6：</strong>爆梯度、loss 抖动、混精度溢出、脏数据。对应手段是梯度裁剪、warmup、数值稳定和数据清洗。</p></div>
+</div></body></html>

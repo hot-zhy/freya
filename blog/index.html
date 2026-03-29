@@ -185,6 +185,7 @@
         <a href="../" class="logo">PORTFOLIO</a>
         <div class="nav-links">
             <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换主题">🌙 暗色</button>
+            <a href="./ai/index.html">AI 分页题库</a>
             <a href="../#about">关于</a>
             <a href="../#experience">经历</a>
             <a href="../#skills">技能</a>
@@ -375,6 +376,20 @@
                 <a href="#" class="toc-item" data-id="rag-agent-llm-real-sources">RAG/Agent/LLM：真实面经来源</a>
             </div>
 
+            <div class="toc-category" data-tag="ai-bank">
+                <div class="sidebar-title">AI 全题库（分专题）</div>
+                <a href="#" class="toc-item" data-id="ai-bank-openclaw">OpenClaw 体系化题库</a>
+                <a href="#" class="toc-item" data-id="ai-bank-coding">AI 代码智能与 AI 编程</a>
+                <a href="#" class="toc-item" data-id="ai-bank-rag">AI 知识工程与 RAG</a>
+                <a href="#" class="toc-item" data-id="ai-bank-agent">AI Agent 理论与框架</a>
+                <a href="#" class="toc-item" data-id="ai-bank-prompt">AI Prompt 工程与应用</a>
+                <a href="#" class="toc-item" data-id="ai-bank-multimodal">AI 多模态与 AIGC</a>
+                <a href="#" class="toc-item" data-id="ai-bank-llm">AI 大模型</a>
+                <a href="#" class="toc-item" data-id="ai-bank-serving">AI 模型部署与推理优化</a>
+                <a href="#" class="toc-item" data-id="ai-bank-distributed">AI 分布式训练与大规模系统</a>
+                <a href="#" class="toc-item" data-id="ai-bank-rs">AI 推荐与搜索算法</a>
+            </div>
+
             <div class="toc-category" data-tag="algorithm">
                 <div class="sidebar-title">算法</div>
                 <a href="#" class="toc-item" data-id="n-diff-k">构造 n 个数字差值为 k</a>
@@ -418,6 +433,10 @@
                 <a href="#" class="toc-item" data-id="big-little-endian">大端与小端</a>
                 <a href="#" class="toc-item" data-id="float-represent">浮点数表示</a>
                 <a href="#" class="toc-item" data-id="compile-interpret">编译与解释</a>
+                <a href="#" class="toc-item" data-id="tencent-nowcoder-cpp-os-net">腾讯面经 QA（C++/OS/网络）</a>
+                <a href="#" class="toc-item" data-id="tencent-nowcoder-bigdata">腾讯面经 QA（Spark/大数据）</a>
+                <a href="#" class="toc-item" data-id="tencent-nowcoder-server">腾讯面经 QA（服务端/并发）</a>
+                <a href="#" class="toc-item" data-id="tencent-nowcoder-arch">腾讯面经 QA（架构/主管面）</a>
             </div>
 
         </aside>
@@ -3663,6 +3682,176 @@ chunks = splitter.split_text(document_text)</code></pre>
                 <p><strong>实战建议：</strong>每篇面经至少提炼 3 个“可迁移问法”，并写上你的项目映射。面试时不要背帖子原文，要讲你自己的指标、决策和复盘。</p>
             </article>
 
+            <article class="article-content" id="ai-bank-openclaw">
+                <h1>OpenClaw 体系化题库</h1>
+                <div class="meta">AI 全题库 · 体系化总览（原创答法版）</div>
+                <p><strong>Q1：怎么用体系化方式准备 AI 面试，而不是“背一堆散点”？</strong></p>
+                <p><strong>A1：</strong>先按“模型层、数据层、工程层、业务层、评测层”拆分，再在每层建立 20% 的核心问题。比如模型层先打透 Transformer、训练目标、对齐；工程层打透推理优化、服务稳定性、成本。这样你遇到跨域问题也能定位到某一层回答，不会慌。</p>
+                <p><strong>Q2：如何构建个人 AI 面试知识图谱？</strong></p>
+                <p><strong>A2：</strong>以“概念-原理-实现-指标-案例”五节点建图。每个节点至少准备 1 个你做过的项目证据。面试时按图谱从抽象走到具体，能显著减少“只会概念不懂落地”的风险。</p>
+                <p><strong>Q3：AI 岗位常见能力短板是什么？</strong></p>
+                <p><strong>A3：</strong>最常见是只会调 API、不会看数据闭环；只会模型名词、不会算成本和 SLA；只会离线效果、不会线上监控。补齐方式是“每个项目都补三张表”：效果表、性能表、成本表。</p>
+                <p><strong>Q4：如何把项目说得“像你真的做过”？</strong></p>
+                <p><strong>A4：</strong>用固定模板：背景约束、你的职责、关键决策、失败点、量化结果。尤其要讲你放弃了什么方案以及为什么放弃，这个比“我用了 xx 框架”更有说服力。</p>
+                <p><strong>Q5：面试时被追问不会的问题怎么办？</strong></p>
+                <p><strong>A5：</strong>不要硬编。先明确边界“这块我没在线上做过”，再给你理解的原理和可验证路径。能体现工程诚实和推理能力，通常比胡答更加分。</p>
+                <p><strong>Q6：如何安排 2 周 AI 冲刺？</strong></p>
+                <p><strong>A6：</strong>第 1 周补基础（LLM/RAG/Agent/推理优化）；第 2 周做口语化输出训练（每天 20 题）。每晚做一次“2 分钟白板复述”，把答案从文字变成口语。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-coding">
+                <h1>AI 代码智能与 AI 编程</h1>
+                <div class="meta">AI 全题库 · Coding Agent / Code Intelligence</div>
+                <p><strong>Q1：代码补全模型和通用聊天模型有什么核心差异？</strong></p>
+                <p><strong>A1：</strong>代码模型更强调语法约束、长上下文引用、仓库级一致性和可执行正确率。评估指标除困惑度外，更看 pass@k、编译通过率、单测通过率和修复成功率。</p>
+                <p><strong>Q2：如何设计一个“读仓库-改代码-提 PR”的编码 Agent？</strong></p>
+                <p><strong>A2：</strong>典型链路是检索代码上下文、规划改动点、生成补丁、运行测试、失败回退再修复。关键是加“执行沙箱 + 回滚机制 + 变更审查”，保证 Agent 可控而不是乱改。</p>
+                <p><strong>Q3：如何降低 AI 改代码引入回归的风险？</strong></p>
+                <p><strong>A3：</strong>至少做三层防线：静态检查（lint/type）、单测/集成测试、变更范围约束（只改白名单目录）。对于高风险模块再加人工审批和灰度发布。</p>
+                <p><strong>Q4：代码检索为什么要做语义检索 + 结构检索混合？</strong></p>
+                <p><strong>A4：</strong>纯语义检索擅长“意思相近”，但容易漏符号级依赖；结构检索（符号表、调用图）擅长精确定位。混合后召回更稳，尤其在大仓库中效果明显。</p>
+                <p><strong>Q5：如何评估代码 Agent 的效果？</strong></p>
+                <p><strong>A5：</strong>离线看 benchmark（HumanEval、RepoEval、修复集），线上看开发效率指标（首轮通过率、review 修改轮次、平均修复时长）。要分任务类型统计，不要只报一个平均值。</p>
+                <p><strong>Q6：代码 Agent 的安全风险有哪些？</strong></p>
+                <p><strong>A6：</strong>核心风险是越权读写、提示词注入、敏感信息泄漏、恶意依赖注入。治理手段是最小权限、依赖签名、审计日志、敏感词/密钥扫描和隔离执行。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-rag">
+                <h1>AI 知识工程与 RAG</h1>
+                <div class="meta">AI 全题库 · Retrieval Augmented Generation</div>
+                <p><strong>Q1：RAG 的核心价值是什么？</strong></p>
+                <p><strong>A1：</strong>用外部知识降低幻觉、提升时效性和可解释性。模型不需要记住所有事实，而是“先检索，再生成”，并把答案绑定到可追溯证据。</p>
+                <p><strong>Q2：文档分块（chunking）怎么做？</strong></p>
+                <p><strong>A2：</strong>常见是按语义段落切分并保留 overlap。块太大召回不准，太小上下文不足。实践里要按文档类型（FAQ、技术文档、制度文档）配置不同切分策略。</p>
+                <p><strong>Q3：检索链路如何设计？</strong></p>
+                <p><strong>A3：</strong>常用“两阶段”：向量召回做高召回，重排做高精度。再加 metadata 过滤（时间、权限、业务域）减少无关文档。必要时做 query rewrite 和 HyDE 提升召回质量。</p>
+                <p><strong>Q4：RAG 常见失败模式有哪些？</strong></p>
+                <p><strong>A4：</strong>主要是召回不到、召回不准、生成偏题、证据冲突。对应治理是补索引、调重排、加入引用约束、冲突证据优先级策略。</p>
+                <p><strong>Q5：怎么做 RAG 评测？</strong></p>
+                <p><strong>A5：</strong>拆成检索评测和生成评测。检索看 Recall@k / MRR；生成看正确性、完整性、可引用性。线上再看用户点击证据率、追问率和人工纠错率。</p>
+                <p><strong>Q6：RAG 和微调怎么选？</strong></p>
+                <p><strong>A6：</strong>知识更新快、需要可追溯时优先 RAG；风格与任务映射稳定、且数据闭环成熟时考虑微调。多数业务最终是“RAG + 轻量微调”混合方案。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-agent">
+                <h1>AI Agent 理论与框架</h1>
+                <div class="meta">AI 全题库 · ReAct / Planning / Tool Use</div>
+                <p><strong>Q1：Agent 和普通 ChatBot 的本质区别？</strong></p>
+                <p><strong>A1：</strong>Agent 有目标驱动、可调用工具、可多步规划和自我纠错闭环；ChatBot 通常是单轮对话生成。核心差异是“是否有行动能力与执行反馈”。</p>
+                <p><strong>Q2：ReAct 为什么有效？</strong></p>
+                <p><strong>A2：</strong>ReAct 把“思考”和“行动”交替进行：先推理要做什么，再调用工具拿事实，再基于新事实继续推理。这样能显著降低闭门造车式幻觉。</p>
+                <p><strong>Q3：什么时候用 Plan-and-Execute？</strong></p>
+                <p><strong>A3：</strong>当任务长、依赖多、步骤可分解时用。先产出高层计划，再逐步执行和重规划，能避免一步步盲走导致成本爆炸。</p>
+                <p><strong>Q4：Agent 如何做记忆？</strong></p>
+                <p><strong>A4：</strong>短期记忆用会话窗口，长期记忆用结构化存储（profile、事件、偏好）。记忆要有写入门槛和过期策略，否则噪声会污染后续决策。</p>
+                <p><strong>Q5：多 Agent 协作常见架构？</strong></p>
+                <p><strong>A5：</strong>常见是“协调者 + 专家子代理”模式。协调者负责任务拆解和结果汇总，专家代理专注单域。要避免无限对话，可设置轮次上限和仲裁策略。</p>
+                <p><strong>Q6：Agent 如何做可靠性治理？</strong></p>
+                <p><strong>A6：</strong>引入工具调用白名单、参数校验、重试与超时、补偿事务、审计日志。对高风险动作必须人工确认（Human-in-the-loop）。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-prompt">
+                <h1>AI Prompt 工程与应用</h1>
+                <div class="meta">AI 全题库 · Prompt Design</div>
+                <p><strong>Q1：高质量 Prompt 的结构是什么？</strong></p>
+                <p><strong>A1：</strong>任务目标、上下文约束、输出格式、评价标准、失败兜底。不要只写“帮我总结”，而要写“按三段式、每段不超过 100 字、给证据引用”。</p>
+                <p><strong>Q2：Few-shot 什么时候有效？</strong></p>
+                <p><strong>A2：</strong>任务边界明确、样例覆盖代表性场景时最有效。样例太少会偏、太多会挤占上下文，实践上通常 3-8 个高质量样例较稳。</p>
+                <p><strong>Q3：CoT 是否总能提升效果？</strong></p>
+                <p><strong>A3：</strong>不是。复杂推理题通常有帮助，但在事实问答中可能引入冗余推理和幻觉。可根据任务动态启用，或用“先给答案再给关键依据”的压缩推理。</p>
+                <p><strong>Q4：如何防 Prompt 注入？</strong></p>
+                <p><strong>A4：</strong>核心是分离“系统指令”和“用户数据”，并对外部文档做安全过滤。高风险动作不让模型直接执行，必须经过策略层校验。</p>
+                <p><strong>Q5：如何把 Prompt 工程产品化？</strong></p>
+                <p><strong>A5：</strong>要做版本管理、A/B 实验、回滚机制和质量监控。Prompt 不该散落在代码里，应该有统一模板仓库和发布流程。</p>
+                <p><strong>Q6：Prompt 优化如何量化收益？</strong></p>
+                <p><strong>A6：</strong>用任务成功率、人工修改率、平均响应长度、token 成本、用户满意度联合评估。只看“感觉更好”不可复用。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-multimodal">
+                <h1>AI 多模态与 AIGC</h1>
+                <div class="meta">AI 全题库 · Vision/Audio/Video/AIGC</div>
+                <p><strong>Q1：多模态模型为什么难？</strong></p>
+                <p><strong>A1：</strong>因为不同模态的信息密度和时间结构完全不同。文本离散、图像连续、音频时序强。难点是跨模态对齐和统一表示空间。</p>
+                <p><strong>Q2：图文模型的训练核心是什么？</strong></p>
+                <p><strong>A2：</strong>常见做法是对比学习（拉近正样本图文向量、拉远负样本）。再在此基础上做指令微调，提升多轮图文问答能力。</p>
+                <p><strong>Q3：AIGC 生成质量怎么评估？</strong></p>
+                <p><strong>A3：</strong>图像可用 CLIPScore、FID、人评一致性；文本看真实性、可读性、可控性。最终要结合业务指标，如转化率、留存、投诉率。</p>
+                <p><strong>Q4：多模态系统常见工程瓶颈？</strong></p>
+                <p><strong>A4：</strong>主要是吞吐、延迟和显存。视频和高分辨率图像会显著增加推理成本。常见优化是分辨率分级、缓存特征、异步流水线。</p>
+                <p><strong>Q5：AIGC 的版权与安全问题怎么处理？</strong></p>
+                <p><strong>A5：</strong>要做训练数据合规审查、输出审核和水印追踪。对敏感领域（肖像、品牌、医疗）必须增加策略拦截和人工复核。</p>
+                <p><strong>Q6：文本转图像中的 prompt 工程重点？</strong></p>
+                <p><strong>A6：</strong>结构化描述主体、风格、构图、光照和禁用项。对商业场景建议固定模板，减少结果抖动，提升可控性与复现性。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-llm">
+                <h1>AI 大模型</h1>
+                <div class="meta">AI 全题库 · LLM Fundamentals</div>
+                <p><strong>Q1：Transformer 为什么能成为大模型基础架构？</strong></p>
+                <p><strong>A1：</strong>自注意力机制可以并行计算并建模长距离依赖，训练效率和表达能力优于传统 RNN。再叠加大规模数据和算力，形成可扩展路线。</p>
+                <p><strong>Q2：预训练、指令微调、对齐的关系？</strong></p>
+                <p><strong>A2：</strong>预训练学语言世界知识，指令微调学“按人类任务输出”，对齐（RLHF/DPO）学“偏好与安全边界”。三者缺一会导致可用性明显下降。</p>
+                <p><strong>Q3：LoRA/QLoRA 的核心思想？</strong></p>
+                <p><strong>A3：</strong>冻结大部分原模型参数，只训练低秩增量矩阵，显著降低微调显存和成本。QLoRA 通过量化进一步压缩资源占用。</p>
+                <p><strong>Q4：模型幻觉怎么缓解？</strong></p>
+                <p><strong>A4：</strong>用检索增强、工具校验、结构化输出约束、低温采样、拒答策略。关键是“承认不知道”的机制，而不是强行编答案。</p>
+                <p><strong>Q5：上下文窗口变大一定更好吗？</strong></p>
+                <p><strong>A5：</strong>不一定。窗口大带来成本和注意力稀释问题。工程上要结合检索、摘要和对话记忆压缩，不是无脑堆上下文。</p>
+                <p><strong>Q6：怎么评估一个 LLM 是否适合业务上线？</strong></p>
+                <p><strong>A6：</strong>至少看四类：任务效果、时延吞吐、稳定性、安全合规。并用线上灰度验证真实用户场景，不只看公开 benchmark。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-serving">
+                <h1>AI 模型部署与推理优化</h1>
+                <div class="meta">AI 全题库 · Inference / Serving</div>
+                <p><strong>Q1：推理服务设计最先看什么？</strong></p>
+                <p><strong>A1：</strong>先定 SLA（P95/P99、可用性、并发量）和成本目标。没有 SLA 的优化容易跑偏，最后既贵又不稳。</p>
+                <p><strong>Q2：常见推理优化手段？</strong></p>
+                <p><strong>A2：</strong>量化（INT8/4bit）、KV Cache、连续批处理、算子融合、张量并行、请求合并。优化要结合模型大小和负载形态。</p>
+                <p><strong>Q3：为什么 KV Cache 重要？</strong></p>
+                <p><strong>A3：</strong>自回归生成每步都要复用历史上下文，KV Cache 可避免重复计算，显著降低 token 级时延和算力开销。</p>
+                <p><strong>Q4：如何做高并发下的稳定性保障？</strong></p>
+                <p><strong>A4：</strong>要做限流、队列优先级、超时取消、熔断和降级（如切小模型/缩短上下文）。还要监控 GPU 利用率、显存碎片和请求队列长度。</p>
+                <p><strong>Q5：如何选推理框架？</strong></p>
+                <p><strong>A5：</strong>看生态支持、吞吐时延、可观测性、集群调度能力。常见组合是 vLLM/TGI + K8s + Prometheus/Grafana。</p>
+                <p><strong>Q6：模型部署如何控制成本？</strong></p>
+                <p><strong>A6：</strong>通过流量分层（高价值请求用大模型）、缓存复用、离峰批处理、动态扩缩容。成本优化要和效果指标同时看，不能只追求便宜。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-distributed">
+                <h1>AI 分布式训练与大规模系统</h1>
+                <div class="meta">AI 全题库 · Distributed Training</div>
+                <p><strong>Q1：数据并行、张量并行、流水线并行怎么选？</strong></p>
+                <p><strong>A1：</strong>数据并行实现简单、通用性强；模型太大单卡放不下时用张量并行；层数深且训练链长时用流水线并行。实际通常是混合并行。</p>
+                <p><strong>Q2：分布式训练最大瓶颈是什么？</strong></p>
+                <p><strong>A2：</strong>通信开销（AllReduce）和负载不均衡。优化方向是梯度压缩、重叠通信与计算、拓扑感知调度和更合理的 batch/并行划分。</p>
+                <p><strong>Q3：ZeRO 的价值是什么？</strong></p>
+                <p><strong>A3：</strong>ZeRO 通过分片优化器状态、梯度和参数，把显存压力分散到多卡，显著提升可训练模型规模。</p>
+                <p><strong>Q4：如何应对训练中的节点故障？</strong></p>
+                <p><strong>A4：</strong>要有周期性 checkpoint、自动重启、弹性训练和失败任务重调度。大规模训练一定要把“恢复能力”当作第一公民。</p>
+                <p><strong>Q5：大模型训练如何做可观测性？</strong></p>
+                <p><strong>A5：</strong>监控 loss、学习率、吞吐、GPU 利用率、通信时延、NaN 比例。对异常波动要自动告警并保存上下文快照便于复盘。</p>
+                <p><strong>Q6：训练稳定性常见问题？</strong></p>
+                <p><strong>A6：</strong>爆梯度、loss 振荡、混精度溢出、数据脏样本。常见手段是梯度裁剪、warmup、权重衰减、样本清洗和数值稳定技巧。</p>
+            </article>
+
+            <article class="article-content" id="ai-bank-rs">
+                <h1>AI 推荐与搜索算法</h1>
+                <div class="meta">AI 全题库 · RecSys / Search</div>
+                <p><strong>Q1：推荐系统经典架构是什么？</strong></p>
+                <p><strong>A1：</strong>通常是召回、粗排、精排、重排四层。召回追求高覆盖，排序追求高精度，重排处理多目标约束（多样性、商业目标、体验）。</p>
+                <p><strong>Q2：搜索排序和推荐排序的核心差异？</strong></p>
+                <p><strong>A2：</strong>搜索是“有明确 query 的意图匹配”，推荐是“无 query 的兴趣预测”。因此搜索更强调相关性和时效性，推荐更强调长期偏好与探索。</p>
+                <p><strong>Q3：如何解决冷启动？</strong></p>
+                <p><strong>A3：</strong>用户冷启动用人口属性 + 热门内容 + 探索策略；物品冷启动用内容特征 embedding 和小流量探索。关键是尽快积累首批行为信号。</p>
+                <p><strong>Q4：推荐系统如何做多目标优化？</strong></p>
+                <p><strong>A4：</strong>将点击、时长、转化、留存等目标做加权或约束优化，并按场景动态调权。线下看 AUC/GAUC，线上看 CTR、CVR、停留时长和留存综合提升。</p>
+                <p><strong>Q5：为什么要做重排？</strong></p>
+                <p><strong>A5：</strong>纯分数排序会出现内容同质化。重排可加入去重、多样性、新鲜度、公平性和业务规则，提升整体体验。</p>
+                <p><strong>Q6：推荐/搜索系统常见线上问题？</strong></p>
+                <p><strong>A6：</strong>特征延迟、索引不同步、反馈回路偏置、实验污染。治理要靠实时特征监控、回滚机制、实验隔离和反作弊。</p>
+            </article>
+
             <article class="article-content" id="rag-agent-llm-real-sources">
                 <h1>RAG/Agent/LLM：真实面经来源</h1>
                 <div class="meta">真实来源索引 · RAG / Agent / LLM</div>
@@ -3678,6 +3867,90 @@ chunks = splitter.split_text(document_text)</code></pre>
                     <li><a href="https://github.com/datawhalechina/hello-agents/blob/main/Extra-Chapter/Extra01-%E9%9D%A2%E8%AF%95%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93.md" target="_blank" rel="noopener noreferrer">Hello-Agents 面试题总结（GitHub 原文）</a></li>
                 </ul>
                 <p><strong>面试提醒：</strong>真实面经帖子常带个人背景与具体项目语境，建议不要死背原帖。最佳方式是把“真实题干”抽出来，再绑定你的项目经历回答（例如你自己的 RAG 链路、你自己的故障复盘）。</p>
+            </article>
+
+            <article class="article-content" id="tencent-nowcoder-cpp-os-net">
+                <h1>腾讯面经 QA（C++ / OS / 网络）</h1>
+                <div class="meta">基于你提供的牛客原题重编 · 详细可复述版</div>
+                <p><strong>Q1：虚函数原理是什么？</strong><br><strong>A：</strong>每个含虚函数的类通常会有一张虚函数表（vtable），对象里有一个隐藏指针（vptr）指向该表。运行时通过 vptr 找到实际函数地址，实现“基类指针调子类实现”的动态绑定。开销主要是一次间接寻址和对象多一个指针。</p>
+                <p><strong>Q2：const 如何保证变量不被修改？</strong><br><strong>A：</strong>本质是编译期语义约束：编译器禁止通过该名字进行写操作。`const` 不等于“物理只读”，可被 `const_cast` 或底层别名破坏；但在规范代码中，`const` 是 API 契约，能明确只读语义并减少副作用。</p>
+                <p><strong>Q3：map 和 unordered_map 区别？</strong><br><strong>A：</strong>`map` 是红黑树，有序，查改增删 O(log n)；`unordered_map` 是哈希表，无序，平均 O(1)，最坏 O(n)。需要有序遍历、范围查询、稳定复杂度选 `map`；追求吞吐一般选 `unordered_map`。</p>
+                <p><strong>Q4：map 的 insert() 和下标 [] 区别？</strong><br><strong>A：</strong>`insert` 在 key 已存在时不会覆盖，可根据返回值判断是否插入成功；`operator[]` 若 key 不存在会先默认构造 value 再返回引用，常导致“无意创建元素”。只想查存在性优先 `find/contains`，避免误插入。</p>
+                <p><strong>Q5：怎么查看某个进程的 CPU 利用率？</strong><br><strong>A：</strong>命令行可用 `top -p PID`、`ps -p PID -o %cpu,cmd`、`pidstat -p PID 1`。排障时建议看“瞬时 + 一段时间趋势”，并结合线程维度（`top -H -p PID`）定位热点线程。</p>
+                <p><strong>Q6：malloc 的作用？申请的是物理内存还是虚拟内存？</strong><br><strong>A：</strong>`malloc` 向进程堆申请虚拟地址空间，通常先得到虚拟页映射权限，不一定立即分配物理页。真正触发物理页分配常在首次访问（缺页中断）时发生，这是现代 OS 的按需分页机制。</p>
+                <p><strong>Q7：什么是僵尸进程？</strong><br><strong>A：</strong>子进程已退出，但父进程未 `wait/waitpid` 回收，导致其进程表项残留（状态 Z）。少量可接受，堆积会耗尽 PID/进程表。处理是父进程及时回收，或设置 `SIGCHLD` 回收策略。</p>
+                <p><strong>Q8：堆和栈区别？</strong><br><strong>A：</strong>栈由编译器/运行时自动管理，分配释放快，空间较小，生命周期随作用域；堆由程序申请释放，生命周期灵活，但易碎片和泄漏。大对象、动态生命周期数据放堆；短生命周期局部变量放栈。</p>
+                <p><strong>Q9：select 和 epoll 区别？</strong><br><strong>A：</strong>`select` 每次都要把 fd 集合从用户态拷到内核态并线性扫描，fd 上限受限；`epoll` 事件注册一次，内核就绪队列返回活跃 fd，适合高并发连接，性能更稳定。</p>
+                <p><strong>Q10：epoll 的 ET 和 LT？</strong><br><strong>A：</strong>LT（水平触发）只要缓冲区还有数据就会持续通知，易用；ET（边沿触发）只在状态变化时通知，要求一次读到 `EAGAIN`，但事件次数更少、效率更高。工程上 ET 必须配合非阻塞 IO。</p>
+                <p><strong>Q11：TCP 和 UDP 区别？</strong><br><strong>A：</strong>TCP 面向连接、可靠、有序、字节流；UDP 无连接、尽力而为、报文边界明确、开销小。实时性优先常用 UDP（语音/直播/游戏），可靠性优先常用 TCP（HTTP/数据库连接）。</p>
+                <p><strong>Q12：Linux 如何按一列分组统计另一列（类似 SQL group by + sum）？</strong><br><strong>A：</strong>可用 awk：<code>awk '{sum[$1]+=$2} END {for (k in sum) print k, sum[k]}' file</code>。若要排序输出：<code>... | sort -k1,1</code>。`$1` 和 `$2` 可替换为目标列。</p>
+                <p><strong>Q13：TCP 数据没收到，如何判断应用层问题还是底层问题？</strong><br><strong>A：</strong>先抓包（`tcpdump`）看三层：1）是否发出（应用 -> 内核）；2）是否到达对端网卡；3）是否被对端 ACK。若包已到对端且 ACK 正常但应用无消费，多半是应用层协议/线程阻塞；若中间丢包、重传、RST/窗口 0，则偏网络或内核缓冲问题。</p>
+                <p><strong>Q14：MySQL 两个常见引擎和区别？</strong><br><strong>A：</strong>面试一般说 InnoDB 与 MyISAM：InnoDB 支持事务、行锁、崩溃恢复、外键，适合 OLTP；MyISAM 不支持事务，表锁，读多写少可快但可靠性弱。现代线上主流是 InnoDB。</p>
+                <p><strong>Q15：动态链接库和静态链接库区别？</strong><br><strong>A：</strong>静态库在链接期打包进可执行文件，部署独立但体积大；动态库运行期加载，节省体积且可共享升级，但存在版本兼容和依赖管理问题。</p>
+                <p><strong>Q16：如何编程判断字节序？x86 是大端还是小端？</strong><br><strong>A：</strong>写入 `0x0102`，读取首字节若为 `0x02` 则小端。x86/x64 是小端。网络传输默认网络序（大端），因此 `htons/htonl` 很关键。</p>
+                <p><strong>Q17：网络序是什么？</strong><br><strong>A：</strong>网络序是协议统一使用的大端字节序，避免不同主机端序不一致导致解析错误。主机序和网络序转换常用 `htonl/htons` 与 `ntohl/ntohs`。</p>
+                <p><strong>Q18：.h 如何避免重复定义？</strong><br><strong>A：</strong>使用头文件保护宏或 `#pragma once`。例如 `#ifndef XXX_H ... #define XXX_H ... #endif`，防止同一翻译单元多次包含导致重定义。</p>
+                <p><strong>扩展高频：</strong>析构函数一般不应抛异常；对关闭 socket 写可能触发 `SIGPIPE` 或返回 `EPIPE`；`TIME_WAIT` 是为了可靠终止和防止旧报文污染新连接。</p>
+                <p><strong>来源：</strong>作者：超越护体，<a href="https://www.nowcoder.com/discuss/353156266354745344?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
+            </article>
+
+            <article class="article-content" id="tencent-nowcoder-bigdata">
+                <h1>腾讯面经 QA（Spark / 大数据）</h1>
+                <div class="meta">腾讯云后台方向高频题 · 作业参数到架构设计</div>
+                <p><strong>Q1：Spark 提交作业常用参数有哪些？</strong><br><strong>A：</strong>重点说清 `--master`、`--deploy-mode`、`--num-executors`、`--executor-cores`、`--executor-memory`、`--driver-memory`、`--conf spark.sql.shuffle.partitions=...`。面试官通常追问“你怎么定这些值”，必须给依据：数据规模、并行度、shuffle 比例、集群总资源和 SLA。</p>
+                <p><strong>Q2：如何估算 executor 数量和内存？</strong><br><strong>A：</strong>先看集群总核数与可用内存，留出系统/AM/缓冲开销，再做“每 executor 3~5 核、避免过大 JVM”原则切分。内存估算按输入规模、算子宽依赖（shuffle）、缓存比例、序列化方式来定，先给基线再压测迭代。</p>
+                <p><strong>Q3：1TB Spark 作业大致怎么配？</strong><br><strong>A：</strong>没有唯一值，但可给可落地思路：以目标时延反推并行度，设置合理分区（常以数据块和算子复杂度估算，避免分区过少/过多），优先减少 shuffle 与数据倾斜。若内存紧张可用 Kryo 序列化、`persist` 级别调整、广播小表、预聚合替代 `groupByKey`。</p>
+                <p><strong>Q4：YARN 资源管理机制？</strong><br><strong>A：</strong>`ResourceManager` 全局调度，`NodeManager` 管理节点资源，`ApplicationMaster` 负责单作业资源协商与任务协调，`Container` 是资源分配单位。调优核心是队列容量、抢占策略、资源隔离和失败重试配置。</p>
+                <p><strong>Q5：你对 ZooKeeper / Kafka 了解？</strong><br><strong>A：</strong>ZooKeeper 侧重协调：选主、配置、分布式锁；Kafka 侧重高吞吐日志流。答题建议补“生产保障”：分区规划、ISR、副本同步、消息堆积监控、消费幂等。</p>
+                <p><strong>Q6：Spark 和 Hive 的场景区别？</strong><br><strong>A：</strong>Hive 适合离线批处理和数仓 SQL 生产；Spark 更适合内存计算、复杂 DAG、多阶段迭代。实际常是 Hive 做离线仓，Spark 做高性能 ETL/分析任务。</p>
+                <p><strong>Q7：Spark Streaming 怎么讲？</strong><br><strong>A：</strong>核心是微批模型：以批次间隔将流数据切成 RDD/DStream 处理。要区分无状态转换与有状态转换，并强调状态管理、checkpoint、窗口和容错。</p>
+                <p><strong>Q8：了解 Flink/Storm 吗，如何回答不熟题？</strong><br><strong>A：</strong>不熟就明确边界，再讲共同点与差异：Flink 真流、事件时间和状态管理强；Storm 轻量但生态弱于 Flink。面试忌“硬编细节”，可说“我在生产主要用 Spark，Flink 做过概念验证”。</p>
+                <p><strong>Q9：给 1PB 日志，5 分钟出结果，怎么设计架构？</strong><br><strong>A：</strong>典型是“冷热分层 + 流批结合”：采集（Kafka/Flume）-> 实时层（Flink/Spark Structured Streaming）-> 明细湖仓（HDFS/对象存储 + Iceberg/Hudi）-> OLAP 服务层（ClickHouse/ES）-> 缓存层（Redis）。为满足 5 分钟，核心结果走预聚合和近实时宽表，历史明细异步补齐。</p>
+                <p><strong>Q10：数据采集为什么常用 Flume？ES 要怎么补答？</strong><br><strong>A：</strong>Flume 擅长日志采集与可靠投递，和 Hadoop 生态契合。ES 可作为检索和近实时分析引擎，适合日志检索、倒排查询和多维聚合，但要注意写放大和存储成本。</p>
+                <p><strong>扩展追问：</strong>为什么 `groupByKey` 往往不如 `reduceByKey`？<br><strong>答：</strong>`groupByKey` 会把同 key 全量值搬运到下游，shuffle 压力和内存风险大；`reduceByKey` 先 map 端预聚合，网络和内存开销更小。</p>
+                <p><strong>来源：</strong>作者：提灯寻梦在南国，<a href="https://www.nowcoder.com/discuss/353155779471548416?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
+            </article>
+
+            <article class="article-content" id="tencent-nowcoder-server">
+                <h1>腾讯面经 QA（服务端 / 并发 / 网络编程）</h1>
+                <div class="meta">Reactor、守护进程、协程、TCP 细节、手撕算法</div>
+                <p><strong>Q1：Reactor 模式是什么？你实现的服务器架构怎么说？</strong><br><strong>A：</strong>Reactor 是事件分发 + 非阻塞 IO 模式：主线程监听事件并分发，工作线程处理业务。回答时给清楚三层：acceptor、IO reactor、业务线程池，并补“连接管理、超时剔除、背压策略”。</p>
+                <p><strong>Q2：read 系统调用常见错误有哪些？</strong><br><strong>A：</strong>`EINTR`（被信号中断可重试）、`EAGAIN/EWOULDBLOCK`（非阻塞暂时无数据）、`ECONNRESET`（对端复位）。高分点是“按错误分类处理而不是统一重试”。</p>
+                <p><strong>Q3：对关闭 socket 写会发生什么？</strong><br><strong>A：</strong>常见返回 `EPIPE`，并可能触发 `SIGPIPE` 导致进程退出。工程实践通常忽略 `SIGPIPE` 或用 `MSG_NOSIGNAL`，并在写前检查连接状态与错误码。</p>
+                <p><strong>Q4：守护进程是什么？如何实现？</strong><br><strong>A：</strong>守护进程是脱离终端、后台长期运行的系统服务。典型步骤：`fork` 父退出、`setsid` 创建新会话、可二次 `fork` 防止重新占终端、切换工作目录、重设 `umask`、重定向标准 IO。</p>
+                <p><strong>Q5：gevent 是什么，协程何时切换？</strong><br><strong>A：</strong>gevent 是 Python 协程库，基于 greenlet + 事件循环，在 IO 点进行协作式切换。切换通常发生在可让出控制权的阻塞操作（网络 IO、sleep）处，而非任意 CPU 计算点。</p>
+                <p><strong>Q6：如何实现协程自动切换？</strong><br><strong>A：</strong>核心是“非阻塞 IO + 事件多路复用 + 调度器”。把 IO 注册到 epoll，事件就绪后唤醒对应协程，未就绪协程挂起。这样单线程可高并发处理大量连接。</p>
+                <p><strong>Q7：C 的运行时多态怎么实现？</strong><br><strong>A：</strong>C 没有语言级虚函数，通常通过“函数指针表 + 上下文结构体”模拟，即手写 vtable。面试答“对象首字段放接口函数表”会很加分。</p>
+                <p><strong>Q8：析构函数能抛异常吗？</strong><br><strong>A：</strong>不建议。若栈展开期间析构再抛异常会触发 `std::terminate`。工程上析构应保证 `noexcept`，错误通过日志或显式 `close()` 返回值处理。</p>
+                <p><strong>Q9：Go 协程会固定在一个 CPU 吗？</strong><br><strong>A：</strong>不会。Go 调度器是 G-M-P 模型，goroutine 可在多个 OS 线程和 CPU 核之间调度。`GOMAXPROCS` 控制可并行执行的线程数上限。</p>
+                <p><strong>Q10：TCP 流量控制怎么做？接收窗口为 0 怎么恢复？</strong><br><strong>A：</strong>发送方依据接收窗口（rwnd）控制发送量。窗口为 0 时发送方进入 persist 状态，定期发窗口探测包（zero-window probe）；接收方缓冲恢复后通过 ACK 宣告新窗口。</p>
+                <p><strong>Q11：TIME_WAIT 为什么存在？</strong><br><strong>A：</strong>保证最后 ACK 可重传，且等待网络中的旧报文消散，防止污染后续同四元组连接。持续 2MSL 是协议安全边界。</p>
+                <p><strong>Q12：快排最坏复杂度？怎么优化？</strong><br><strong>A：</strong>最坏 O(n^2)。优化策略：随机 pivot、三数取中、三路快排处理重复值、小区间切换插排，必要时退化到堆排（introsort）。</p>
+                <p><strong>Q13：不用临时变量交换两个整数怎么做？</strong><br><strong>A：</strong>可用异或交换或加减交换，但工程不推荐，易读性差且有溢出/别名风险。面试可先写出方法，再说明生产代码更建议 `std::swap`。</p>
+                <p><strong>Q14：O(n) 时间、一个变量实现洗牌怎么理解？</strong><br><strong>A：</strong>标准解是 Fisher-Yates 洗牌，从后往前把当前位置与 `[0,i]` 随机位交换，时间 O(n)、原地 O(1) 额外空间（除随机索引变量）。</p>
+                <p><strong>来源：</strong>作者：特立独行MVP，<a href="https://www.nowcoder.com/discuss/353154871211794432" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
+            </article>
+
+            <article class="article-content" id="tencent-nowcoder-arch">
+                <h1>腾讯面经 QA（架构 / 二三面 / 系统设计）</h1>
+                <div class="meta">CRM、网关、Redis、K8s、WebSocket、数据库与项目深挖</div>
+                <p><strong>Q1：项目架构瓶颈怎么答？</strong><br><strong>A：</strong>按“吞吐、时延、稳定性、成本”四维拆解，再指出最主要瓶颈（例如 DB 写放大、网关单点、缓存击穿）。高分关键是给“现状指标 + 改造动作 + 改造后指标”。</p>
+                <p><strong>Q2：为什么 API Gateway 要尽量无状态？</strong><br><strong>A：</strong>无状态便于水平扩容、故障转移和弹性调度。会话或粘性信息应外置到 Redis/鉴权服务，网关自身专注路由、限流、鉴权和观测。</p>
+                <p><strong>Q3：Redis 单机还是集群？备份恢复怎么说？</strong><br><strong>A：</strong>单机适合轻量场景；生产常见主从+哨兵或 Cluster。备份恢复答 RDB（快照，恢复快但可能丢最近数据）与 AOF（更实时，文件大且恢复慢），通常混合使用。</p>
+                <p><strong>Q4：WebSocket 与 HTTP 区别？为何能推送？</strong><br><strong>A：</strong>WebSocket 建立后是持久全双工通道，服务器可主动推送；HTTP 经典模式是请求-响应，服务端不能无缘无故“发起”消息。长轮询可模拟推送但效率、时延和连接开销都较差。</p>
+                <p><strong>Q5：线程池实现细节常问什么？</strong><br><strong>A：</strong>任务队列、核心线程/最大线程、拒绝策略、线程回收、异常处理与监控。回答时补“拒绝策略与业务降级联动”最加分。</p>
+                <p><strong>Q6：MySQL 引擎优缺点？为什么查询快？</strong><br><strong>A：</strong>InnoDB 通过 B+Tree 索引、Buffer Pool 缓存、顺序 IO 友好的页结构与 MVCC 提升查询性能。查询快不只看索引，还依赖 SQL 写法、统计信息、连接方式和冷热数据分布。</p>
+                <p><strong>Q7：所有关系库都能随便建索引吗？</strong><br><strong>A：</strong>并非“越多越好”。索引会占空间并拖慢写入，且低选择性列收益有限。要按查询模式建最小必要索引，并定期清理冗余索引。</p>
+                <p><strong>Q8：C++ 有没有不能被继承的类？</strong><br><strong>A：</strong>有。C++11 起可用 `final` 标记类禁止继承；旧式写法可把构造/析构设私有并受控创建。</p>
+                <p><strong>Q9：TCP 三次握手里初始序列号为什么随机？能否固定从 1 开始？</strong><br><strong>A：</strong>随机 ISN 可减少历史报文干扰并提升抗攻击能力（防伪造/预测）。固定从 1 极易被预测并导致连接安全和可靠性风险。</p>
+                <p><strong>Q10：两次握手可不可以？</strong><br><strong>A：</strong>不可靠。服务端无法确认客户端是否收到自己的序列号确认，容易出现半开连接和历史 SYN 问题，导致资源浪费与错误连接建立。</p>
+                <p><strong>Q11：给 1T URL 取访问最多 1000 个 IP 怎么做？</strong><br><strong>A：</strong>离线可先分桶（按 hash 切文件）再桶内计数，最后最小堆求全局 TopK；实时可用近似算法（Count-Min Sketch + heap）降内存。重点是“外存分治 + TopK 合并”。</p>
+                <p><strong>Q12：1T 数据取最大 1000 个数怎么做？</strong><br><strong>A：</strong>流式扫描 + 大小为 1000 的最小堆，复杂度 O(n log 1000)，内存 O(1000)。多机场景可先局部 TopK，再全局归并。</p>
+                <p><strong>Q13：分布式产品题（Lustre/Ceph/ES）怎么答？</strong><br><strong>A：</strong>统一模板：它是什么、解决什么问题、核心架构、典型故障与治理。比如 Ceph 可讲 CRUSH 去中心化放置、对象副本、扩容平衡；ES 可讲倒排索引、分片、副本、写入刷新机制。</p>
+                <p><strong>Q14：针对 Lustre 元数据服务器瓶颈如何优化？</strong><br><strong>A：</strong>方向包括元数据冷热分离、增加 MDT、目录哈希/分片、客户端缓存优化、减少小文件风暴、并提升日志与 SSD 元数据盘性能。</p>
+                <p><strong>Q15：三面主管常问“为什么没继续之前实习、为什么选 Python”等非技术题如何回答？</strong><br><strong>A：</strong>原则是“职业路径一致性 + 客观约束 + 正向动机”。避免负面评价前团队，重点表达你想长期深耕的方向、可迁移能力以及对当前岗位的匹配度。</p>
+                <p><strong>补充建议：</strong>这组题目跨度很大，最终面最看重“项目可信度 + 结构化表达”。每题都尽量落到你做过的真实指标，不要只背定义。</p>
+                <p><strong>来源：</strong>作者：slamdunk1214，<a href="https://www.nowcoder.com/discuss/353154519850754048?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
             </article>
 
         </main>

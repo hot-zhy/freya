@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI 知识工程与 RAG</title>
+<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
+<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+<h1>AI 知识工程与 RAG</h1><p class="meta">Retrieval Augmented Generation（逐题 Q/A）</p>
+<div class="qa"><p class="q"><strong>Q1：RAG 的核心价值？</strong></p><p><strong>A1：</strong>RAG 通过外部检索提供最新、可追溯证据，降低幻觉并提升答案可信度，特别适合企业知识问答场景。</p></div>
+<div class="qa"><p class="q"><strong>Q2：文档分块如何做？</strong></p><p><strong>A2：</strong>按语义边界切分并保留重叠上下文，块大小按任务调优。太大召回不准，太小上下文不足，通常要针对文档类型分策略。</p></div>
+<div class="qa"><p class="q"><strong>Q3：检索链路推荐怎么搭？</strong></p><p><strong>A3：</strong>先向量召回做高覆盖，再重排做高精度，附加元数据过滤控制业务边界。复杂查询可加 query rewrite 和 HyDE。</p></div>
+<div class="qa"><p class="q"><strong>Q4：RAG 常见失败模式？</strong></p><p><strong>A4：</strong>召回不到、召回不准、生成偏题、证据冲突。要分别针对索引、重排、提示约束和证据仲裁做治理。</p></div>
+<div class="qa"><p class="q"><strong>Q5：怎么做 RAG 评测？</strong></p><p><strong>A5：</strong>检索层看 Recall@k、MRR，生成层看正确性、引用一致性和完整性。线上再监控纠错率、追问率和证据点击率。</p></div>
+<div class="qa"><p class="q"><strong>Q6：RAG 和微调如何取舍？</strong></p><p><strong>A6：</strong>知识更新频繁、需要可追溯优先 RAG；任务稳定、风格固定可做微调。实战里常见“RAG + 轻微调”的混合路线。</p></div>
+</div></body></html>

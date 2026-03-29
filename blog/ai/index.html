@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 分页题库</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #151522;
+            --text: #e8e8f0;
+            --muted: #a0a0b8;
+            --accent: #00f5ff;
+            --border: rgba(255,255,255,0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "STKaiti", "KaiTi", "Kaiti SC", "Noto Serif SC", serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 18px 40px; }
+        .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .top a { color: var(--accent); text-decoration: none; }
+        h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        .desc { color: var(--muted); margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+        .card {
+            display: block;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .card:hover { border-color: var(--accent); }
+        .card h2 { font-size: 1.08rem; margin-bottom: 6px; }
+        .card p { color: var(--muted); font-size: 0.92rem; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="top">
+            <h1>AI 分页题库</h1>
+            <a href="../index.html">返回总题库</a>
+        </div>
+        <p class="desc">按专题拆分的 AI 题库页面，每个页面均为逐题 Q/A，可单独刷题与复述。</p>
+        <div class="grid">
+            <a class="card" href="./openclaw.html"><h2>OpenClaw 体系化题库</h2><p>备面方法论与能力框架。</p></a>
+            <a class="card" href="./coding.html"><h2>AI 代码智能与 AI 编程</h2><p>代码 Agent、质量与安全。</p></a>
+            <a class="card" href="./rag.html"><h2>AI 知识工程与 RAG</h2><p>检索、分块、重排与评测。</p></a>
+            <a class="card" href="./agent.html"><h2>AI Agent 理论与框架</h2><p>ReAct、规划、工具调用。</p></a>
+            <a class="card" href="./prompt.html"><h2>AI Prompt 工程与应用</h2><p>Prompt 结构、注入防御、产品化。</p></a>
+            <a class="card" href="./multimodal.html"><h2>AI 多模态与 AIGC</h2><p>图文对齐、生成评测与风控。</p></a>
+            <a class="card" href="./llm.html"><h2>AI 大模型</h2><p>预训练、对齐、微调与幻觉。</p></a>
+            <a class="card" href="./serving.html"><h2>AI 模型部署与推理优化</h2><p>SLA、并发、量化与成本。</p></a>
+            <a class="card" href="./distributed.html"><h2>AI 分布式训练与大规模系统</h2><p>并行策略、容错与可观测性。</p></a>
+            <a class="card" href="./rs.html"><h2>AI 推荐与搜索算法</h2><p>召回排序、冷启动、多目标优化。</p></a>
+        </div>
+    </div>
+</body>
+</html>

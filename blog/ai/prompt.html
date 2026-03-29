@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Prompt 工程与应用</title>
+<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
+<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+<h1>AI Prompt 工程与应用</h1><p class="meta">Prompt Design（逐题 Q/A）</p>
+<div class="qa"><p class="q"><strong>Q1：高质量 Prompt 的结构？</strong></p><p><strong>A1：</strong>明确目标、给足上下文、约束输出格式、定义评价标准、提供失败兜底。结构化 Prompt 能稳定输出质量。</p></div>
+<div class="qa"><p class="q"><strong>Q2：Few-shot 何时最有效？</strong></p><p><strong>A2：</strong>当任务边界清晰、样例覆盖关键场景时效果最好。通常 3-8 个高质量样例比大量低质量样例更有效。</p></div>
+<div class="qa"><p class="q"><strong>Q3：CoT 总是更好吗？</strong></p><p><strong>A3：</strong>不是。复杂推理题常有收益，但事实问答可能引入冗余和幻觉。应根据任务按需开启，避免无谓成本。</p></div>
+<div class="qa"><p class="q"><strong>Q4：如何防 Prompt 注入？</strong></p><p><strong>A4：</strong>把系统指令和用户输入严格隔离，对外部内容做清洗与策略校验。高风险动作不让模型直接执行。</p></div>
+<div class="qa"><p class="q"><strong>Q5：Prompt 如何产品化管理？</strong></p><p><strong>A5：</strong>需要版本控制、A/B 实验、回滚机制和质量监控。把 Prompt 当配置资产，而不是散落在业务代码里。</p></div>
+<div class="qa"><p class="q"><strong>Q6：Prompt 优化怎么量化？</strong></p><p><strong>A6：</strong>看任务成功率、人工修订率、响应时延、token 成本和用户满意度，形成可回归的指标闭环。</p></div>
+</div></body></html>

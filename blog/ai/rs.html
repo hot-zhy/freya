@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI 推荐与搜索算法</title>
+<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
+<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+<h1>AI 推荐与搜索算法</h1><p class="meta">RecSys / Search（逐题 Q/A）</p>
+<div class="qa"><p class="q"><strong>Q1：推荐系统经典架构？</strong></p><p><strong>A1：</strong>召回、粗排、精排、重排四层。召回保证覆盖，排序保证准确，重排负责多目标平衡和体验约束。</p></div>
+<div class="qa"><p class="q"><strong>Q2：搜索排序与推荐排序差异？</strong></p><p><strong>A2：</strong>搜索有显式 query，核心是相关性；推荐无显式 query，核心是兴趣预测和长期价值。</p></div>
+<div class="qa"><p class="q"><strong>Q3：冷启动怎么做？</strong></p><p><strong>A3：</strong>用户冷启动用画像+热门+探索，物品冷启动用内容特征和小流量试探，尽快积累行为反馈。</p></div>
+<div class="qa"><p class="q"><strong>Q4：多目标优化如何落地？</strong></p><p><strong>A4：</strong>把点击、时长、转化、留存等目标组合建模并动态调权。离线和线上要联动评估，避免单指标最优伤害整体体验。</p></div>
+<div class="qa"><p class="q"><strong>Q5：为什么需要重排层？</strong></p><p><strong>A5：</strong>防止结果同质化，并注入多样性、新鲜度、公平性和业务规则。重排决定的是“最终体验”而不只是分数高低。</p></div>
+<div class="qa"><p class="q"><strong>Q6：常见线上问题与治理？</strong></p><p><strong>A6：</strong>问题包括特征延迟、索引不一致、反馈回路偏置。治理靠实时监控、实验隔离、回滚机制和反作弊策略。</p></div>
+</div></body></html>

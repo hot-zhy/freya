@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Agent 理论与框架</title>
+<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
+<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+<h1>AI Agent 理论与框架</h1><p class="meta">ReAct / Planning / Tool Use（逐题 Q/A）</p>
+<div class="qa"><p class="q"><strong>Q1：Agent 与 ChatBot 的本质区别？</strong></p><p><strong>A1：</strong>Agent 具备目标驱动、多步规划、工具调用和反馈纠错能力；普通 ChatBot 多是单轮回答，不具备可执行闭环。</p></div>
+<div class="qa"><p class="q"><strong>Q2：ReAct 为什么有效？</strong></p><p><strong>A2：</strong>ReAct 让模型在“推理-行动-观察”中循环，通过工具结果不断修正思路，显著减少闭门推理导致的错误。</p></div>
+<div class="qa"><p class="q"><strong>Q3：什么时候用 Plan-and-Execute？</strong></p><p><strong>A3：</strong>任务复杂、步骤长、依赖多时优先使用。先规划再执行能控制 token 成本，并让失败可定位、可回滚。</p></div>
+<div class="qa"><p class="q"><strong>Q4：Agent 记忆系统怎么设计？</strong></p><p><strong>A4：</strong>短期记忆放会话上下文，长期记忆放结构化画像与事件。要有写入门槛和过期机制，避免噪声污染决策。</p></div>
+<div class="qa"><p class="q"><strong>Q5：多 Agent 协作常用哪种模式？</strong></p><p><strong>A5：</strong>常见是协调者+专家代理。协调者拆解任务并汇总结果，专家处理垂直子任务，同时设置轮次上限防止无穷对话。</p></div>
+<div class="qa"><p class="q"><strong>Q6：Agent 可靠性怎么做？</strong></p><p><strong>A6：</strong>关键是权限边界、参数校验、超时重试、补偿机制和审计日志。高风险操作引入人工确认，保证可追责。</p></div>
+</div></body></html>
