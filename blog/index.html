@@ -3879,58 +3879,172 @@ chunks = splitter.split_text(document_text)</code></pre>
 
             <article class="article-content" id="tencent-nowcoder-cpp-os-net">
                 <h1>腾讯面经 QA（C++ / OS / 网络）</h1>
-                <div class="meta">基于你提供的牛客原题重编 · 完整版（定义 + 原理 + 例子 + 追问）</div>
-                <p><strong>Q1：虚函数原理是什么？</strong><br><strong>A：</strong>你可以把虚函数理解成“运行时再决定调用哪个版本的函数”。C++ 会给类放一张“函数地址表”（vtable），对象里有个指针（vptr）指向它。你拿“基类指针”调用时，会顺着这张表找到“真实对象”的函数。<br><strong>例子：</strong>`Animal* p = new Dog(); p->speak();` 最终执行的是 `Dog::speak()`。<br><strong>延展：</strong>虚函数带来动态扩展能力（开闭原则），但也有一点点性能开销（一次间接寻址）。</p>
-                <p><strong>Q2：const 如何保证变量不被修改？</strong><br><strong>A：</strong>`const` 主要是“编译器层面”保护：你写了修改代码，编译器就报错。它更像“合同”，告诉别人这个值不应该被改。<br><strong>例子：</strong>`void print(const string& s)` 表示函数不会改 `s`，调用方更放心。<br><strong>延展：</strong>面试可补一句：`const` 不是绝对安全（可被非常规手段绕过），但在工程规范里非常重要。</p>
-                <p><strong>Q3：map 和 unordered_map 区别？</strong><br><strong>A：</strong>`map` 是有序容器（底层红黑树），查找通常 O(log n)；`unordered_map` 无序（哈希表），平均 O(1)。<br><strong>例子：</strong>要“按 key 从小到大遍历”选 `map`；只想快速查用户 ID 选 `unordered_map`。<br><strong>延展：</strong>哈希冲突严重时 `unordered_map` 可能退化，所以要关注哈希函数和负载因子。</p>
-                <p><strong>Q4：map 的 insert() 和下标 [] 区别？</strong><br><strong>A（全面版）：</strong>两者都能“让 key 对应一个 value”，但语义差别很大。<br>1）<strong>是否会自动创建：</strong>`operator[]` 在 key 不存在时会“先插入一个默认值”再返回引用；`insert` 不会默认构造，它只尝试插入你给的键值对。<br>2）<strong>遇到已存在 key 时：</strong>`insert` 不会覆盖旧值；`[]` 取到的是旧值引用，你再赋值就会覆盖。<br>3）<strong>返回信息：</strong>`insert` 返回 `pair<iterator,bool>`，`bool` 告诉你“这次是否真的插入成功”；`[]` 只返回引用，不告诉你是“新建”还是“已存在”。<br>4）<strong>对 value 类型的要求：</strong>`[]` 需要 value 可默认构造（因为可能要先造一个默认值）；`insert` 不要求这点。<br>5）<strong>只读访问行为：</strong>想“只读不创建”不要用 `[]`，应该用 `find`/`contains`/`at`（`at` 不存在会抛异常）。<br><strong>例子：</strong>`m["tom"]++` 在 `tom` 不存在时会先插入 `("tom", 0)` 再变成 1，这在计数场景非常方便；但在配置读取场景可能误创建脏 key。<br><strong>工程建议：</strong>“只插一次”优先 `insert`/`emplace`/`try_emplace`；“存在就更新，不存在就插入”优先 `insert_or_assign`；“只查不改”优先 `find/contains/at`，避免无意写入。</p>
-                <p><strong>Q5：怎么查看某个进程的 CPU 利用率？</strong><br><strong>A：</strong>常用命令：`top -p PID`（实时看），`ps -p PID -o %cpu,cmd`（快照），`pidstat -p PID 1`（每秒趋势）。<br><strong>例子：</strong>服务卡顿时先 `top` 找到高 CPU 进程，再 `top -H -p PID` 看哪个线程最热。<br><strong>延展：</strong>线程 ID 可转十六进制后配合 `jstack`/`gdb` 定位到具体函数。</p>
-                <p><strong>Q6：malloc 的作用？申请的是物理内存还是虚拟内存？</strong><br><strong>A（先说结论）：</strong>`malloc` 申请到的是“进程可用的虚拟地址区间”，不等于立刻拿到同等大小的物理内存。操作系统通常采用按需分页：你真正读写到某个页时，才触发缺页中断，把物理页映射进来。<br><strong>例子：</strong>程序里 `malloc(1GB)` 后如果不访问这 1GB，`top` 看到的常驻内存（RES）不会马上涨 1GB；但你若 `memset` 全部 1GB，RES 会明显上升。<br><strong>技术补充：</strong>`malloc` 小块分配常来自进程堆（`brk/sbrk`），大块分配常走 `mmap`；释放时小块不一定立刻还给 OS，大块 `munmap` 更可能直接归还。<br><strong>延展：</strong>面试可顺带说内存问题排查：看“虚拟内存 VS 常驻内存”、看缺页次数、看是否存在内存碎片和泄漏。</p>
-                <p><strong>Q7：什么是僵尸进程？`waitpid` 在里面是什么意思？</strong><br><strong>A：</strong>把它想成“人已经走了，但档案还没销户”。子进程执行完后，内核会先保留一条退出记录（退出码、结束原因），等父进程来“签收”。父进程签收用的就是 `wait/waitpid`。如果父进程一直不签收，这条记录就一直挂着，这个状态就是僵尸进程。<br><strong>`waitpid` 的作用：</strong>父进程等待并回收子进程，拿到退出状态，释放子进程在进程表里的残留项。<br><strong>常见写法：</strong><code>waitpid(child_pid, &status, 0)</code>（阻塞等指定子进程结束）；如果不想阻塞可用 <code>WNOHANG</code>，例如 <code>waitpid(-1, &status, WNOHANG)</code> 表示“非阻塞地回收任意已退出子进程”。<br><strong>例子：</strong>一个程序不停创建短命子进程，但代码里没写 `waitpid`，`ps -ef` 会看到很多 `Z` 状态；补上 `waitpid` 后这些 `Z` 会被回收。<br><strong>延展：</strong>僵尸进程本身几乎不占 CPU，但会占 PID 和进程表名额。积累太多会导致“无法创建新进程”。线上常见做法是父进程显式回收，或在 `SIGCHLD` 处理中循环 `waitpid(-1, &status, WNOHANG)`。</p>
-                <p><strong>Q8：堆和栈区别？</strong><br><strong>A：</strong>栈是自动管理（函数进出自动分配释放），速度快但空间小；堆是手动或由运行时管理，灵活但容易泄漏和碎片。<br><strong>例子：</strong>函数局部变量在栈上，`new/malloc` 通常在堆上。<br><strong>延展：</strong>C++ 里建议优先 RAII 和智能指针，减少手动 `new/delete` 错误。</p>
-                <p><strong>Q9：select 和 epoll 区别？</strong><br><strong>A（先讲背景）：</strong>这题的背景是“一个线程要同时管理很多网络连接”。早期做法是每次都遍历所有连接看谁可读可写，但连接数一多就很慢，所以才有 `select/poll/epoll` 这类 IO 多路复用方案。它们解决的核心问题是：<strong>少阻塞线程、减少无效遍历、提高高并发下的事件处理效率</strong>。<br><strong>直观理解：</strong>`select` 像“每次都把全班名单交给老师，再一个个点名”；`epoll` 像“先登记名单，老师只通知今天到场的人”。<br><strong>技术差异：</strong>1）`select` 每次调用都要拷贝 fd 集合并线性扫描，复杂度接近 O(n)；2）`select` 有 fd 数量上限（常见 1024，和系统配置相关）；3）`epoll` 把关注的 fd 通过 `epoll_ctl` 预先注册，`epoll_wait` 直接返回就绪事件，适合高并发长连接。<br><strong>例子：</strong>1 万长连接里只有 30 个活跃，`select` 仍要扫 1 万，`epoll` 只处理那 30 个就绪事件。<br><strong>延展：</strong>并非所有场景都要 epoll。连接数少、实现简单优先时 `select/poll` 也可接受；高并发网络服务器通常选 `epoll`。</p>
-                <p><strong>Q10：epoll 的 ET 和 LT？</strong><br><strong>A（先讲背景）：</strong>有了 `epoll` 后，还会遇到一个问题：<strong>内核该“提醒应用多少次”</strong>。如果提醒太频繁，事件风暴会增加开销；如果提醒太少，应用又可能漏处理数据。ET/LT 就是在解决这个“通知策略”问题。<br><strong>一句话记忆：</strong>LT（水平触发）是“缓冲区里还有数据就持续提醒”；ET（边沿触发）是“状态从无到有只提醒一次”。<br><strong>例子：</strong>某 socket 收到 10KB 数据：LT 下你这次只读了 2KB，下一轮还会提醒可读；ET 下如果你没读到 `EAGAIN` 就返回，后面可能不再提醒，导致应用层“看起来卡住”。<br><strong>技术要点：</strong>ET 必须配合非阻塞 fd，并在回调里循环 `read/write` 直到 `EAGAIN`；LT 容错更高、代码更稳。<br><strong>延展：</strong>工程上常见策略是“先 LT 跑通，再评估 ET 是否必要”。如果业务瓶颈不在事件通知次数，盲目切 ET 收益有限但复杂度上升。</p>
-                <p><strong>Q11：TCP 和 UDP 区别？</strong><br><strong>A：</strong>TCP 可靠、有序、先连接后传输；UDP 直接发、速度快、但不保证到达和顺序。<br><strong>例子：</strong>文件传输用 TCP，语音通话常用 UDP（允许少量丢包换低延迟）。<br><strong>延展：</strong>QUIC 就是在 UDP 之上实现“类似 TCP 的可靠能力”。</p>
-                <p><strong>Q12：Linux 如何按一列分组统计另一列（类似 SQL group by + sum）？</strong><br><strong>A：</strong>用 awk 做“键值累加”：<code>awk '{sum[$1]+=$2} END {for (k in sum) print k, sum[k]}' file</code>。<br><strong>例子：</strong>日志里 `$1` 是部门、`$2` 是销售额，就能输出各部门总额。<br><strong>延展：</strong>若文件有标题行可加 `NR>1` 跳过首行。</p>
-                <p><strong>Q13：TCP 数据没收到，如何判断应用层问题还是底层问题？</strong><br><strong>A（排查顺序）：</strong>按“发送端应用 -> 发送端内核 -> 网络 -> 接收端内核 -> 接收端应用”逐层证据化排查，不要凭感觉。<br><strong>实操步骤：</strong>1）先确认连接状态（`ss -tanp` 看是否 ESTABLISHED）；2）抓包（`tcpdump -i any host A and port P`）看数据包是否发出；3）看对端是否收到并回 ACK；4）看是否有重传、RST、零窗口（Window=0）；5）若 TCP 层都正常，再查应用日志、线程栈、协议解码。<br><strong>例子：</strong>抓包显示三次握手正常、数据段已到对端且 ACK 正常，但业务无响应，通常是应用层问题（线程卡死、消息队列堵塞、协议包长度解析错误）。<br><strong>延展：</strong>常见底层信号：大量重传（网络丢包/抖动）、持续零窗口（接收端消费慢）、RST 激增（连接被主动重置）。常见应用信号：TCP 正常但业务日志无消费记录或处理超时。</p>
-                <p><strong>Q14：MySQL 两个常见引擎和区别？</strong><br><strong>A：</strong>常答 InnoDB vs MyISAM。InnoDB 支持事务、行锁、崩溃恢复；MyISAM 不支持事务、以表锁为主。<br><strong>例子：</strong>电商下单这类要强一致和并发写，基本都用 InnoDB。<br><strong>延展：</strong>现在生产环境几乎默认 InnoDB，MyISAM 多在历史系统或特定只读场景。</p>
-                <p><strong>Q15：动态链接库和静态链接库区别？</strong><br><strong>A：</strong>静态库编译时打进程序，运行时不依赖外部库；动态库运行时再加载，程序体积更小、更新更灵活。<br><strong>例子：</strong>多个程序共享同一 `libssl.so` 就是动态库共享。<br><strong>延展：</strong>动态库要处理版本兼容，发布时常见“某机缺库启动失败”。</p>
-                <p><strong>Q16：如何编程判断字节序？x86 是大端还是小端？</strong><br><strong>A：</strong>把 `0x0102` 放入内存，读第一个字节：若是 `0x02` 就是小端。x86/x64 是小端。<br><strong>例子：</strong>网络协议解析常遇到端序不一致，必须转换。<br><strong>延展：</strong>跨平台二进制协议一定要明确字段端序，不能靠“默认”。</p>
-                <p><strong>Q17：网络序（Network Byte Order）是什么？</strong><br><strong>A（先讲背景）：</strong>不同 CPU 架构在内存里存放多字节整数的顺序可能不同。如果通信双方字节序不统一，接收方就会把同一串字节解析成错误数值。网络协议为了解决这个跨平台问题，规定传输时统一使用 <strong>网络序（大端序）</strong>。<br><strong>定义：</strong>网络序 = 大端字节序（高位字节放低地址，低位字节放高地址）。例如 `0x12345678` 在大端下按字节是 `12 34 56 78`，在小端下是 `78 56 34 12`。<br><strong>为什么要统一成网络序：</strong>核心不是“谁更先进”，而是“协议必须统一”。Internet 协议族（TCP/IP）约定了网络字节序，这样任意主机都能按同一规则解析报文。<br><strong>协议里的应用：</strong>IP 头、TCP/UDP 头中的多字节字段（如端口、长度、序号、地址）都按网络序传输。发送前从主机序转网络序，接收后从网络序转主机序。<br><strong>转换函数（C/C++ 常用）：</strong><code>htons</code>（16 位主机序 -> 网络序）、<code>htonl</code>（32 位）、<code>ntohs</code>（16 位网络序 -> 主机序）、<code>ntohl</code>（32 位）。<br><strong>示例代码：</strong></p>
-                <pre><code>#include &lt;arpa/inet.h&gt;
-#include &lt;stdio.h&gt;
+                <div class="meta">文档化重构版：前置知识 + 逐题详解 + 命令/代码 + 高频追问</div>
 
-int main() {
-    unsigned short port_host = 8080;
-    unsigned short port_net = htons(port_host);
-    printf("host=%u, network=0x%x\n", port_host, port_net);
-    printf("back to host=%u\n", ntohs(port_net));
-    return 0;
-}</code></pre>
-                <p><strong>工程注意点：</strong>1）不要对“已经是网络序”的值再重复 `hton*`；2）`char` 数组按字节拷贝通常不需要转换，转换的是“多字节整数语义”；3）位字段（bitfield）在不同编译器上的布局可能不一致，协议解析更稳妥的方式是按字节读写并手动移位。<br><strong>面试追问可答：</strong>“x86 是什么字节序？”答：x86/x64 主机序通常是小端；“为什么网络序不用小端？”答：历史上 TCP/IP 规范统一选了大端，关键在于标准统一而不是某种端序绝对优越。</p>
-                <p><strong>Q18：.h 如何避免重复定义？</strong><br><strong>A：</strong>用头文件保护：`#ifndef/#define/#endif` 或 `#pragma once`。<br><strong>例子：</strong>同一个头被 A.cpp 和 B.cpp 多次间接包含时，不会重复展开。<br><strong>延展：</strong>大型工程里没有防重包含会导致大量“redefinition”编译错误。</p>
-                <p><strong>逐题深挖补充（展开版）：</strong></p>
+                <p><strong>这份文档怎么用：</strong>先看“前置知识（OS + 计网）”，再看 Q1~Q18。每题都按“背景 -> 定义 -> 原理 -> 例子 -> 常见坑/排障 -> 30 秒答法”。</p>
+
+                <h2>前置知识 A：操作系统最小知识图</h2>
+                <ul>
+                    <li><strong>进程/线程：</strong>进程是资源隔离单位，线程是调度单位。</li>
+                    <li><strong>用户态/内核态：</strong>应用代码在用户态，系统调用触发陷入内核态。</li>
+                    <li><strong>虚拟内存：</strong>进程看到的是虚拟地址，物理页按需映射。</li>
+                    <li><strong>系统调用链：</strong>用户函数 -> glibc 包装 -> syscall -> 内核处理 -> 返回用户态。</li>
+                </ul>
+
+                <h2>前置知识 B：计网最小知识图</h2>
+                <ul>
+                    <li><strong>TCP：</strong>面向连接、可靠、有序、字节流。</li>
+                    <li><strong>UDP：</strong>无连接、尽力而为、报文边界保留。</li>
+                    <li><strong>连接生命周期：</strong>三次握手建立，四次挥手关闭，主动关闭方常进入 TIME_WAIT。</li>
+                    <li><strong>排障原则：</strong>先证据后结论，应用层/内核层/网络层逐层定位。</li>
+                </ul>
+
+                <h2>前置知识 C：Linux 排障常用命令</h2>
+                <pre><code># 连接状态
+ss -tanp
+
+# 进程/线程 CPU
+top -p &lt;pid&gt;
+top -H -p &lt;pid&gt;
+pidstat -p &lt;pid&gt; 1
+
+# 抓包
+tcpdump -i any host 10.0.0.8 and port 8080 -nn -vv
+
+# 系统调用追踪
+strace -fp &lt;pid&gt; -e trace=network,read,write
+</code></pre>
+
+                <h2>Q1：虚函数原理是什么？</h2>
+                <p><strong>背景：</strong>面向对象设计里要支持“同接口多实现”。</p>
+                <p><strong>定义：</strong>虚函数通过 vtable/vptr 在运行时决定实际调用目标，实现动态绑定。</p>
+                <p><strong>原理：</strong>对象中保存 vptr，指向类虚表；基类指针调用虚函数时通过 vtable 分发到派生类实现。</p>
+                <p><strong>例子：</strong>`Animal* p = new Dog(); p->speak();` 实际执行 `Dog::speak()`。</p>
+                <p><strong>常见坑：</strong>构造/析构期间虚调用不会按“完整派生类型”分发。</p>
+                <p><strong>30 秒答法：</strong>“虚函数是运行时多态基础，靠 vtable/vptr 动态分发。它换来扩展性，代价是一次间接调用和对象额外指针。”</p>
+
+                <h2>Q2：const 如何保证变量不被修改？</h2>
+                <p><strong>背景：</strong>大型代码需要明确读写边界和 API 契约。</p>
+                <p><strong>定义：</strong>`const` 主要由编译器在语义层面限制写操作。</p>
+                <p><strong>原理：</strong>编译阶段检查“是否通过该表达式写入”；违反时报错。</p>
+                <p><strong>例子：</strong>`void print(const string& s)` 明确不修改入参。</p>
+                <p><strong>常见坑：</strong>顶层 const 与底层 const 混淆。</p>
+                <p><strong>30 秒答法：</strong>“const 是编译期约束和接口契约，能显著降低副作用。要分清顶层/底层 const，尤其在指针和函数参数里。”</p>
+
+                <h2>Q3：map 和 unordered_map 区别？</h2>
+                <p><strong>背景：</strong>容器选型会直接影响复杂度和稳定性。</p>
+                <p><strong>定义：</strong>`map`（红黑树，有序，O(log n)）；`unordered_map`（哈希表，无序，均摊 O(1)）。</p>
+                <p><strong>例子：</strong>需要有序遍历选 `map`；高频键查找优先 `unordered_map`。</p>
+                <p><strong>常见坑：</strong>哈希冲突和 rehash 导致迭代器失效、性能波动。</p>
+                <p><strong>30 秒答法：</strong>“是否需要有序和稳定最坏复杂度是核心分界：有序/范围查询选 map，吞吐优先选 unordered_map 并关注哈希质量。”</p>
+
+                <h2>Q4：map 的 insert() 和下标 [] 区别？</h2>
+                <p><strong>背景：</strong>这题常用于区分“查、插、改”的语义精度。</p>
+                <p><strong>核心差异：</strong>`[]` 不存在会默认构造并插入；`insert` 只尝试插入且能返回是否成功；`[]` 更像“可写访问”。</p>
+                <p><strong>例子：</strong>`m["tom"]++` 在不存在时会先建 key 再加 1。</p>
+                <p><strong>工程建议：</strong>只查用 `find/contains/at`；存在更新用 `insert_or_assign`；避免误创建脏 key。</p>
+                <p><strong>30 秒答法：</strong>“`[]` 有副作用会自动插入，`insert` 无副作用只尝试插入并返回结果。业务上按语义选接口，避免隐式写入。”</p>
+
+                <h2>Q5：怎么查看某个进程的 CPU 利用率？</h2>
+                <p><strong>背景：</strong>服务变慢时第一步通常是 CPU 排障。</p>
+                <p><strong>命令：</strong>`top -p PID`、`ps -p PID -o %cpu,cmd`、`pidstat -p PID 1`。</p>
+                <p><strong>排障链路：</strong>进程 -> 线程（`top -H -p`）-> 调用栈（`jstack`/`gdb`）-> 热点函数。</p>
+                <p><strong>30 秒答法：</strong>“先看进程 CPU，再下钻线程热点，最后用栈定位代码。只看进程百分比不够，要有线程和函数级证据。”</p>
+
+                <h2>Q6：malloc 的作用？申请的是物理内存还是虚拟内存？</h2>
+                <p><strong>背景：</strong>内存题高频考“虚拟内存 vs 物理内存”。</p>
+                <p><strong>结论：</strong>`malloc` 通常先拿虚拟地址区间，物理页多在首次访问时按需映射。</p>
+                <p><strong>机制：</strong>小块常走 `brk/sbrk`，大块常走 `mmap`；释放后不一定立刻归还 OS。</p>
+                <p><strong>例子：</strong>`malloc(1GB)` 不触碰时 RES 可能不涨，`memset` 后 RES 明显增加。</p>
+                <p><strong>30 秒答法：</strong>“malloc 申请的是进程虚拟地址，不等于立刻占满物理内存。按需分页和分配器策略决定实际占用表现。”</p>
+
+                <h2>Q7：什么是僵尸进程？waitpid 在里面是什么意思？</h2>
+                <p><strong>背景：</strong>高并发 fork 场景不回收子进程会触发系统问题。</p>
+                <p><strong>定义：</strong>子进程已退出但父进程未回收退出状态，进程表残留项即僵尸。</p>
+                <p><strong>waitpid 作用：</strong>回收子进程状态并释放进程表项。</p>
+                <p><strong>示例：</strong><code>waitpid(-1, &status, WNOHANG)</code> 可非阻塞回收任意已退出子进程。</p>
+                <p><strong>常见坑：</strong>僵尸与孤儿混淆；孤儿会被 init/systemd 接管并回收。</p>
+                <p><strong>30 秒答法：</strong>“僵尸不耗 CPU 但耗 PID/表项。核心是父进程及时 waitpid 回收，常配 SIGCHLD 非阻塞循环收尸。”</p>
+
+                <h2>Q8：堆和栈区别？</h2>
+                <p><strong>定义：</strong>栈自动管理、快但小；堆灵活但需显式管理，易泄漏/碎片。</p>
+                <p><strong>例子：</strong>局部变量在栈，`new/malloc` 在堆。</p>
+                <p><strong>工程建议：</strong>C++ 优先 RAII/智能指针，减少手写 `new/delete`。</p>
+                <p><strong>30 秒答法：</strong>“栈换速度，堆换灵活。工程里重点是生命周期管理，优先 RAII 降低泄漏风险。”</p>
+
+                <h2>Q9：select 和 epoll 区别？</h2>
+                <p><strong>背景：</strong>单线程管理大量连接时，轮询遍历会成为瓶颈。</p>
+                <p><strong>对比：</strong>`select/poll` 线性扫描；`epoll` 事件驱动返回就绪 fd。`poll` 去掉 fd 位图上限，但仍线性扫描。</p>
+                <p><strong>例子：</strong>1 万连接 30 活跃时，epoll 只处理活跃事件。</p>
+                <p><strong>30 秒答法：</strong>“select/poll 是全量扫描，epoll 是就绪事件返回。高并发长连接普遍选 epoll。”</p>
+
+                <h2>Q10：epoll 的 ET 和 LT？</h2>
+                <p><strong>背景：</strong>考事件通知策略与正确读写模式。</p>
+                <p><strong>定义：</strong>LT 持续提醒“还有数据”；ET 只在状态变化时提醒一次。</p>
+                <p><strong>关键：</strong>ET 常配非阻塞并循环读写到 `EAGAIN`，否则可能漏事件。</p>
+                <p><strong>复现：</strong>ET 下只读一次就返回，后续可能卡在 `epoll_wait`。</p>
+                <p><strong>30 秒答法：</strong>“LT 容错高，ET 性能更激进但要求严格。ET 必须非阻塞并读写到 EAGAIN 才安全。”</p>
+
+                <h2>Q11：TCP 和 UDP 区别？</h2>
+                <p><strong>定义：</strong>TCP 可靠有序字节流；UDP 无连接、报文边界保留。</p>
+                <p><strong>常问补充：</strong>TCP 是流，应用层要自己做消息边界（长度字段/分隔符/固定长度）。</p>
+                <p><strong>例子：</strong>文件传输 TCP；实时语音常 UDP。</p>
+                <p><strong>30 秒答法：</strong>“TCP 换可靠，UDP 换时延。TCP 粘包不是 bug，是流式协议特性，需应用层 framing。”</p>
+
+                <h2>Q12：Linux 如何按一列分组统计另一列（类似 SQL group by + sum）？</h2>
+                <pre><code>awk '{sum[$1]+=$2} END {for (k in sum) print k, sum[k]}' file
+# CSV:
+awk -F, 'NR&gt;1{sum[$1]+=$2} END {for (k in sum) print k, sum[k]}' file.csv</code></pre>
+                <p><strong>30 秒答法：</strong>“用 awk 关联数组按 key 累加，`-F` 处理分隔符，`NR&gt;1` 可跳标题行。”</p>
+
+                <h2>Q13：TCP 数据没收到，如何判断应用层问题还是底层问题？</h2>
+                <p><strong>排查顺序：</strong>发送端应用 -> 发送端内核 -> 网络 -> 接收端内核 -> 接收端应用。</p>
+                <p><strong>步骤：</strong>看连接（`ss`）-> 抓包（`tcpdump`）-> 看 ACK/重传/RST/Window0 -> 再看应用日志与线程栈。</p>
+                <p><strong>判据：</strong>TCP 层正常但业务无响应，多数是应用层堵塞或协议解析问题。</p>
+                <p><strong>30 秒答法：</strong>“先证据化分层，不靠猜。抓包看是否发出/到达/被 ACK，再决定是网络问题还是应用问题。”</p>
+
+                <h2>Q14：MySQL 两个常见引擎和区别？</h2>
+                <p><strong>结论：</strong>面试常答 InnoDB vs MyISAM。InnoDB 支持事务、行锁、崩溃恢复；MyISAM 偏表锁不支持事务。</p>
+                <p><strong>深挖：</strong>InnoDB 事务能力来自 redo（持久化）+ undo（回滚与 MVCC）机制。</p>
+                <p><strong>30 秒答法：</strong>“生产默认 InnoDB，因为事务和并发写能力更强；MyISAM 多见于历史读多写少场景。”</p>
+
+                <h2>Q15：动态链接库和静态链接库区别？</h2>
+                <p><strong>静态库：</strong>编译期打包，部署独立但体积大。</p>
+                <p><strong>动态库：</strong>运行时加载，体积小可共享，需处理 ABI 和版本兼容。</p>
+                <p><strong>30 秒答法：</strong>“静态库换独立部署，动态库换复用和更新灵活。动态库常见风险是版本地狱与 ABI 兼容。”</p>
+
+                <h2>Q16：如何编程判断字节序？x86 是大端还是小端？</h2>
+                <pre><code>uint16_t x = 0x0102;
+unsigned char* p = (unsigned char*)&x;
+// p[0] == 0x02 -> little endian</code></pre>
+                <p><strong>结论：</strong>x86/x64 通常是小端。</p>
+                <p><strong>30 秒答法：</strong>“把多字节整数转字节看首字节即可。x86/x64 主机序是小端，跨平台协议必须显式约定端序。”</p>
+
+                <h2>Q17：网络序（Network Byte Order）是什么？</h2>
+                <p><strong>背景：</strong>不同主机端序不同，不统一会解析错值。</p>
+                <p><strong>定义：</strong>网络序是大端序，TCP/IP 规定传输多字节字段使用网络序。</p>
+                <p><strong>函数：</strong>`htons/htonl`（主机 -> 网络），`ntohs/ntohl`（网络 -> 主机）。</p>
+                <pre><code>#include &lt;arpa/inet.h&gt;
+unsigned short net = htons(8080);
+unsigned short host = ntohs(net);</code></pre>
+                <p><strong>工程注意：</strong>不要重复转换；bitfield 布局不跨编译器稳定，协议解析优先按字节+位运算。</p>
+                <p><strong>30 秒答法：</strong>“网络序是协议统一规则（大端），核心价值是跨平台一致解析，不是端序优劣之争。”</p>
+
+                <h2>Q18：.h 如何避免重复定义？</h2>
+                <p><strong>做法：</strong>`#ifndef/#define/#endif` 或 `#pragma once`。</p>
+                <p><strong>工程补充：</strong>头文件放声明，定义放 `.cpp`；跨文件共享变量用 `extern` 声明。</p>
+                <p><strong>30 秒答法：</strong>“防重包含用 include guard 或 pragma once。链接层面再配合 extern/单点定义避免多重定义。”</p>
+
+                <h2>常问补充题（OS + 计网）</h2>
                 <ol>
-                    <li><strong>Q1 虚函数：</strong>构造/析构阶段调用虚函数时不会发生“完整多态”，因为对象尚未构造成最终派生类型；这是 C++ 面试高频陷阱题。</li>
-                    <li><strong>Q2 const：</strong>要区分“顶层 const（变量本身只读）”与“底层 const（指向内容只读）”，尤其在指针声明和函数参数里。</li>
-                    <li><strong>Q3 map vs unordered_map：</strong>`unordered_map` 在 rehash 后迭代器可能失效，且最坏复杂度会退化；工程上要关注负载因子和哈希函数质量。</li>
-                    <li><strong>Q4 insert 与 []：</strong>推荐掌握 `try_emplace`（避免不必要构造）和 `insert_or_assign`（存在更新，不存在插入）这两个现代接口。</li>
-                    <li><strong>Q5 CPU 排障：</strong>建议固定链路：进程 CPU -> 线程 CPU -> 调用栈 -> 热点函数，这样回答最有工程感。</li>
-                    <li><strong>Q6 malloc：</strong>高频追问是内存碎片与 OOM 区别，及为何某些释放后内存不立刻归还操作系统。</li>
-                    <li><strong>Q7 僵尸进程：</strong>要能区分“僵尸进程”和“孤儿进程”：孤儿会被 init/systemd 接管并回收，不等于僵尸。</li>
-                    <li><strong>Q8 堆栈：</strong>栈溢出常表现为深递归崩溃；堆泄漏常靠长时间运行后的内存持续增长定位。</li>
-                    <li><strong>Q9 select/epoll：</strong>补一句 `poll` 的意义：它去掉了 `select` 的固定 fd 位图上限，但仍是线性扫描。</li>
-                    <li><strong>Q10 ET/LT：</strong>ET 漏读复现方式是“只读一次就返回”；修复核心是非阻塞+循环读写到 `EAGAIN`。</li>
-                    <li><strong>Q11 TCP/UDP：</strong>追问常到“TCP 粘包怎么处理（长度字段/分隔符）”和“UDP 分片丢一片整包不可用”。</li>
-                    <li><strong>Q12 awk：</strong>若输入不是空格分隔，记得 `-F` 指定分隔符，例如 CSV 用 `-F,`。</li>
-                    <li><strong>Q13 抓包：</strong>抓包点选择很关键：客户端、服务端、网关三处抓包可快速定位“丢在哪里”。</li>
-                    <li><strong>Q14 MySQL 引擎：</strong>可补 InnoDB 事务基础（redo/undo + MVCC）来提升回答深度。</li>
-                    <li><strong>Q15 动静态库：</strong>动态库常见问题是 ABI 不兼容与版本地狱；静态库常见问题是体积和重复链接。</li>
-                    <li><strong>Q16/Q17 字节序：</strong>要能说清“主机序仅本机内存表示，网络序是传输规则”，并会用 `hton*/ntoh*`。</li>
-                    <li><strong>Q18 头文件：</strong>变量定义应放 `.cpp`，头文件通常用 `extern` 声明，避免多重定义链接错误。</li>
+                    <li><strong>TCP 粘包如何处理？</strong>长度字段协议最常见，或分隔符+转义，或固定长度帧。</li>
+                    <li><strong>用户态到内核态发生了什么？</strong>系统调用触发陷入，内核完成权限操作后返回用户态。</li>
+                    <li><strong>高 CPU 与高 Load 怎么区分？</strong>高 CPU 是在跑；高 Load 还可能是 D 状态 IO 等待堆积。</li>
+                    <li><strong>TIME_WAIT 过多怎么治理？</strong>连接复用、连接池、端口规划，避免破坏协议语义。</li>
                 </ol>
-                <p><strong>完整答题技巧：</strong>每题尽量按“背景 -> 结论 -> 机制 -> 例子 -> 取舍”五段来讲，面试官会明显感到你不是背答案，而是能解决问题。</p>
-                <p><strong>来源：</strong>作者：超越护体，<a href="https://www.nowcoder.com/discuss/353156266354745344?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>。</p>
+
+                <p><strong>答题总模板（建议背诵）：</strong>“先说这个问题解决什么，再给核心机制，然后给一条命令或一个例子，最后说常见坑和工程取舍。”</p>
+                <p><strong>来源：</strong>作者：超越护体，<a href="https://www.nowcoder.com/discuss/353156266354745344?sourceSSR=search" target="_blank" rel="noopener noreferrer">牛客原帖</a>；并结合 Linux man-pages、C++ 语义规则和网络协议常识做技术补全。</p>
             </article>
 
             <article class="article-content" id="tencent-nowcoder-bigdata">
