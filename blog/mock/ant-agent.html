@@ -23,8 +23,25 @@ h1{margin:0 0 4px;font-size:1.6rem}
 .toc li{margin-bottom:4px;font-size:0.9rem}
 .toc li a{color:#a0a0b8}.toc li a:hover{color:#00f5ff}
 @media(max-width:600px){.toc ul{columns:1}}
+#auth-gate{display:none;position:fixed;inset:0;z-index:9999;background:#0a0a0f;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#auth-gate .lock{font-size:2.4rem;margin-bottom:4px}
+#auth-gate h2{font-size:1.2rem;color:#e8e8f0;font-weight:600}
+#auth-gate input{width:260px;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#151522;color:#e8e8f0;font-size:0.95rem;outline:none;font-family:inherit}
+#auth-gate input:focus{border-color:#00f5ff}
+#auth-gate button{padding:8px 28px;border:none;border-radius:8px;background:#00f5ff;color:#0a0a0f;font-weight:700;font-size:0.92rem;cursor:pointer;font-family:inherit}
+#auth-gate button:hover{opacity:0.85}
+#auth-gate .err{color:#ff4466;font-size:0.85rem;min-height:1.2em}
+#main-content{display:none}
 </style></head>
-<body><div class="wrap">
+<body>
+<div id="auth-gate">
+<div class="lock">🔒</div>
+<h2>需要密码访问</h2>
+<input type="password" id="auth-pwd" placeholder="请输入访问密码" autofocus>
+<button id="auth-btn">确认</button>
+<p class="err" id="auth-err"></p>
+</div>
+<div id="main-content" class="wrap">
 <p><a href="./index.html">返回模拟面试</a> · <a href="../index.html">返回总题库</a></p>
 <h1>蚂蚁集团 · 智能体与大模型应用工程</h1>
 <p class="sub">2027 届转正实习 · 模拟面试题库 · 8 大类 · 65+ 题 · 深度追问<br>难度标识：<span class="depth d1">基础</span> <span class="depth d2">进阶</span> <span class="depth d3">深追问</span></p>
@@ -288,4 +305,6 @@ h1{margin:0 0 4px;font-size:1.6rem}
 <div class="qa"><p class="q"><strong>Q70：你的研究方向是 AI4Edu，如何看待 AI Agent 在教育领域的应用前景和挑战？</strong><span class="depth d2">进阶</span></p>
 <p class="a"><strong>A：</strong>前景：①<strong>个性化辅导</strong>——Agent 可以根据学生的知识水平、学习风格动态调整教学策略（如你的 AI 面试系统中的自适应出题）；②<strong>实时反馈</strong>——代码/作文批改从天级缩短到秒级（如小花狮系统）；③<strong>教师赋能</strong>——自动化处理重复性工作，让教师专注高价值互动。挑战：①<strong>准确性要求极高</strong>——教育场景对幻觉零容忍，错误知识会误导学生；②<strong>评估标准化</strong>——开放性题目的 AI 评估与人类评估一致性仍需验证；③<strong>公平性</strong>——模型偏见可能对不同背景学生造成不公平对待；④<strong>隐私</strong>——学生数据的采集和使用需要严格合规。</p></div>
 
-</div></body></html>
+</div>
+<script src="./auth.js"></script>
+</body></html>
