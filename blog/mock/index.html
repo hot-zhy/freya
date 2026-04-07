@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟面试</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #151522;
+            --text: #e8e8f0;
+            --muted: #a0a0b8;
+            --accent: #00f5ff;
+            --border: rgba(255,255,255,0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "STKaiti", "KaiTi", "Kaiti SC", "Noto Serif SC", serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+        }
+        .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 18px 40px; }
+        .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .top a { color: var(--accent); text-decoration: none; }
+        h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        .desc { color: var(--muted); margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+        .card {
+            display: block;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        .card:hover { border-color: var(--accent); }
+        .card h2 { font-size: 1.08rem; margin-bottom: 6px; }
+        .card p { color: var(--muted); font-size: 0.92rem; }
+        .card .tag { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; background: rgba(0,245,255,0.12); color: var(--accent); margin-top: 6px; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="top">
+            <h1>模拟面试</h1>
+            <span><a href="../index.html">返回总题库</a> · <a href="../ai/index.html">AI 分页题库</a></span>
+        </div>
+        <p class="desc">针对特定岗位 JD 与个人简历定制的模拟面试题库，覆盖项目深挖、技术原理、系统设计与场景题，帮助系统化备面。</p>
+        <div class="grid">
+            <a class="card" href="./ant-agent.html">
+                <h2>蚂蚁集团 · 智能体与大模型应用工程</h2>
+                <p>2027 届转正实习 | 8 大类 65+ 题 | 项目深挖 + Agent 架构 + RAG + Context Engineering + LLM 基础 + 推理优化 + 工程化 + 场景题</p>
+                <span class="tag">AI Agent</span>
+                <span class="tag">RAG</span>
+                <span class="tag">LLM</span>
+                <span class="tag">系统设计</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
