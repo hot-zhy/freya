@@ -58,8 +58,10 @@ h1{margin:0 0 4px;font-size:1.6rem}
 </div>
 
 <div class="qa"><p class="q"><strong>开场可直接说的自我介绍（60-90秒）</strong><span class="depth d1">基础</span></p>
-<p class="a"><strong>口语稿：</strong>面试官您好，我是赵晗瑜，华东师范大学软件工程硕士在读。我的核心方向是把大模型和 Agent 做成可上线、可观测、可持续优化的系统。过去几段经历中，我在 NVIDIA 做过 NVPunish 的批量 RCA 与可视化闭环，在喜马拉雅做过 Multi-Agent、Mem0 长期记忆、MCP 工具编排和 Milvus 多维召回，在小花狮做过高并发 Agentic Workflow、RAG 注入和 SSE 流式返回。我的优势是既能做模型应用设计，也能把后端稳定性、性能和成本控制到业务可用水平，比如高峰期超时率下降、接口响应和点击指标可量化提升。希望在这个岗位继续做“智能体能力产品化”的工作。</p>
-<p class="a"><strong>被打断时30秒收束：</strong>如果用一句话总结，我是“Agent 应用工程 + 后端性能治理”的复合型选手，重点能力是把模型能力从 Demo 变成稳定可交付系统。</p></div>
+<p class="a"><strong>口语稿（先技术栈）：</strong>面试官您好，我是赵晗瑜，华东师范大学软件工程硕士在读。我的技术栈主要是 Python / Java / Go 后端开发，AI 方向重点做过 Agent 应用落地，包括 RAG、Multi-Agent、MCP、Mem0、Milvus 向量检索，以及 RabbitMQ / Redis Stream 异步链路、Redis 缓存、慢 SQL 优化和 SSE 流式返回。</p>
+<p class="a"><strong>项目经历（按简历顺序）：</strong>第一段是 NVIDIA NVPunish，我做了多机多 Job 可视化和 Batch RCA Pipeline，覆盖 1000+ failure pattern，支持幂等恢复和断点续跑；第二段是喜马拉雅“智慧大师”，我负责 Main Agent + SubAgent 协作、Mem0 长期记忆、MCP 工具编排和 Milvus 召回，通过异步化把高峰超时率降了约 60%，推荐 CTR 提升约 8%-12%；第三段是上海智能教育研究院“小花狮”，我做了 Agentic Workflow、RAG 注入和高并发优化，接口响应提升 42%，数据库压力下降 52%，P99 控制在 100ms 内；第四段是科研助手 Go 微服务，我负责长文本分块聚合和 Redis Stream + SSE 断点续推，保证流式结果的一致性和可恢复性。</p>
+<p class="a"><strong>收束（岗位匹配）：</strong>所以我的特点是，不只是会用模型，而是能把模型能力做成稳定、可观测、可优化的系统。我希望在这个岗位继续把智能体能力做成业务上真正可量化的结果。</p>
+<p class="a"><strong>被打断时30秒版本：</strong>我主要做 Agent 应用工程和后端性能治理，技术栈覆盖 RAG、Multi-Agent、MCP、向量检索和异步架构；项目上按顺序做过 NVIDIA 的 Batch RCA、喜马拉雅的记忆与召回链路、小花狮的高并发优化和科研助手的流式续推，核心优势是能从方案走到上线并持续优化指标。</p></div>
 
 <div class="qa"><p class="q"><strong>喜马拉雅项目完整链路示例：从用户输入到点击率提升是怎么发生的？</strong><span class="depth d3">深追问</span></p>
 <p class="a"><strong>端到端链路（可口述）：</strong>用户在主 App 发起一轮对话后，Main Agent 先做意图识别；如果需要个性化推荐，会并行拿三类信息：MCP 拉取账号与行为特征、Mem0 检索长期记忆、实时情绪分析子 Agent 给出当前情绪标签。然后推荐 Agent 组装召回请求，在 Milvus 做向量检索（画像向量 + 记忆向量），拿到候选内容后做聚类与重排，最终返回 top-N 内容给前端卡片位。用户点击后埋点回流，再异步写回画像和记忆，形成下一轮优化闭环。</p>
