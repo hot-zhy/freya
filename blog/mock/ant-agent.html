@@ -75,9 +75,10 @@ h1{margin:0 0 4px;font-size:1.6rem}
 <p class="a"><strong>追问9：如果让你总结你这些项目的方法论，是什么？</strong><br><strong>完整回复：</strong>我的方法论是“先对象化问题，再工程化闭环”。对象化是指先把业务问题抽成可计算单元（pattern、画像、任务状态）；工程化闭环是指从策略到执行到指标回流都可观测、可复盘。这样做的结果是，系统不是一次性 demo，而是能持续优化的生产能力。</p>
 </div>
 
-<div class="qa"><p class="q"><strong>喜马拉雅项目完整链路示例：从用户输入到点击率提升是怎么发生的？</strong><span class="depth d3">深追问</span></p>
-<p class="a"><strong>一句话总览：</strong>这条链路本质是“先更懂用户，再更准召回，再用点击反馈继续纠偏”。所以 CTR 提升不是靠某一个模型点子，而是整条链路每一步都在减少“推荐不相关”的概率。</p>
-<p class="a"><strong>Step 1（目的：先判断该不该推荐）：</strong>用户在 App 发来一句话后，Main Agent 先做意图识别。<strong>怎么做：</strong>把请求分成“闲聊 / 问答 / 推荐”三类；只有命中推荐意图才进入推荐链路。<strong>产出：</strong>一个明确路由标记（是否走推荐）。<strong>作用：</strong>避免把不该推荐的请求硬塞推荐，减少无效曝光。</p>
+<div class="qa"><p class="q"><strong>喜马拉雅项目完整链路示例：从“向智慧大师提问”到点击率提升是怎么发生的？</strong><span class="depth d3">深追问</span></p>
+<p class="a"><strong>一句话总览：</strong>正确讲法是先从“用户向智慧大师发起提问”开始，再解释系统如何判断是否进入推荐链路。只有进入推荐链路的请求，才会产生推荐卡片曝光与点击，因此 CTR 提升和这条链路是直接相关的，但并不是所有对话都算进 CTR。</p>
+<p class="a"><strong>Step 1（目的：先判断用户这次提问要走哪条链路）：</strong>用户在主 App 向智慧大师提问后，Main Agent 先做意图识别。<strong>怎么做：</strong>把请求分成“闲聊 / 问答 / 推荐”三类；只有命中推荐意图才进入推荐链路，其余走普通问答或陪伴回复。<strong>产出：</strong>路由标记（是否推荐）。<strong>作用：</strong>把“需要推荐”的流量和“非推荐”流量分开，避免统计口径混乱。</p>
+<p class="a"><strong>CTR 和这一步的关系：</strong>有关系而且很关键。因为 CTR 的分母是“推荐卡片曝光”，如果不先做路由，就会把不该推荐的请求也算进来，导致曝光被稀释、CTR 失真。所以“先判路由”本身就是提升和稳定 CTR 的前置条件。</p>
 <p class="a"><strong>Step 2（目的：补齐用户画像上下文）：</strong>如果进入推荐链路，系统并行拿三路信息。<strong>怎么做：</strong>① MCP 拉账号与行为特征（年龄段、偏好类目、活跃时段）；② Mem0 拉长期记忆（历史兴趣、关键事件）；③ 情绪子 Agent 给当前情绪标签。<strong>产出：</strong>“长期偏好 + 当前状态”的组合画像。<strong>作用：</strong>避免只看历史或只看当下，降低推荐偏题率。</p>
 <p class="a"><strong>Step 3（目的：缩短响应时间，保证主链路稳定）：</strong>画像抽取、向量化、记忆同步都比较慢。<strong>怎么做：</strong>这些高延迟步骤通过 RabbitMQ 异步化，主链路先返回可用结果，后台再落库。<strong>产出：</strong>高峰期主链路不会被慢步骤卡住。<strong>作用：</strong>超时率下降（你项目里约 60%），曝光请求更稳定，CTR 才有比较基础。</p>
 <p class="a"><strong>Step 4（目的：把“能点的内容”排到前面）：</strong>推荐 Agent 用画像向量和记忆向量去 Milvus 做 ANN 召回。<strong>怎么做：</strong>先拿候选集，再按“相关度 + 时间衰减 + 情绪匹配”做重排。<strong>产出：</strong>最终 top-N 卡片。<strong>作用：</strong>把真正相关内容前置，提高用户看到前几条就愿意点击的概率。</p>
