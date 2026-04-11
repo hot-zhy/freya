@@ -57,6 +57,31 @@
         <p class="a"><strong>追问应对：</strong>追问：你最强的一项能力到底是什么？回答：在约束条件下做可上线的系统拆解能力，我不仅能做出功能，还能解释并稳定复现“为什么这个方案能持续产生指标收益”。</p>
     </div>
 
+    <h2>实习经历完整案例（逐段）</h2>
+    <div class="qa"><p class="q"><strong>案例1：NVIDIA NVPunish——从失败日志到可执行RCA报告</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>业务场景：</strong>GPU 压测任务量大、失败模式多，人工逐条读日志排障效率低，且高峰期经常积压。目标是把“发现异常 -> 根因定位 -> 结果查询”做成统一闭环。</p>
+    <p class="a"><strong>怎么做：</strong>我先把日志对象化为 <code>pattern_id</code>，建立任务状态机（pending/running/completed/failed），再做 Batch RCA Pipeline：上下文预处理 -> 频次过滤 -> 版本归因 -> SubAgent 并发分析。调度层采用滑动窗口并发，避免全量并发打爆模型配额。</p>
+    <p class="a"><strong>关键实现：</strong>后端用 Django 对接 NvPunish REST API，做了 10+ 端点；每个 pattern 独立上下文和超时重试；结果以结构化 schema 持久化，支持幂等恢复和断点续跑，服务重启后可继续跑未完成任务。</p>
+    <p class="a"><strong>结果与追问：</strong>最终把人工逐模式排查变成批量自动分析流程。追问“怎么证明靠谱”可答：看三项——平均排障时长、pattern 覆盖率、重跑一致性（同 pattern 重跑结论一致）。</p></div>
+
+    <div class="qa"><p class="q"><strong>案例2：喜马拉雅智慧大师——对话主链路 + 推荐子分支</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>业务场景：</strong>智慧大师核心是“对话答疑”，推荐只是子能力。难点是既要回复连贯、又要个性化，还要在高峰下保持低超时。</p>
+    <p class="a"><strong>怎么做：</strong>完整链路是用户提问 -> 意图路由 -> 上下文组装（会话历史 + Mem0 + MCP）-> 主回复生成 -> 条件触发推荐分支（Milvus 召回重排）-> 反馈回流。MCP 负责结构化事实，向量检索负责语义相关记忆/内容，职责不重复。</p>
+    <p class="a"><strong>关键实现：</strong>高延迟步骤（特征抽取、向量化、Mem0 同步）通过 RabbitMQ 异步化，主链路先返回答疑结果；推荐分支按“相关度 + 时间衰减 + 情绪匹配”重排。埋点回流后更新画像权重，下一轮更准。</p>
+    <p class="a"><strong>结果与追问：</strong>高峰超时率下降约 60%，推荐子分支 CTR 提升约 8%-12%。追问“CTR 是不是对话质量”可答：不是，CTR 只衡量推荐采纳；对话还看回答完成率、追问承接率、会话时长/满意度。</p></div>
+
+    <div class="qa"><p class="q"><strong>案例3：小花狮作文系统——高并发下的Agent稳定交付</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>业务场景：</strong>开学季并发高，作文批改链路重（检索、生成、校验、回写），用户对时延非常敏感。目标是“稳住P99 + 保证批改质量”。</p>
+    <p class="a"><strong>怎么做：</strong>我按四层治理：缓存层（Caffeine+Redis）削读流量，数据库层做慢 SQL 与索引优化，任务层用 RabbitMQ 异步解耦重操作，交互层用 SSE 流式返回减少等待感知。批改逻辑采用 Reflection：生成 -> 校验 -> 修订。</p>
+    <p class="a"><strong>关键实现：</strong>限流用 Lua 原子脚本；批改任务持久化状态，防重复执行；RAG 注入评分依据，减少“凭感觉打分”；bad case 回流形成固定回归集，确保每次迭代可验证。</p>
+    <p class="a"><strong>结果与追问：</strong>核心接口响应提升 42%，数据库压力下降 52%，P99 控制在 100ms 内，支撑 10,000+ 用户。追问“为什么不是单点优化”可答：这类链路必须分层治理，单点优化无法同时改善均值和尾延迟。</p></div>
+
+    <div class="qa"><p class="q"><strong>案例4：科研助手（上海人工智能创新中心）——长文导图与断点续推</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>业务场景：</strong>论文超长，单次上下文放不下；用户希望快速看到中间结果，不愿等待一次性返回。目标是“可增量展示 + 断线可恢复”。</p>
+    <p class="a"><strong>怎么做：</strong>我采用“分块并行 + 二次聚合”：先分段并行抽取节点，再聚合去重、修冲突、补关系边；传输层用 Redis Stream + SSE，前端边收边渲染。</p>
+    <p class="a"><strong>关键实现：</strong>Consumer Group 管理位点，消息成功才 ACK；断线重连时先补 pending 再读新消息；同任务加分布式锁避免并发乱序；结果按任务快照保存，支持 checkpoint resume。</p>
+    <p class="a"><strong>结果与追问：</strong>首屏可见时间显著缩短，且服务重启/断线后可续推。追问“为什么不用一次性返回”可答：一次性返回对长任务不友好，失败重试成本高，流式+续推更符合真实使用体验。</p></div>
+
     <h2>一、教育与科研亮点（8题）</h2>
     <div class="qa"><p class="q"><strong>Q1：你教育背景很强，如何证明不是“只会做题不会落地”？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>我证明方式不是“说我学得好”，而是给出线上闭环。比如 AI 面试系统里我把论文里学习路径建模改成 Query Rewrite + token 命中检索链路，语义检索准确率提升 30%，用户满意度稳定在 84% 左右，说明方法能落地。</p><p class="a"><strong>实现细节：</strong>流程是用户回答先做意图重写，再走向量召回与关键词命中混合检索，返回题目后记录答题特征到画像状态；下一轮根据薄弱点动态调难度。状态层分会话态与长期态，避免短期波动污染长期能力评估。</p><p class="a"><strong>追问应对：</strong>追问：30% 提升是怎么测的？回答：同题库做 A/B，对照组只向量检索，实验组加 rewrite + token hit，按人工标注相关性计算准确率，连续两周都稳定提升。</p></div>
     <div class="qa"><p class="q"><strong>Q2：你的一区论文价值是什么？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>这篇论文价值不在“一个新模型”，而在给出可执行教学闭环：Learn-Practice-Evaluate-Support。它后来直接被我迁移到 AI 面试和科研助手系统，证明不是实验室结果，而是可复用工程框架。</p><p class="a"><strong>实现细节：</strong>我把框架拆成三层组件：知识检索层（RAG）、过程评估层（自动评分与错误标签）、反馈规划层（下一步建议）。每层都有独立输入输出契约，便于替换模型与策略，降低系统迭代耦合成本。</p><p class="a"><strong>追问应对：</strong>追问：论文方法迁移后哪里改动最大？回答：评估层改动最大，线上更关注稳定和解释性，所以增加了规则校验与置信度门槛，不直接用论文里的离线打分方式。</p></div>
