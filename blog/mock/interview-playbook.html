@@ -45,6 +45,17 @@
       padding: 12px 14px;
       margin-bottom: 10px;
     }
+    .deep {
+      background: #121828;
+      border: 1px solid rgba(0, 245, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .k {
+      color: #9be9ff;
+      font-weight: 700;
+    }
     .q { color: var(--accent); margin-bottom: 4px; }
     ul { margin: 4px 0 0 1.2em; }
     li { margin-bottom: 2px; }
@@ -241,6 +252,82 @@
       <p><strong>已新增：</strong><code>blog/mock/interview-playbook.html</code>（本页）。</p>
       <p><strong>复用关系：</strong>Agent/LLM/RAG 细节可回跳 <code>blog/ai/agent.html</code>、<code>blog/ai/llm.html</code>、<code>blog/ai/rag.html</code>、<code>blog/ai/serving.html</code>。</p>
       <p><strong>后续建议：</strong>将本页高频题拆分为“30秒版/2分钟版”双视图，并按公司面经打标签（如“偏系统设计”“偏原理追问”）。</p>
+    </div>
+
+    <h2>六、深挖增强版（更可靠、更抗追问）</h2>
+
+    <div class="deep">
+      <p class="q"><strong>增强 1：AI Coding 占比怎么说才真实可靠？</strong></p>
+      <p><span class="k">30秒版本：</span>“我把 AI coding 控制在 35%~50%，主要承担脚手架、测试和文档，关键设计和上线责任仍由我承担。”</p>
+      <p><span class="k">2分钟深挖：</span>我把研发任务拆成“可自动化”和“高风险决策”两类：前者交给 AI，后者自己做。高风险包括事务边界、并发控制、压测瓶颈、告警阈值、灰度与回滚。这样做能确保提效的同时不牺牲稳定性。面试官追问时，最好补一句“我会记录 AI 生成代码占比和返工率”。</p>
+      <p><span class="k">项目绑定：</span>你可结合“小花狮”说：接口骨架和测试样例由 AI 协助，Redisson 锁策略、MQ 重试和幂等链路由你拍板。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 2：0-1 与 1-100 的工程差异（可画架构图）</strong></p>
+      <p><span class="k">30秒版本：</span>0-1 看价值闭环，1-100 看稳定性与成本效率，关注点从“功能可用”转为“SLA 可承诺”。</p>
+      <p><span class="k">2分钟深挖：</span>0-1 阶段重点是需求真假验证、最小可用链路、快速迭代；1-100 重点是容量评估、扩缩容策略、可观测体系、故障演练和跨团队协作。技术动作包括：限流熔断、降级、缓存层次化、异步化削峰、读写隔离、灰度发布。组织动作包括：On-call、事故复盘、变更审批和回滚预案。</p>
+      <p><span class="k">项目绑定：</span>“智慧大师”可讲 0-1 先验证检索可用，1-100 再做多源融合 + 异步化 + 指标监控。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 3：Agent 安全链路（用户-Agent-工具-后端）</strong></p>
+      <p><span class="k">30秒版本：</span>安全核心是最小权限、输入输出校验和审计留痕，绝不让模型直接拥有无限执行权限。</p>
+      <p><span class="k">2分钟深挖：</span>用户到 Agent 的风险是 prompt 注入和越权诱导；Agent 到 Agent 的风险是上下文污染与信任链被劫持；Agent 到后端是参数注入和横向越权。治理分四层：1）鉴权与作用域令牌；2）工具 schema 白名单校验；3）高风险动作强制人工确认；4）全链路 traceId 和审计。补充一句“我会做只读模式和模拟执行模式（dry-run）”，可信度更高。</p>
+      <p><span class="k">项目绑定：</span>可说你把高风险工具单独隔离，并限制写权限只对特定 API 开放。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 4：MCP 与 Shell 脚本不是替代关系，而是分层关系</strong></p>
+      <p><span class="k">30秒版本：</span>Shell 擅长一次性自动化，MCP 擅长标准化能力暴露和治理，适合多模型、多团队复用。</p>
+      <p><span class="k">2分钟深挖：</span>Shell 的问题是输入输出协议不统一、权限边界难管理、可观测性弱。MCP 的优势是工具有 schema、参数类型、权限边界和资源接口规范，方便接入审计、限流和策略控制。生产里常见做法是“底层还是脚本/服务，上层通过 MCP 统一封装”。这样既保留灵活性，也提升治理能力。</p>
+      <p><span class="k">项目绑定：</span>可讲你在多源工具接入时优先走标准化协议，减少 ad-hoc 脚本维护成本。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 5：vLLM、KV-cache、Streaming 延迟取舍怎么答得专业</strong></p>
+      <p><span class="k">30秒版本：</span>vLLM 主要优势是吞吐和显存利用率；KV-cache 减少重复计算；Streaming 优化的是感知时延，不等于总时延降低。</p>
+      <p><span class="k">2分钟深挖：</span>我会把指标拆成 TTFT（首 token 时延）、TPOT（每 token 时间）和 E2E 时延。KV-cache 主要降低 TPOT，动态批处理提升吞吐但可能拉高 TTFT，所以要按业务类型分池路由。Streaming 超标时的折中是：短答先流式返回，复杂补充异步生成；同时限制上下文长度、减少低价值检索候选、按优先级做降级。</p>
+      <p><span class="k">项目绑定：</span>你可以讲“课堂助手”里优先保证首屏响应，再延迟补全解释细节。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 6：DPO vs SFT 如何回答“不是背概念”</strong></p>
+      <p><span class="k">30秒版本：</span>SFT 解决“会不会做”，DPO 解决“更偏好怎么做”。两者通常串联，不是二选一。</p>
+      <p><span class="k">2分钟深挖：</span>SFT 成本低、训练稳定，适合先把任务能力拉起来；DPO 用偏好对做对齐，能改善风格、拒答边界和工具调用选择。偏好对构造建议“规则自动初筛 + 人工抽样校准 + 线上反馈闭环”，否则偏好噪声会被放大。面试时提一句“我看重偏好数据的一致性而不是数量”，更像真实实践者。</p>
+      <p><span class="k">项目绑定：</span>可用 AAAI 项目延展：先 SFT/LoRA 提能力，再通过偏好策略优化答案可读性和步骤完整性。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 7：事务、MQ、幂等三件套（后端追问高频）</strong></p>
+      <p><span class="k">30秒版本：</span>我默认 MQ 是至少一次投递，所以业务端必须幂等；跨服务一致性优先用最终一致，而不是重锁全局事务。</p>
+      <p><span class="k">2分钟深挖：</span>生产者超时时要区分“发送失败”和“发送成功但回执丢失”。消费端采用业务唯一键 + 幂等表或唯一索引；状态变更语句加条件，例如 <code>WHERE status='INIT'</code>。跨服务推荐本地消息表/事务消息/SAGA，配补偿和对账任务兜底。面试官追问事故时，可说“我们监控重复消费率和补偿成功率”。</p>
+      <p><span class="k">项目绑定：</span>“小花狮”异步批改链路可直接套这套话术。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 8：并发锁与线程池怎么讲到“可落地”</strong></p>
+      <p><span class="k">30秒版本：</span>锁的选择看冲突密度和可中断需求，线程池调优看队列、拒绝策略和任务类型，不看单一参数。</p>
+      <p><span class="k">2分钟深挖：</span><code>synchronized</code> 适合简单互斥；<code>ReentrantLock</code> 适合可中断、可超时、条件变量场景。线程池调优先看任务性质（CPU/I/O 密集），再定队列与最大线程，拒绝策略必须业务化：关键任务转 MQ，非关键任务降级。再补“我们会监控队列长度、任务等待时长、拒绝率和线程活跃度”，可信度很高。</p>
+      <p><span class="k">项目绑定：</span>可讲你在高并发接口通过异步化和限流保护核心线程池，避免雪崩。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 9：缓存三大问题（穿透/击穿/雪崩）如何答成体系</strong></p>
+      <p><span class="k">30秒版本：</span>穿透防非法请求，击穿防热点失效瞬时流量，雪崩防大量 key 同时失效，三者治理策略不同。</p>
+      <p><span class="k">2分钟深挖：</span>穿透用参数校验 + 布隆过滤器 + 空值缓存；击穿用 singleflight 或分布式互斥重建；雪崩用随机 TTL、多级缓存、限流熔断和 Redis 高可用。面试加分点是“缓存策略必须配套降级策略”，例如返回兜底内容或近似值，避免直接打爆 DB。</p>
+      <p><span class="k">项目绑定：</span>可结合“智慧大师”说热点知识条目用永不过期 + 异步刷新。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>增强 10：索引失效与 B+Tree，怎么说出工程判断力</strong></p>
+      <p><span class="k">30秒版本：</span>B+Tree 适合磁盘和范围查询，索引失效常由写法问题和优化器选择导致，先看执行计划再改 SQL。</p>
+      <p><span class="k">2分钟深挖：</span>索引失效高频原因：函数包裹、隐式类型转换、最左前缀破坏、范围查询后续列失效、<code>like '%xx'</code>。排查流程：先 <code>EXPLAIN</code> 看走没走索引，再看基数和回表成本，再决定是改 SQL、补联合索引还是强制 hint（慎用）。面试时强调“索引优化是查询模式驱动，不是索引越多越好”。</p>
+      <p><span class="k">项目绑定：</span>可讲你在高频查询上通过联合索引和 SQL 改写把慢查询降下来。</p>
+    </div>
+
+    <div class="note">
+      面试实战建议：每题按“结论一句话 → 机制两点 → 项目证据一条 → 风险兜底一条”回答，基本就能抗住大多数追问。
     </div>
 
     <p class="tail">注：涉及个人项目具体数字（如 AI coding 占比、提效比例、工具数量、模型名称）请按真实经历替换。面试时优先“真实可追问”，不要过度包装。</p>
