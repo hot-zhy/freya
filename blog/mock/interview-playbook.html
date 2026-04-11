@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全量面试题可复述答案（项目绑定版）</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #151522;
+      --text: #e8e8f0;
+      --muted: #a0a0b8;
+      --accent: #00f5ff;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", "Noto Serif SC", serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.85;
+    }
+    .wrap { max-width: 1020px; margin: 0 auto; padding: 28px 18px 50px; }
+    a { color: var(--accent); text-decoration: none; }
+    .top { margin-bottom: 14px; color: var(--muted); }
+    h1 { font-size: 1.9rem; margin-bottom: 8px; }
+    .desc { color: var(--muted); margin-bottom: 18px; }
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 1.28rem;
+      color: var(--accent);
+    }
+    .note {
+      background: rgba(0, 245, 255, 0.08);
+      border: 1px solid rgba(0, 245, 255, 0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 10px 0 16px;
+      color: #c7faff;
+    }
+    .qa {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .q { color: var(--accent); margin-bottom: 4px; }
+    ul { margin: 4px 0 0 1.2em; }
+    li { margin-bottom: 2px; }
+    .tail {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    code {
+      background: rgba(255,255,255,0.07);
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-family: Consolas, monospace;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="top"><a href="./index.html">返回模拟面试</a> · <a href="../ai/index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+    <h1>全量面试题可复述答案（项目绑定版）</h1>
+    <p class="desc">目标：每题都能 30 秒答清楚，2 分钟能展开，且能连到你的项目。涉及数字的地方给了可调整区间，按你的真实数据替换即可。</p>
+
+    <div class="note">
+      推荐口径：AI Coding 占比可讲 <strong>35%~50%</strong>（需求拆解/样板代码/测试用例/文档）；核心链路设计、异常兜底、性能瓶颈定位仍由你主导。效率提升可讲 <strong>30%~60%</strong>，并强调“复杂问题不是替代，而是放大工程师能力”。
+    </div>
+
+    <h2>一、项目与 AI Coding 实战</h2>
+
+    <div class="qa">
+      <p class="q"><strong>Q1：简历上项目 AI coding 占比有多少？</strong></p>
+      <p><strong>A：</strong>我一般讲“AI coding 参与度 35%~50%”。重复性编码和脚手架很适合交给 AI，但架构、边界、可靠性策略、压测和上线兜底是我亲自做。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q2：你的 AI coding 使用范式/习惯？</strong></p>
+      <p><strong>A：</strong>固定四步：先让它做方案草图，再让它只改小范围，再跑测试和静态检查，最后我做 code review。我的习惯是“让 AI 多提选项，最终决策在人”。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q3：项目从 0 到 1 和 1 到 100 有什么区别？</strong></p>
+      <p><strong>A：</strong>0-1 重点是验证价值闭环，追求“能跑通”；1-100 重点是稳定性、成本、可观测和协作效率，追求“能长期跑、低成本跑”。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q4：function call、map、skills，智能体演进过程？</strong></p>
+      <p><strong>A：</strong>演进一般是：纯对话 → function call（工具能力）→ tool map/router（按任务选工具）→ skills（沉淀可复用工作流）→ 多智能体协作。核心变化是从“回答”走向“可执行与可复用”。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q5：项目中最大难点是什么？</strong></p>
+      <p><strong>A：</strong>我遇到的最大难点是“检索命中率与时延同时优化”。比如在“智慧大师”里，既要多源信息融合提升正确率，又要控制链路延迟。做法是召回分层、重排和异步化，最终在可接受时延内稳定输出。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q6：项目用了什么大模型？</strong></p>
+      <p><strong>A：</strong>我会按场景说“多模型路由”：主模型负责复杂推理，小模型处理分类与抽取；你可按真实情况替换为 ChatGLM、Qwen、Llama 系。你主页已有 AAAI 项目可明确讲 ChatGLM + LoRA + 多模型投票。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q7：语言模型在系统里的作用？</strong></p>
+      <p><strong>A：</strong>它是“决策与生成中枢”：把非结构化输入转成可执行计划，结合检索证据输出可解释结果。真正落地时，它必须和检索、规则、工具一起工作。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q8：怎么评估检索效果？</strong></p>
+      <p><strong>A：</strong>离线看 <code>Recall@k</code>、<code>MRR</code>、<code>NDCG</code>；线上看追问率、纠错率、证据点击率。我的做法是“检索层和生成层分开评”，防止把问题都归咎给模型。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q9：平时怎么用 AI coding，能提效多少？</strong></p>
+      <p><strong>A：</strong>高频用在单测、样板代码、接口文档、重构建议、日志分析。稳定提效一般在 30%~60%，但我会强调“越复杂越需要人工做约束与验收”。</p>
+    </div>
+
+    <h2>二、Agent / LLM 深挖（含你给的 13 个进阶问题）</h2>
+
+    <div class="qa">
+      <p class="q"><strong>Q10：Agent 的 System Prompt 怎么设计与迭代？是否做过自动优化？如何补全不完整意图？</strong></p>
+      <p><strong>A：</strong>我把 System Prompt 分为角色、边界、工具协议、失败回退四层，版本化管理。迭代靠“失败样本回放 + A/B”。自动优化可用提示词模板搜索或规则生成。用户意图不完整时先做槽位提取，再反问关键缺失参数，不盲猜高风险动作。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q11：构建 Agent 的瓶颈？LangChain memory 在多用户并发有什么问题？</strong></p>
+      <p><strong>A：</strong>瓶颈通常在上下文膨胀、工具不稳定和状态错乱。LangChain 默认 memory 若全局实例化，容易串会话；并且 token window 处理不好会超长崩溃。我的做法是按 <code>userId/sessionId</code> 隔离会话存储，摘要压缩历史，并加 TTL。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q12：并发用户如何隔离？怎么保证线程安全？</strong></p>
+      <p><strong>A：</strong>核心是“状态不共享、共享必加锁”。会话状态放 Redis/DB，以 <code>sessionId</code> 隔离；进程内只留无状态组件。并发更新用 CAS 或分布式锁，避免同一会话多路写冲突。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q13：微调 Llama2 如何选样本和清洗？哪些数据质量问题影响大？</strong></p>
+      <p><strong>A：</strong>我会优先选“真实任务闭环数据”，覆盖成功样本与失败修复样本。清洗包括去重、去脏、脱敏、统一指令格式。影响最大的脏数据是：错误答案被当正样本、标签风格不一致、模板泄漏，这会直接导致模型输出漂移和幻觉增多。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q14：DPO 相比 SFT 的优劣？Agent 场景提升明显吗？偏好对怎么构造？</strong></p>
+      <p><strong>A：</strong>SFT 稳、简单、便宜；DPO 能更直接对齐偏好，减少“看起来对但不可用”的回答。Agent 场景里，DPO 对工具选择和拒答边界常有增益，但依赖高质量偏好对。偏好对可以规则自动生成 + 人工抽检校准，纯自动会引入系统偏差。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q15：为何选 vLLM？KV-cache 如何加速？你做过哪些优化？</strong></p>
+      <p><strong>A：</strong>选 vLLM 主要看吞吐和调度能力，尤其 PagedAttention 对 KV 内存利用率好。KV-cache 复用历史 token 的 K/V，避免重复计算。常见优化是动态批处理、长度分桶、缓存热门前缀、按请求价值做模型路由。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q16：要支持 Streaming，但当前延迟超标，如何折中？</strong></p>
+      <p><strong>A：</strong>我会把“首 token 时延”和“全量完成时延”分开优化。先用小模型快速给草答并流式返回，再异步补充高质量段落；同时控制上下文长度和检索候选数，必要时对低优先级请求降级。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q17：多轮上下文状态管理怎么做？高并发下一致性如何保证？</strong></p>
+      <p><strong>A：</strong>短记忆放会话窗口，长记忆放结构化存储。更新策略采用事件序号或版本号，保证乱序写入可检测。关键写路径走单写者策略或乐观锁重试，避免覆盖。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q18：你们 Agent 调了多少外部工具？如何做容错与超时？</strong></p>
+      <p><strong>A：</strong>面试可讲 6~12 个工具是常见规模。每个工具设超时、重试、熔断和降级策略；链路层有 traceId。对于高风险工具加人工确认和只读模式，保证失败可控。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q19：工具调用失败后的 feedback 策略？</strong></p>
+      <p><strong>A：</strong>我会让 Agent 先分类失败类型：参数错误、权限错误、下游超时、数据缺失。然后分别走“自动修参重试 / 切换备选工具 / 友好降级答复 / 请求用户补充信息”，避免一句“失败了”结束。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q20：从用户行为日志抽取训练对话，如何归一化和事件抽象？</strong></p>
+      <p><strong>A：</strong>先把日志转成统一事件流（提问、检索、工具调用、反馈、改写）。再做脱敏、去重、会话切分、意图标签化，最终形成监督样本或偏好对。关键是保留失败上下文，这比纯成功样本更有训练价值。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q21：时间窗口/偏移限制对话系统，模型如何“理解时间”？</strong></p>
+      <p><strong>A：</strong>模型本身不可靠地“感知当前时间”，要靠系统注入时间锚点和可检索时间线。工程上会把时间约束写进工具参数和检索过滤条件，而不是只靠自然语言描述。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q22：你觉得 Agent 哪些模块最容易在生产出问题？如何监控定位？</strong></p>
+      <p><strong>A：</strong>最容易出问题的是工具编排、上下文污染和权限边界。监控上我会盯四类指标：成功率、端到端延迟、工具超时率、人工接管率；定位靠全链路日志和失败回放。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q23：什么是 Agent / MCP / Skill？</strong></p>
+      <p><strong>A：</strong>Agent 是可规划可执行的智能体；MCP 是模型与外部工具/资源的标准协议；Skill 是可复用任务模板（步骤、约束、参数），让 Agent 稳定复用最佳实践。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q24：Transformer 是什么？</strong></p>
+      <p><strong>A：</strong>核心是自注意力，能并行建模 token 之间关系，配合位置编码与前馈网络实现强表达能力。它成为主流因为可扩展、可并行、在大数据大算力下效果稳定上升。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q25：从安全角度看，用户↔Agent、Agent↔Agent、Agent↔后端有哪些风险？</strong></p>
+      <ul>
+        <li><strong>用户↔Agent：</strong>Prompt 注入、越权指令、敏感信息诱导泄漏。</li>
+        <li><strong>Agent↔Agent：</strong>上下文污染、信任链被劫持、任务边界漂移。</li>
+        <li><strong>Agent↔后端：</strong>工具越权调用、参数注入、横向访问未授权资源。</li>
+      </ul>
+      <p><strong>防线：</strong>最小权限、参数白名单、敏感操作二次确认、审计日志、隔离执行沙箱。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q26：MCP 和 Shell 脚本实现功能有什么区别？</strong></p>
+      <p><strong>A：</strong>Shell 脚本偏“过程自动化”，灵活但难标准化治理；MCP 偏“能力标准化暴露”，有清晰工具 schema、权限边界和可观测。团队化和多模型复用场景，MCP 维护成本更低。</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>Q27：AI 时代对传统后端有什么影响？是不是不用懂后端了？</strong></p>
+      <p><strong>A：</strong>影响是后端职责从“纯接口实现”升级为“AI 系统编排与稳定性负责人”。更需要懂并发、事务、一致性、缓存、观测、成本。不会后端，只会调模型，很难把系统做稳。</p>
+    </div>
+
+    <h2>三、Java / Spring / 并发 / 数据库高频</h2>
+
+    <div class="qa"><p class="q"><strong>Q28：AOP 原理？</strong></p><p><strong>A：</strong>通过动态代理在目标方法前后织入增强逻辑。Spring 会在 Bean 初始化后生成代理对象，统一处理事务、日志、权限等横切关注点。</p></div>
+    <div class="qa"><p class="q"><strong>Q29：JDK 动态代理和 CGLIB 区别？</strong></p><p><strong>A：</strong>JDK 基于接口，轻量；CGLIB 基于继承，能代理无接口类，但不能代理 final 类/方法。Spring 默认有接口用 JDK，无接口用 CGLIB。</p></div>
+    <div class="qa"><p class="q"><strong>Q30：事务传播行为？</strong></p><p><strong>A：</strong>重点记 <code>REQUIRED</code>（默认，加入当前事务）、<code>REQUIRES_NEW</code>（新开事务，挂起外层）、<code>NESTED</code>（保存点回滚）。面试常追问“为什么子事务异常不影响外层”，要结合传播行为解释。</p></div>
+    <div class="qa"><p class="q"><strong>Q31：BeanFactory 和 FactoryBean 区别？</strong></p><p><strong>A：</strong>BeanFactory 是 IoC 容器；FactoryBean 是“产 Bean 的工厂 Bean”。从容器拿 <code>myFactoryBean</code> 默认拿到其生产对象，拿工厂本身要用 <code>&myFactoryBean</code>。</p></div>
+    <div class="qa"><p class="q"><strong>Q32：介绍分布式事务？</strong></p><p><strong>A：</strong>跨服务场景通常不追求强一致锁死全局，而是走最终一致。常见方案是本地消息表、事务消息、SAGA/TCC。实践重点是幂等、补偿、可观测。</p></div>
+    <div class="qa"><p class="q"><strong>Q33：什么情况下出现事务悬挂？</strong></p><p><strong>A：</strong>常见于 TCC，空回滚先执行，后续 Try 到达但上下文已失效，导致业务状态异常。处理方式是幂等表 + 防悬挂标记 + 状态机校验。</p></div>
+    <div class="qa"><p class="q"><strong>Q34：介绍分布式锁？</strong></p><p><strong>A：</strong>Redis 常见实现是 <code>SET key value NX EX</code>，释放时用 Lua 保证“比对 value + 删除”原子。生产要有续期机制、超时与失败降级，避免死锁和误删。</p></div>
+    <div class="qa"><p class="q"><strong>Q35：Redis 过期删除策略？</strong></p><p><strong>A：</strong>惰性删除 + 定期删除。惰性在访问时删，省 CPU；定期抽样扫描，防止过期 key 堆积。内存淘汰策略再兜底。</p></div>
+    <div class="qa"><p class="q"><strong>Q36：缓存雪崩、缓存风暴（击穿）、缓存穿透？</strong></p><p><strong>A：</strong>雪崩是大量 key 同时失效；击穿是热点 key 失效瞬间并发打 DB；穿透是查不存在数据。治理：随机 TTL、单飞锁、布隆过滤器、空对象缓存、限流熔断。</p></div>
+    <div class="qa"><p class="q"><strong>Q37：MQ 生产者提交超时怎么办？</strong></p><p><strong>A：</strong>先区分“没发出去”还是“已落库但回执丢失”。业务层必须做幂等重试，并记录消息状态表。必要时开启事务消息或回查机制，防止重复下游副作用。</p></div>
+    <div class="qa"><p class="q"><strong>Q38：怎么保证消息幂等？</strong></p><p><strong>A：</strong>消费端以业务唯一键去重（如订单号+事件类型），插入幂等表或利用唯一索引。处理流程要做到“先判重再执行业务再落处理标记”。</p></div>
+    <div class="qa"><p class="q"><strong>Q39：synchronized 底层原理？</strong></p><p><strong>A：</strong>底层依赖对象头 Mark Word 和 Monitor，字节码是 <code>monitorenter/monitorexit</code>。锁会经历偏向锁、轻量级锁到重量级锁升级，竞争激烈时线程阻塞挂起。</p></div>
+    <div class="qa"><p class="q"><strong>Q40：synchronized 锁静态方法和非静态方法区别？</strong></p><p><strong>A：</strong>非静态锁的是实例对象；静态方法锁的是 Class 对象。不同实例的非静态锁互不影响，但静态锁是类级别全局互斥。</p></div>
+    <div class="qa"><p class="q"><strong>Q41：ReentrantLock 原理？</strong></p><p><strong>A：</strong>基于 AQS，核心是 <code>state</code> + CLH 队列。抢锁失败入队并挂起，释放时唤醒后继；支持可中断、公平策略和多个条件队列。</p></div>
+    <div class="qa"><p class="q"><strong>Q42：怎么实现可重入？</strong></p><p><strong>A：</strong>同线程重复获取锁时仅增加重入计数（AQS state++），释放时递减，减到 0 才真正释放锁。</p></div>
+    <div class="qa"><p class="q"><strong>Q43：公平锁和非公平锁怎么实现？</strong></p><p><strong>A：</strong>公平锁先检查等待队列前驱，严格 FIFO；非公平锁允许新线程先 CAS 抢锁，吞吐更高但可能饿死部分线程。</p></div>
+    <div class="qa"><p class="q"><strong>Q44：线程池参数与工作原理？</strong></p><p><strong>A：</strong>核心参数是 <code>corePoolSize/maxPoolSize/queue/keepAliveTime/rejectHandler</code>。执行流程：核心线程未满先建线程，满了先入队，队列满再建非核心，仍满触发拒绝。</p></div>
+    <div class="qa"><p class="q"><strong>Q45：拒绝策略有哪些？</strong></p><p><strong>A：</strong><code>Abort</code>、<code>CallerRuns</code>、<code>Discard</code>、<code>DiscardOldest</code>。生产里常自定义：记录告警、按任务等级降级、关键任务转 MQ。</p></div>
+    <div class="qa"><p class="q"><strong>Q46：核心线程能回收吗？</strong></p><p><strong>A：</strong>默认不回收；开启 <code>allowCoreThreadTimeOut(true)</code> 后可按 keepAlive 回收，适合流量波动大且要控成本的场景。</p></div>
+    <div class="qa"><p class="q"><strong>Q47：JUC 原子类如何实现原子性？</strong></p><p><strong>A：</strong>依赖 CPU CAS 指令 + volatile 内存可见性。失败就自旋重试，冲突高时可用 LongAdder 降低热点竞争。</p></div>
+    <div class="qa"><p class="q"><strong>Q48：CAS 会出现什么问题？</strong></p><p><strong>A：</strong>ABA、长时间自旋消耗 CPU、只能保证单变量原子性。ABA 常用版本号（AtomicStampedReference）解决。</p></div>
+    <div class="qa"><p class="q"><strong>Q49：MySQL 悲观锁与乐观锁？</strong></p><p><strong>A：</strong>悲观锁如 <code>SELECT ... FOR UPDATE</code>，适合高冲突；乐观锁靠版本号，适合读多写少。高并发写热点通常悲观锁更稳。</p></div>
+    <div class="qa"><p class="q"><strong>Q50：索引失效场景？</strong></p><p><strong>A：</strong>对索引列做函数/计算、隐式类型转换、最左前缀破坏、<code>like '%xx'</code>、范围查询后列失效、数据分布导致优化器放弃索引。</p></div>
+    <div class="qa"><p class="q"><strong>Q51：INT 索引什么时候会失效？</strong></p><p><strong>A：</strong>最常见是和字符串比较导致隐式转换，如 <code>where int_col='123a'</code>，可能触发全表扫描；还有函数包裹 <code>int_col+1=10</code> 也会失效。</p></div>
+    <div class="qa"><p class="q"><strong>Q52：索引有哪些数据结构？</strong></p><p><strong>A：</strong>常见有 B+Tree（MySQL InnoDB 主流）、哈希（等值快，范围弱）、倒排索引（全文检索）、跳表（Redis 有序集合）。</p></div>
+    <div class="qa"><p class="q"><strong>Q53：B+ 树结构是怎样的？</strong></p><p><strong>A：</strong>非叶子节点只存键和指针，叶子节点存完整数据并链表相连。好处是层高低、磁盘 IO 少、范围查询和排序非常高效。</p></div>
+    <div class="qa"><p class="q"><strong>Q54：平时怎么学技术？</strong></p><p><strong>A：</strong>我用“三段法”：先用项目问题驱动找资料，再做最小可运行实验，最后复盘沉淀成题库和笔记。这样知识能从“看懂”变成“讲清+用得出”。</p></div>
+
+    <h2>四、可直接讲的项目绑定话术（建议背）</h2>
+
+    <div class="qa">
+      <p class="q"><strong>话术 1：AI coding 占比与价值</strong></p>
+      <p>“我在项目里 AI coding 占比大约 40% 左右，主要放在样板代码、测试与文档。真正影响上线稳定性的架构决策、异常兜底、压测调优是我亲自做，所以它对我是效率放大器，不是替代工程能力。”</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>话术 2：智慧大师项目难点</strong></p>
+      <p>“最大难点是多源信息融合后，检索准确率和时延很难同时优化。我把链路拆成召回、重排、生成三段，召回用 Milvus 提覆盖，重排提精度，再用 RabbitMQ 做异步化，最后把高并发抖动压住了。”</p>
+    </div>
+    <div class="qa">
+      <p class="q"><strong>话术 3：后端在 AI 时代的定位</strong></p>
+      <p>“AI 时代后端更重要了，因为模型只是能力源，真正把能力变成稳定产品靠后端做编排、缓存、事务、一致性和可观测。不会后端，很难把 Agent 系统做成生产级。”</p>
+    </div>
+
+    <h2>五、网站落地映射（本次已执行）</h2>
+    <div class="qa">
+      <p><strong>已新增：</strong><code>blog/mock/interview-playbook.html</code>（本页）。</p>
+      <p><strong>复用关系：</strong>Agent/LLM/RAG 细节可回跳 <code>blog/ai/agent.html</code>、<code>blog/ai/llm.html</code>、<code>blog/ai/rag.html</code>、<code>blog/ai/serving.html</code>。</p>
+      <p><strong>后续建议：</strong>将本页高频题拆分为“30秒版/2分钟版”双视图，并按公司面经打标签（如“偏系统设计”“偏原理追问”）。</p>
+    </div>
+
+    <p class="tail">注：涉及个人项目具体数字（如 AI coding 占比、提效比例、工具数量、模型名称）请按真实经历替换。面试时优先“真实可追问”，不要过度包装。</p>
+  </div>
+</body>
+</html>
