@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG 进阶实战与 Agentic RAG</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #151522;
+      --deep: #121828;
+      --text: #e8e8f0;
+      --muted: #a0a0b8;
+      --accent: #00f5ff;
+      --border: rgba(255,255,255,.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "STKaiti", "KaiTi", "Kaiti SC", "Noto Serif SC", serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.9;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 44px; }
+    a { color: var(--accent); text-decoration: none; }
+    h1 { margin: 0 0 8px; }
+    h2 { margin: 18px 0 10px; color: var(--accent); font-size: 1.22rem; }
+    .meta { color: var(--muted); margin-bottom: 14px; }
+    .qa {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .deep {
+      background: var(--deep);
+      border: 1px solid rgba(0,245,255,.2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .q { color: var(--accent); margin-bottom: 4px; }
+    .k { color: #9be9ff; font-weight: 700; }
+    ul { margin: 4px 0 0 1.2em; }
+    code {
+      background: rgba(255,255,255,.08);
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-family: Consolas, monospace;
+      font-size: .9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p><a href="./index.html">返回 AI 分页题库</a> · <a href="./rag.html">返回 RAG 基础页</a> · <a href="../index.html">返回总题库</a></p>
+    <h1>RAG 进阶实战与 Agentic RAG</h1>
+    <p class="meta">流程优化、范式设计、评估落地（面试可复述版）</p>
+
+    <h2>一、RAG 全链路优化（8 步）</h2>
+
+    <div class="deep">
+      <p class="q"><strong>1) 数据接入与清洗（Ingestion）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>把原始文档变成可检索、可追踪、可增量更新的知识资产。</li>
+        <li><span class="k">优化：</span>去模板噪声、保留标题层级与来源字段、建立版本号和更新时间。</li>
+        <li><span class="k">坑点：</span>只保留纯文本，后续权限过滤、时间过滤、归因追溯都会变差。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>2) 分块（Chunking）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>每个块可召回且语义完整。</li>
+        <li><span class="k">优化：</span>先按语义边界切（标题/段落/函数），再控 token，保留 10%~20% overlap。</li>
+        <li><span class="k">实践：</span>FAQ、代码、规章文档分开策略，避免“一刀切”。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>3) Embedding 与索引</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>平衡召回率、时延和成本。</li>
+        <li><span class="k">优化：</span>同域 embedding + ANN 参数调优（HNSW/IVF）+ 冷热分层索引。</li>
+        <li><span class="k">坑点：</span>换 embedding 模型却不重建索引，向量空间会漂移。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>4) Query Understanding（查询理解）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>把自然语言问题转成检索友好表达。</li>
+        <li><span class="k">优化：</span>query rewrite、实体补全、同义扩展、多路并行检索。</li>
+        <li><span class="k">加分：</span>复杂问题先拆子问题，提高多跳问题命中率。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>5) 召回 + 重排（Retrieve + Rerank）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>先高覆盖，再高精度。</li>
+        <li><span class="k">优化：</span>混合检索（BM25 + Vector）并行召回，cross-encoder 重排到 topK。</li>
+        <li><span class="k">工程：</span>先 metadata 过滤再重排，减少算力开销并提升稳定性。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>6) 上下文构建（Context Assembly）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>给模型“高价值低噪声”证据包。</li>
+        <li><span class="k">优化：</span>去重、合并相邻块、按可信度排序、控制 token budget。</li>
+        <li><span class="k">建议：</span>每条证据绑定 source id，输出可追溯引用。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>7) 生成约束与拒答策略</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>正确、可解释、可拒答。</li>
+        <li><span class="k">优化：</span>提示词约束“仅基于证据回答”；证据不足触发拒答或补检索。</li>
+        <li><span class="k">坑点：</span>不设拒答边界会导致高置信幻觉。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>8) 反馈闭环（Feedback Loop）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>上线后持续提升而不是停留初版。</li>
+        <li><span class="k">优化：</span>沉淀失败样本（没召回/召回错/生成错），做回放与回归评测。</li>
+        <li><span class="k">策略：</span>优先改检索和重排，再考虑模型侧改造。</li>
+      </ul>
+    </div>
+
+    <h2>二、Agentic RAG 常见范式</h2>
+
+    <div class="qa"><p class="q"><strong>范式 A：ReAct RAG</strong></p><p>Thought → Retrieve → Observe → Refine → Answer，多轮迭代修正；适合多跳问题。要设置轮次上限与超时，防止循环。</p></div>
+    <div class="qa"><p class="q"><strong>范式 B：Plan-and-Execute RAG</strong></p><p>先拆子问题，再逐个检索与汇总；适合长任务和报告生成。关键是统一子任务输出 schema，避免汇总失真。</p></div>
+    <div class="qa"><p class="q"><strong>范式 C：Router RAG</strong></p><p>先路由再检索，按问题类型分发到 FAQ/代码库/工单库等；多知识域场景效果好。需要 fallback 通道防路由错误。</p></div>
+    <div class="qa"><p class="q"><strong>范式 D：Self-RAG / CRAG</strong></p><p>模型先答再自检证据充分性，不足则补检索重答；准确率导向场景常用。阈值过严会拉高时延与成本。</p></div>
+    <div class="qa"><p class="q"><strong>范式 E：Multi-Agent RAG</strong></p><p>Planner、Retriever、Verifier、Writer 分工协作；复杂任务更稳。要明确角色边界、共享状态和审计日志。</p></div>
+    <div class="qa"><p class="q"><strong>范式 F：GraphRAG</strong></p><p>关系图检索 + 文本证据融合；适合依赖链和因果链问题。优势是关系可解释，代价是图谱维护成本高。</p></div>
+
+    <h2>三、RAG 评估怎么做（必须分层）</h2>
+
+    <div class="deep">
+      <p class="q"><strong>检索层指标（Retriever）</strong></p>
+      <ul>
+        <li><code>Recall@k</code>：正确证据是否进入 topK（最关键）。</li>
+        <li><code>MRR</code>/<code>NDCG</code>：正确证据排序质量。</li>
+        <li>HitRate、P95/P99 检索时延、查询类型覆盖度。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>生成层指标（Generator）</strong></p>
+      <ul>
+        <li>Correctness：答案是否正确。</li>
+        <li>Faithfulness/Groundedness：答案是否被证据支持。</li>
+        <li>Citation Accuracy：引用是否准确。</li>
+        <li>Completeness：回答是否完整。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>端到端指标（E2E）</strong></p>
+      <ul>
+        <li>任务成功率、一次解决率、追问率、人工接管率。</li>
+        <li>成本指标：单问 token 成本、重排成本、平均响应时延。</li>
+        <li>用户侧：满意度、复用率、留存。</li>
+      </ul>
+    </div>
+
+    <div class="qa">
+      <p class="q"><strong>评估落地方法</strong></p>
+      <p><strong>离线：</strong>构建 benchmark（问题-金证据-标准答案）做回归；<strong>线上：</strong>A/B 实验；<strong>回放：</strong>失败会话重放验证改进。LLM-as-Judge 可用，但必须配人工抽检校准。</p>
+    </div>
+
+    <h2>四、面试可直接背诵</h2>
+    <div class="qa">
+      <p><strong>30 秒版：</strong>“我做 RAG 会按数据、检索、生成三层优化。检索看 Recall@k/MRR，生成看 groundedness/引用准确率，线上看时延和成功率。复杂问题会用 Agentic RAG 迭代检索纠错。”</p>
+      <p><strong>2 分钟版：</strong>“我把链路拆成 8 步：数据清洗、chunk、混合召回、重排、上下文构建、生成约束、反馈回放。先保召回覆盖，再提精度，最后控成本和时延。范式上按场景选 ReAct、Plan-Execute、Router 或 Self-RAG。”</p>
+      <p><strong>5 分钟版：</strong>“我会补充范式取舍和失败治理：路由错误怎么 fallback、重排预算怎么控、证据不足何时拒答，以及如何通过离线回归 + 线上 A/B + 失败回放持续优化。”</p>
+    </div>
+  </div>
+</body>
+</html>
