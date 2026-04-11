@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大模型Agent面试全攻略（附答题思路）</title>
+    <style>
+        body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}
+        .wrap{max-width:960px;margin:0 auto;padding:24px 16px 60px;line-height:1.9}
+        a{color:#00f5ff;text-decoration:none}
+        h1{margin:0 0 8px;font-size:1.62rem}
+        h2{margin:28px 0 12px;font-size:1.18rem;color:#00f5ff;border-bottom:1px solid rgba(0,245,255,.24);padding-bottom:6px}
+        .meta{color:#a0a0b8;font-size:.92rem;margin-bottom:16px}
+        .note{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:14px;color:#b9bfd5}
+        .qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+        .q{color:#00f5ff}
+        .q strong{font-size:.98rem}
+        .a{margin-top:6px;color:rgba(232,232,240,.94);font-size:.92rem}
+        .a code{background:rgba(0,245,255,.1);padding:1px 5px;border-radius:4px;font-size:.88em}
+        .depth{display:inline-block;font-size:.7rem;padding:1px 7px;border-radius:5px;margin-left:6px;vertical-align:middle}
+        .d1{background:rgba(0,245,255,.15);color:#00f5ff}
+        .d2{background:rgba(168,85,247,.18);color:#a855f7}
+        .d3{background:rgba(255,0,170,.15);color:#ff00aa}
+        #auth-gate{display:none;position:fixed;inset:0;z-index:9999;background:#0a0a0f;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+        #auth-gate .lock{font-size:2.4rem;margin-bottom:4px}
+        #auth-gate h2{font-size:1.2rem;color:#e8e8f0;font-weight:600}
+        #auth-gate input{width:260px;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#151522;color:#e8e8f0;font-size:.95rem;outline:none;font-family:inherit}
+        #auth-gate input:focus{border-color:#00f5ff}
+        #auth-gate button{padding:8px 28px;border:none;border-radius:8px;background:#00f5ff;color:#0a0a0f;font-weight:700;font-size:.92rem;cursor:pointer;font-family:inherit}
+        #auth-gate .err{color:#ff4466;font-size:.85rem;min-height:1.2em}
+        #main-content{display:none}
+    </style>
+</head>
+<body>
+<div id="auth-gate">
+    <div class="lock">🔒</div>
+    <h2>需要密码访问</h2>
+    <input type="password" id="auth-pwd" placeholder="请输入访问密码" autofocus>
+    <button id="auth-btn">确认</button>
+    <p class="err" id="auth-err"></p>
+</div>
+<div id="main-content" class="wrap">
+    <p><a href="./index.html">返回模拟面试</a> · <a href="../index.html">返回总题库</a></p>
+    <h1>大模型Agent面试全攻略（附答题思路）</h1>
+    <p class="meta">覆盖核心概念、多智能体协同、设计模式、状态管理、RAG实时更新与准确率提升。每题都给出“可直接口述”的回答骨架。</p>
+    <div class="note">使用方式建议：先背每题的“第一段定义 + 第二段方法 + 第三段落地例子”，再根据面试官追问展开“取舍与风险”。这样既有框架感，也有工程深度。</div>
+
+    <h2>一、核心概念与架构篇</h2>
+    <div class="qa"><p class="q"><strong>Q1：请简述Agent的基本架构组成，并解释其与传统LLM Chain的区别。</strong><span class="depth d1">基础</span></p>
+    <p class="a"><strong>回答骨架：</strong>Agent 通常可抽象为 <code>LLM + Planning + Memory + Tool Use</code>。LLM 负责推理与语言生成，Planning 负责任务分解和路径选择，Memory 负责保存短期上下文与长期经验，Tool Use 负责把“会说”变成“会做”（调用检索、数据库、API、代码执行器）。</p>
+    <p class="a"><strong>与 Chain 的本质差异：</strong>传统 Chain 是“预定义、线性、硬编码”的流水线，适合固定流程；Agent 是“目标驱动、可回路、自主决策”的系统，能根据中间观察结果动态改路径。简单说，Chain 像固定脚本，Agent 像会边想边做的执行体。</p>
+    <p class="a"><strong>工程取舍：</strong>Chain 的优点是稳定、可测、可预测；Agent 的优点是灵活、泛化强、能应对开放任务。2026 的主流做法不是二选一，而是“Workflow 约束 Agent”：外层用状态机保底，局部节点给 Agent 决策权。</p>
+    <p class="a"><strong>面试可落地例子：</strong>例如“简历解析 + 题目生成 + 评分报告”中，文件解析与字段校验用 Chain；“根据候选人回答动态追问”用 Agent。这样既保证稳定性，又保留智能性。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q2：解释 ReAct 模式的工作原理。</strong><span class="depth d1">基础</span></p>
+    <p class="a"><strong>定义：</strong>ReAct = <code>Reasoning + Acting</code>。模型先输出 Thought（为什么做这一步），再执行 Action（调用工具），得到 Observation（工具返回），然后进入下一轮 Thought。它不是一次性出答案，而是“思考-行动-观察”的闭环。</p>
+    <p class="a"><strong>为什么有效：</strong>纯 LLM 容易闭门推理；ReAct 把外部真实反馈引入推理过程，减少幻觉。每次 Observation 都是“事实锚点”，帮助模型纠偏。</p>
+    <p class="a"><strong>典型流程：</strong>例如问“某公司最新财报风险点”：Thought 决定先查新闻与公告；Action 调用搜索 API；Observation 返回多条结果；下一轮 Thought 决定做去重和可信源筛选；再 Action 调用摘要工具；最后给结论并附来源。</p>
+    <p class="a"><strong>风险与防护：</strong>ReAct 可能陷入循环或无效工具调用。工程上需设置最大轮数、token 预算、重复动作检测（相同工具+参数连续出现时触发中断）。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q3：如何实现 Agent 的长期记忆（Long-term Memory）？</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>分层记忆：</strong>短期记忆通常放在 Context Window（最近 N 轮对话 + 当前目标）；长期记忆用 RAG 体系存储（Embedding + 向量库 + 元数据），执行前按相关度检索经验片段注入上下文。</p>
+    <p class="a"><strong>写入策略：</strong>不要“每轮都写”，要做信息增量判定。通常只写：偏好变化、关键事实、失败/成功经验、稳定约束。并做去重、冲突合并、时间衰减，避免噪声和过时记忆污染决策。</p>
+    <p class="a"><strong>2026 新趋势：</strong>一是长上下文模型直接处理更多历史；二是“摘要层级结构”（session 摘要 -> 周摘要 -> 月摘要）递归压缩。前者实现简单但成本高，后者工程复杂但可控性和成本更优。</p>
+    <p class="a"><strong>面试亮点答法：</strong>强调“长期记忆不是存越多越好，而是检索命中时能提升任务成功率”。可补一句：记忆系统必须有生命周期管理（TTL、归档、冷存储），否则越跑越慢。</p></div>
+
+    <h2>二、多智能体协同（MAS）</h2>
+    <div class="qa"><p class="q"><strong>Q4：单 Agent 遇到瓶颈时，为什么需要 Multi-Agent？常见的协作模式有哪些？</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>为什么需要：</strong>单 Agent 在复杂长链任务中容易出现注意力漂移、上下文污染、跨域知识断裂。把任务拆给多个专长 Agent，可提高可解释性和并行度。</p>
+    <p class="a"><strong>三种常见模式：</strong><strong>Boss-Worker</strong>（主 Agent 拆任务并汇总）、<strong>Pipeline</strong>（A 产出给 B，再给 C）、<strong>Joint Discussion</strong>（多个 Agent 讨论后投票或仲裁）。</p>
+    <p class="a"><strong>怎么选：</strong>任务强依赖顺序就选 Pipeline；需要统一目标约束就选 Boss-Worker；需要多视角论证（如风控、法律、技术）就选讨论式。实战常是混合结构：先 Boss-Worker 拆分，再每个子任务内用 Pipeline。</p>
+    <p class="a"><strong>面试可补充：</strong>MAS 不是越多越好。Agent 数量增加会抬高通信成本与调度复杂度，建议从 2-3 个角色起步（Planner、Executor、Critic），跑通后再扩展。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q5：多智能体系统中如何解决“无限循环”或“通信冗余”问题？</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>循环治理：</strong>引入状态机与最大迭代次数（如每任务最多 8 轮），并设置“重复检测”：若连续两轮行动相同且收益无提升，强制终止或切换策略。</p>
+    <p class="a"><strong>通信压缩：</strong>Agent 间不传原始长文本，传结构化摘要（结论、证据、置信度、待确认项）。可使用“中间消息模板”，把 token 消耗降到可控范围。</p>
+    <p class="a"><strong>Definition of Done：</strong>提前定义完成标准，比如“答案包含 3 条证据 + 风险等级 + 不确定性声明”。没有 DoD，系统会持续“优化”而不收敛。</p>
+    <p class="a"><strong>工程建议：</strong>做全链路可观测（轮数、token、耗时、回退次数）。面试时可强调：无限循环问题本质是“缺少收敛条件和奖励信号”，不是模型参数本身问题。</p></div>
+
+    <h2>三、Agent 核心设计模式</h2>
+    <div class="qa"><p class="q"><strong>Q6：请对比“工作流（Workflows）”与“自主智能体（Autonomous Agents）”的优劣。</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>Workflows：</strong>通过 DAG 或状态机硬编码路径，优点是可靠、可回放、合规性强，适合审批、标准客服、报表生成等“可枚举路径”的任务。</p>
+    <p class="a"><strong>Autonomous Agents：</strong>由 LLM 决定循环和工具调用，优点是灵活、适应未知问题，适合开放式研究、复杂调试、代码生成这类“路径不可预先枚举”的任务。</p>
+    <p class="a"><strong>面试金句（可直接说）：</strong>“2026 的工程趋势是用 Workflow 约束 Agent：框架定义边界与安全，Agent 在局部节点自主决策。”</p>
+    <p class="a"><strong>决策准则：</strong>如果错误代价高、合规要求强，用 Workflow 为主；如果任务变化快、探索空间大，用 Agent 为主。企业级系统通常是二者混编而不是替代关系。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q7：详细解释“编排者-执行者（Orchestrator-Workers）”模式。</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>角色分工：</strong>Orchestrator 负责任务分解、依赖管理、结果汇总；Worker 负责单点执行（如 UI、后端、测试、检索、评估）。每个 Worker 只暴露清晰输入输出契约，减少耦合。</p>
+    <p class="a"><strong>适用场景：</strong>大型软件开发、复杂调研、跨模块故障分析。比如“生成功能 + 写测试 + 安全审计 + 回归报告”可以并行由不同 Worker 完成。</p>
+    <p class="a"><strong>核心难点：</strong>任务粒度。拆太细会造成通信开销和调度抖动；拆太粗会让 Worker 幻觉率上升。可用“单任务 5-15 分钟可完成”作为经验粒度，必要时动态二次拆分。</p>
+    <p class="a"><strong>面试可加分点：</strong>说明你会给 Worker 输出评分（准确性、完整性、可执行性），低分任务回流给 Orchestrator 重分配，这就是“闭环编排”。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q8：什么是“反思/自我纠正（Reflection/Self-Correction）”模式？</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>定义：</strong>先生成初稿，再由 Critic（可同模型不同提示词，或独立模型）检查约束、事实、格式，再把反馈喂回生成器迭代。目标是把“一次猜对”改为“多轮逼近正确”。</p>
+    <p class="a"><strong>为什么有效：</strong>很多失败不是“不会”，而是“第一次不够稳”。Reflection 能显著提升复杂任务成功率，尤其在代码、报告、长文本推理中。</p>
+    <p class="a"><strong>Reflexion 思路：</strong>记录失败轨迹（错因、修复动作、是否生效）作为可检索经验。下次遇到同类问题先检索“失败记忆”，避免重复犯错。</p>
+    <p class="a"><strong>工程边界：</strong>要限制迭代轮数和收益阈值（如改进幅度 < 5% 就停），否则会“过拟合式润色”并浪费 token。高风险输出仍需人工确认。</p></div>
+
+    <h2>四、深度技术实现与状态管理</h2>
+    <div class="qa"><p class="q"><strong>Q9：在多轮对话 Agent 中，如何处理“状态爆炸”和“上下文溢出”？</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>State Schema：</strong>先定义严格状态结构（如 <code>TypedDict</code>）：<code>goal</code>、<code>constraints</code>、<code>recent_messages</code>、<code>tool_results</code>、<code>memory_refs</code>。不在 schema 里的字段不入状态，避免无界增长。</p>
+    <p class="a"><strong>Trim Strategy：</strong>不是简单截断。优先保留 System Prompt、当前目标、最近 N 轮关键交互、未完成约束；低价值寒暄优先裁剪。可引入“语义重要度打分”做保留策略。</p>
+    <p class="a"><strong>Summary Buffer：</strong>把旧对话做摘要并放在上下文头部，原文只留最近窗口。常见做法是“滚动摘要 + 关键事件列表”，这样既压缩 token，又保留叙事连续性。</p>
+    <p class="a"><strong>面试补充：</strong>状态爆炸本质是信息治理问题。建议把“短期上下文”和“长期记忆”解耦：短期追求实时性，长期追求可检索与可审计。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q10：如何保证 Agent 调用工具（Function Calling）的可靠性？</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>语法可靠：</strong>使用 JSON Mode 或严格 Schema 校验，参数不合法直接拒绝执行，并把错误信息回传模型进行自修复（Self-heal）。</p>
+    <p class="a"><strong>逻辑可靠：</strong>高风险操作必须 Human-in-the-loop。比如删库、转账、批量外呼等动作，不允许自动执行，必须人工确认按钮或二次验证。</p>
+    <p class="a"><strong>执行可靠：</strong>每个工具调用都应有超时、重试、熔断、幂等键。推荐记录 <code>trace_id</code> + <code>tool_name</code> + <code>args_hash</code>，便于去重与审计。</p>
+    <p class="a"><strong>面试可答“闭环”：</strong>“我会把工具错误当成训练信号返回给模型：参数缺失、类型不符、权限不足都让模型改一次，再决定是否降级或转人工。”</p></div>
+
+    <div class="qa"><p class="q"><strong>Q11：LangGraph中的“节点（Node）”和“边（Edge）”与传统工作流有何不同？</strong><span class="depth d2">进阶</span></p>
+    <p class="a"><strong>传统工作流：</strong>边通常固定，路径可提前枚举，适合确定性流程。</p>
+    <p class="a"><strong>LangGraph 差异：</strong>支持条件边（Conditional Edges），可根据模型输出或状态变量动态选择下一节点；支持循环（Cycles），使“尝试-失败-修正-再尝试”成为一等公民。</p>
+    <p class="a"><strong>工程意义：</strong>它把 Agent 从“单次调用”升级为“可持续执行体”，并且能做 checkpoint 恢复。对于长任务和人工插手场景（审批后继续）非常实用。</p>
+    <p class="a"><strong>面试回答建议：</strong>强调“LangGraph 不是替代传统流程，而是给流程图增加了动态决策和可恢复能力”。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q15：当知识库内容更新很快（如每日新闻或实时股价）时，你的RAG系统如何应对？</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>动态路由：</strong>先做问题分类判断实时性需求。若是“实时问题”（股价、突发新闻、今日政策），优先走搜索/API 工具；若是“稳定知识”（概念解释、制度规则），优先走向量库。</p>
+    <p class="a"><strong>流式索引：</strong>通过 Kafka/Flink 等数据流监听增量变更，触发增量 Embedding 写入，避免全量重建。关键是保证“写入顺序 + 去重 + 版本号”。</p>
+    <p class="a"><strong>缓存失效：</strong>对高频问答做 TTL 缓存，并在源数据更新时主动失效。推荐“被动 TTL + 主动事件驱动失效”双机制，避免脏答案长期停留。</p>
+    <p class="a"><strong>面试可加分：</strong>回答中补一句“我会输出数据时间戳与来源，明确告知答案新鲜度”，这能同时提升可信度与合规性。</p></div>
+
+    <div class="qa"><p class="q"><strong>Q16：如何提升问答准确度？</strong><span class="depth d3">深追问</span></p>
+    <p class="a"><strong>总原则：</strong>准确度提升不能只靠 Prompt，要做“解析层 + 检索层 + 生成校验层”的组合拳。</p>
+    <p class="a"><strong>深度解析层（Layout-Aware Parsing）：</strong>传统字符分块会打散表格和标题层级，导致语义断裂。可使用布局感知解析（如 Unstructured 或文档版面模型）把内容识别成标题/正文/表格/列表，再按 H1-H4 层级做语义分块，保证 chunk 结构完整。</p>
+    <p class="a"><strong>检索增强层（Multi-Stage Retrieval）：</strong>先做混合检索（向量 + BM25），再做重排序（Cross-Encoder，例如 BGE-Reranker）。这是性价比最高的提升项。再加 Query Expansion（自动生成 2-3 个同义问并行检索）可显著缓解用户“问得太短”的问题。</p>
+    <p class="a"><strong>生成校验层（Self-RAG）：</strong>增加“验证节点”：先判断检索内容是否足以回答；不足则自动再检索。生成后再做“证据覆盖检查”（答案中的关键陈述是否都能在检索片段中找到依据），超出证据的句子要降级或删除。</p>
+    <p class="a"><strong>可执行落地指标：</strong>建议同时跟踪 <code>Recall@K</code>、<code>Rerank NDCG</code>、<code>Faithfulness</code>、<code>Answer Relevancy</code> 和人工抽检准确率。若只能优先做一件事，先上重排序与证据校验，收益通常最大。</p></div>
+
+    <div class="note">
+        来源整理：牛客网帖子《大模型Agent面试全攻略（附答题思路）》及你提供内容二次扩展改写。
+        原贴链接：<a href="https://www.nowcoder.com/discuss/871718560224112640" target="_blank" rel="noopener noreferrer">https://www.nowcoder.com/discuss/871718560224112640</a>
+    </div>
+</div>
+<script src="./auth.js"></script>
+</body>
+</html>
