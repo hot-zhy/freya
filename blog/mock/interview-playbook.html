@@ -330,6 +330,149 @@
       面试实战建议：每题按“结论一句话 → 机制两点 → 项目证据一条 → 风险兜底一条”回答，基本就能抗住大多数追问。
     </div>
 
+    <h2>七、RAG 与 Agentic RAG 深入专题（已加可复述版）</h2>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 全流程优化：总览</strong></p>
+      <p><span class="k">一条线讲清：</span>数据接入 → 分块 → 向量化与索引 → 查询理解 → 召回重排 → 上下文构建 → 生成约束 → 反馈闭环。</p>
+      <p><span class="k">答题模板：</span>“我做 RAG 不是只调 embedding，而是按链路分层优化；召回层看覆盖，生成层看可证据化，线上看时延和成功率。”</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 1：数据接入与清洗（Ingestion）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>把原始文档变成可检索、可追踪、可更新的知识资产。</li>
+        <li><span class="k">优化：</span>去页眉页脚/模板噪声、保留标题层级和来源字段、做版本号和增量更新。</li>
+        <li><span class="k">坑点：</span>只存纯文本不存 metadata，后续权限过滤和时间过滤会很难做。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 2：分块策略（Chunking）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>让每个 chunk 既有语义完整性，又能被精准召回。</li>
+        <li><span class="k">优化：</span>优先按语义边界切（标题、段落、函数），再控 token 大小并设置 10%~20% overlap。</li>
+        <li><span class="k">经验：</span>FAQ、代码、规范文档应使用不同切分策略，避免“一刀切”。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 3：Embedding 与索引构建</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>兼顾召回率、时延和成本。</li>
+        <li><span class="k">优化：</span>同域 embedding、ANN 参数调优（如 HNSW/IVF）、冷热分层索引。</li>
+        <li><span class="k">坑点：</span>embedding 模型切换后不重建索引，会导致历史向量语义漂移。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 4：查询理解与改写（Query Understanding）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>把用户自然语言转成“可检索表达”。</li>
+        <li><span class="k">优化：</span>query rewrite、实体补全、同义扩展、多路并行查询。</li>
+        <li><span class="k">追问可答：</span>复杂问句可先拆子问题再检索，提升多跳问题命中率。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 5：召回 + 重排（Retrieve + Rerank）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>先高覆盖，再高精度。</li>
+        <li><span class="k">优化：</span>混合检索（BM25 + Vector）并行召回，cross-encoder 重排到 topK。</li>
+        <li><span class="k">工程点：</span>先 metadata 过滤再重排，可减少重排开销并提升稳定性。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 6：上下文构建（Context Assembly）</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>给模型最少噪声的证据包。</li>
+        <li><span class="k">优化：</span>证据去重、相邻片段合并、按可信度排序、严格 token budget。</li>
+        <li><span class="k">加分点：</span>每条证据附 source id，支持可追溯引用。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 7：生成约束与拒答策略</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>答案正确、可解释、可拒答。</li>
+        <li><span class="k">优化：</span>提示词强约束“仅基于证据回答”，证据不足时触发拒答或补检索。</li>
+        <li><span class="k">坑点：</span>没有拒答策略会导致“看起来流畅但事实上幻觉”。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 流程 8：反馈闭环与持续优化</strong></p>
+      <ul>
+        <li><span class="k">目标：</span>系统越跑越准，而不是上线后停滞。</li>
+        <li><span class="k">优化：</span>沉淀失败样本（没召回/召回错/生成错），做离线回放与定期回归评测。</li>
+        <li><span class="k">实践：</span>优先优化检索和重排，不要一上来就改大模型。</li>
+      </ul>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>Agentic RAG 范式 1：ReAct RAG</strong></p>
+      <p><span class="k">做法：</span>Thought → Retrieve → Observe → Refine → Answer，允许多轮检索迭代纠错。</p>
+      <p><span class="k">适用：</span>多跳推理、跨文档证据融合。<span class="k">控制点：</span>设置最大轮次和超时，防止无限循环。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>Agentic RAG 范式 2：Plan-and-Execute RAG</strong></p>
+      <p><span class="k">做法：</span>先拆子任务，再对子任务独立检索并汇总。</p>
+      <p><span class="k">适用：</span>长问题、报告生成、方案比较。<span class="k">控制点：</span>子任务输出统一 schema，便于最后合并。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>Agentic RAG 范式 3：Router RAG（路由式）</strong></p>
+      <p><span class="k">做法：</span>先分类 query，再路由到不同知识源（FAQ、代码库、工单库、政策库）。</p>
+      <p><span class="k">适用：</span>多知识域组织。<span class="k">控制点：</span>路由失败要 fallback 到通用检索。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>Agentic RAG 范式 4：Self-RAG / CRAG（自反思）</strong></p>
+      <p><span class="k">做法：</span>模型先回答，再自评证据充分性；不足则触发补检索和重生成。</p>
+      <p><span class="k">适用：</span>准确性优先场景。<span class="k">控制点：</span>自评阈值要标定，否则检索次数失控、时延上升。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>Agentic RAG 范式 5：Multi-Agent RAG</strong></p>
+      <p><span class="k">做法：</span>Planner 拆解，Retriever 取证，Verifier 校验，Writer 汇总。</p>
+      <p><span class="k">适用：</span>复杂任务和强可解释输出。<span class="k">控制点：</span>角色边界、共享状态一致性、审计日志必须明确。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>Agentic RAG 范式 6：GraphRAG（图谱增强）</strong></p>
+      <p><span class="k">做法：</span>图结构检索关系链 + 文本检索事实证据，最后联合推理。</p>
+      <p><span class="k">适用：</span>关系密集型问题（依赖链、组织关系、因果链）。<span class="k">代价：</span>图构建与更新成本较高。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 评估体系：检索层 / 生成层 / 端到端分开评</strong></p>
+      <ul>
+        <li><span class="k">检索层：</span><code>Recall@k</code>、<code>MRR</code>、<code>NDCG</code>、HitRate、P95 时延。</li>
+        <li><span class="k">生成层：</span>Correctness、Faithfulness（是否被证据支撑）、Citation Accuracy、Completeness。</li>
+        <li><span class="k">端到端：</span>任务成功率、追问率、人工接管率、单问成本、用户满意度。</li>
+      </ul>
+      <p><span class="k">关键原则：</span>先定位“没召回”还是“召回对但生成错”，再做针对性优化。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>RAG 评估怎么落地：离线 + 线上 + 回放</strong></p>
+      <ul>
+        <li><span class="k">离线：</span>构建基准集（问题、金标准证据、标准答案），做回归测试。</li>
+        <li><span class="k">线上：</span>A/B 对比不同检索链路，观察真实业务指标变化。</li>
+        <li><span class="k">回放：</span>把线上失败会话重放到新策略，验证是否实质提升。</li>
+      </ul>
+      <p><span class="k">补充：</span>LLM-as-Judge 可用，但要配人工抽检，避免评估偏差。</p>
+    </div>
+
+    <div class="deep">
+      <p class="q"><strong>可直接背诵：RAG 三档口述（30秒 / 2分钟 / 5分钟）</strong></p>
+      <p><span class="k">30秒：</span>“我做 RAG 会按数据、检索、生成三层优化：检索层先看 Recall@k 和 MRR，生成层看 groundedness 和引用正确率，线上看时延与成功率。复杂问答会用 Agentic RAG 迭代检索纠错。”</p>
+      <p><span class="k">2分钟：</span>“我把链路拆成数据清洗、chunk、混合召回、重排、上下文构建、生成约束、反馈回放。先保召回覆盖，再提重排精度，最后控制 token budget 和拒答策略。评估分层做，避免把问题都归因给模型。”</p>
+      <p><span class="k">5分钟：</span>“我会补充范式取舍：ReAct 适合多跳，Plan-Execute 适合长任务，Router 适合多知识域，Self-RAG 适合准确性优先，Multi-Agent 适合复杂协作。并说明如何权衡时延、成本、准确率和可观测性。”</p>
+    </div>
+
     <p class="tail">注：涉及个人项目具体数字（如 AI coding 占比、提效比例、工具数量、模型名称）请按真实经历替换。面试时优先“真实可追问”，不要过度包装。</p>
   </div>
 </body>
