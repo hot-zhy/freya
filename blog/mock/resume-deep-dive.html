@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简历深挖面试（70题）</title>
+    <style>
+        body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}
+        .wrap{max-width:960px;margin:0 auto;padding:24px 16px 64px;line-height:1.9}
+        a{color:#00f5ff;text-decoration:none}
+        h1{margin:0 0 8px;font-size:1.66rem}
+        h2{margin:28px 0 12px;font-size:1.2rem;color:#00f5ff;border-bottom:1px solid rgba(0,245,255,.25);padding-bottom:6px}
+        .sub{color:#a0a0b8;font-size:.92rem;margin-bottom:14px}
+        .note{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:14px;color:#c2c8dc}
+        .qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+        .q{color:#00f5ff}
+        .q strong{font-size:.98rem}
+        .a{margin-top:6px;color:rgba(232,232,240,.94);font-size:.92rem}
+        .a code{background:rgba(0,245,255,.11);padding:1px 5px;border-radius:4px;font-size:.88em}
+        .depth{display:inline-block;font-size:.7rem;padding:1px 7px;border-radius:5px;margin-left:6px;vertical-align:middle}
+        .d1{background:rgba(0,245,255,.15);color:#00f5ff}
+        .d2{background:rgba(168,85,247,.2);color:#a855f7}
+        .d3{background:rgba(255,0,170,.16);color:#ff00aa}
+        #auth-gate{display:none;position:fixed;inset:0;z-index:9999;background:#0a0a0f;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+        #auth-gate .lock{font-size:2.4rem;margin-bottom:4px}
+        #auth-gate h2{font-size:1.2rem;color:#e8e8f0;font-weight:600}
+        #auth-gate input{width:260px;padding:10px 14px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:#151522;color:#e8e8f0;font-size:.95rem;outline:none;font-family:inherit}
+        #auth-gate input:focus{border-color:#00f5ff}
+        #auth-gate button{padding:8px 28px;border:none;border-radius:8px;background:#00f5ff;color:#0a0a0f;font-weight:700;font-size:.92rem;cursor:pointer;font-family:inherit}
+        #auth-gate .err{color:#ff4466;font-size:.85rem;min-height:1.2em}
+        #main-content{display:none}
+    </style>
+</head>
+<body>
+<div id="auth-gate">
+    <div class="lock">🔒</div>
+    <h2>需要密码访问</h2>
+    <input type="password" id="auth-pwd" placeholder="请输入访问密码" autofocus>
+    <button id="auth-btn">确认</button>
+    <p class="err" id="auth-err"></p>
+</div>
+
+<div id="main-content" class="wrap">
+    <p><a href="./index.html">返回模拟面试</a> · <a href="../index.html">返回总题库</a></p>
+    <h1>简历深挖面试（70题）</h1>
+    <p class="sub">基于 `赵晗瑜0407.pdf` 定制：项目细节 + 技术深挖 + 追问应对 + 口语化回答。目标是让面试官感受到“确实做过、思考过、复盘过”。</p>
+
+    <div class="note">
+        使用建议：每题按“<strong>业务问题 -> 技术方案 -> 指标结果 -> 复盘取舍</strong>”回答；被追问时优先补“为什么这么做，而不是别的方案”。
+    </div>
+
+    <h2>120秒自我介绍（开场）</h2>
+    <div class="qa">
+        <p class="q"><strong>主版本（约120秒）</strong><span class="depth d2">高频</span></p>
+        <p class="a"><strong>可直接口述：</strong>面试官您好，我叫赵晗瑜，目前是华东师范大学软件工程硕士在读，本科同校，GPA 3.87/4.0，研究方向是 AI4Edu。我的核心优势是把 LLM/Agent 能力做成可上线、可观测、可优化的工程系统。过去的几段实习主要做了三类事情：第一类是 Agent 工程化，比如在喜马拉雅“智慧大师”里，我负责用户画像抽取、Mem0 长期记忆、MCP 工具封装和多 Agent 调度，并通过 RabbitMQ 异步化把高峰超时率降低约 60%；第二类是高并发后端与性能优化，比如在“小花狮”智能作文系统，我做了 Agentic Workflow、RAG 注入和多级缓存，核心接口响应提升 42%，数据库压力降低 52%，P99 控制在 100ms 以内；第三类是复杂问题自动化分析，比如在 NVIDIA 的 NVPunish Web UI，我做了多机多 Job 可视化和 Batch RCA Pipeline，面向 1000+ 高频失败模式做自动化根因分析，支持幂等恢复和断点续跑，替代人工逐模式排查。除此之外，我还做过 AI 面试系统和数学推理项目，AAAI 数学竞赛拿到全球第二，主要用到 K-Means 题型聚类、LoRA、PAL 和多模型融合。整体上，我希望在这个岗位里继续做“懂模型也懂工程”的工作：把 Agent 从 demo 做到稳定、高效、可规模化落地。</p>
+        <p class="a"><strong>被打断时30秒收束：</strong>如果只用一句话总结，我的定位是“Agent 应用工程 + 后端性能治理”的复合型选手，过去的项目都围绕一个目标：把大模型能力变成可交付、可量化、可持续优化的产品能力。</p>
+    </div>
+
+    <h2>一、教育与科研亮点（8题）</h2>
+    <div class="qa"><p class="q"><strong>Q1：你教育背景很强，如何证明不是“只会做题不会落地”？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>我会用“科研到工程”的闭环来证明。比如论文里做知识追踪与个性化推荐，落地到 AI 面试系统里就是“学习画像 -> 自适应选题 -> 反馈迭代”；并且线上指标可量化，如满意度 84%、语义检索准确率提升 30%+。我不把论文当结果，而是当方法论来源。</p></div>
+    <div class="qa"><p class="q"><strong>Q2：你的一区论文价值是什么？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>核心价值是把“Learn-Practice-Evaluate-Support”做成可执行框架，不只停留在算法。它给工程落地提供了三个可复用模块：可扩展 RAG 链路、自动代码评估框架、可解释的学习路径推荐。面试里我会强调“可迁移性”和“课堂真实场景验证”。</p></div>
+    <div class="qa"><p class="q"><strong>Q3：AAAI 数学竞赛全球第二，你最关键的技术贡献是什么？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>不是单点技巧，而是组合策略：K-Means 做题型聚类提升 Few-shot 匹配，LoRA 做专项微调增强题型适配，PAL 把计算步骤交给程序执行降低算错率，最后用多模型投票提高稳定性。这个项目让我形成了“先拆误差来源，再逐层补齐”的问题解决习惯。</p></div>
+    <div class="qa"><p class="q"><strong>Q4：你怎么平衡科研、实习和课程？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>我按“长期问题 + 短周期交付”拆分。科研维持长期主线（每周固定时段），实习按两周迭代交付，课程任务尽量工程化复用。核心是把重复劳动模板化，例如评测脚本、日志看板、答辩材料框架，减少上下文切换成本。</p></div>
+    <div class="qa"><p class="q"><strong>Q5：你研究方向AI4Edu，为什么投递Agent工程岗？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>AI4Edu 是我的应用场景，不是能力边界。我做的核心能力其实是 Agent/RAG/后端工程化，这些能力在金融、内容、客服、运维都通用。教育只是让我更重视稳定性、可解释和体验闭环，反而有利于做高要求业务场景。</p></div>
+    <div class="qa"><p class="q"><strong>Q6：奖项很多，哪个最能代表你？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>我会选“AAAI全球第二 + NVIDIA Batch RCA落地”这个组合。前者证明算法与推理能力，后者证明工程兑现能力。两者合起来更能说明我不是单一方向选手。</p></div>
+    <div class="qa"><p class="q"><strong>Q7：你如何定义一个科研/项目是否成功？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>我看三层指标：学术层（方法是否有创新和可解释性）、产品层（用户是否感知到价值）、工程层（是否可维护可扩展）。如果只有论文分数没有线上收益，我不会认定是完整成功。</p></div>
+    <div class="qa"><p class="q"><strong>Q8：如果论文结论和线上效果冲突，你怎么处理？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>先做误差归因：数据分布差异、延迟预算、提示词策略、交互路径是否变化。然后采用双轨策略：线上先用稳态方案保业务，离线继续验证改进版本，满足灰度门槛再切换。结论是“业务稳定优先，研究迭代并行”。</p></div>
+
+    <h2>二、NVIDIA NVPunish 深挖（10题）</h2>
+    <div class="qa"><p class="q"><strong>Q9：你在NVIDIA项目里最核心的一件事是什么？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>把“运行态可视化 + 批量故障根因分析 + 后端接口工程化”打成闭环，不只是做了页面。价值在于从“看见问题”到“定位问题”再到“查询结果”在一个系统里完成。</p></div>
+    <div class="qa"><p class="q"><strong>Q10：为什么做Gantt图和Failure Analytics看板？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>GPU压测是多机多Job并发，表格很难看出阻塞和失败分布。Gantt 图能直观看执行时序、等待与失败点，看板能聚合失败模式并直接联动 RCA 入口，缩短从“发现异常”到“开始分析”的路径。</p></div>
+    <div class="qa"><p class="q"><strong>Q11：Batch RCA Pipeline怎么设计的？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>先做上下文预处理（日志裁剪、字段标准化）、频次过滤（优先高频模式）、版本归因（锁定相关代码范围），形成 pattern-level 分析上下文，再由 SubAgent 并发追踪 failure sequence，输出结构化 root cause report。</p></div>
+    <div class="qa"><p class="q"><strong>Q12：为什么采用滑动窗口并发调度SubAgent？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>全量并发会打爆模型/接口配额且上下文管理失控。固定窗口可控并发，窗口内任一任务完成就补位，兼顾吞吐与稳定；每个 SubAgent 独立上下文，减少相互污染。这个策略和“受控并发”思想一致。</p></div>
+    <div class="qa"><p class="q"><strong>Q13：幂等恢复和断点续跑如何做？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>以 <code>pattern_id</code> 为任务主键持久化状态（pending/running/completed/failed），重启后跳过 completed，回收超时 running，重试 failed/pending。结果写入使用 upsert，保证重复调度不会产生冲突副本。</p></div>
+    <div class="qa"><p class="q"><strong>Q14：如果SubAgent中途失败，会影响整体吗？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>不会阻塞全局。失败任务标记并记录 <code>last_error</code>，释放并发槽位，窗口继续推进；汇总报告里标注未完成项并支持后续重跑。重点是失败隔离而不是“全有全无”。</p></div>
+    <div class="qa"><p class="q"><strong>Q15：你如何证明这套系统真实提升了效率？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>我会拿三个指标：人工逐模式排查工时下降、pattern 覆盖率提升、从失败产生到初步 RCA 报告产出时延缩短。即使没公开绝对值，也能用相对改善和流程变化证明价值。</p></div>
+    <div class="qa"><p class="q"><strong>Q16：为什么后端选 Django？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>项目节奏快，Django 在后台管理、REST 开发和数据模型管理上开发效率高，适合快速把测试管理、报告、配置、RCA 查询等 10+ API 打通。目标不是“最潮框架”，而是“最短路径上线”。</p></div>
+    <div class="qa"><p class="q"><strong>Q17：这个项目最难的点是什么？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>不是画图，而是把日志、版本、源码线索串成可自动分析的对象。真正难点在“抽象模式 + 受控并发 + 结构化输出”三件事同时成立。</p></div>
+    <div class="qa"><p class="q"><strong>Q18：如果让你再做一版2.0，会先改什么？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>先补可观测性与评测体系：增加 RCA 命中率标注回流、错误分类看板、重试策略 A/B；再做在线学习闭环，让失败样例反哺提示词和规则。先提质量，再提花哨功能。</p></div>
+
+    <h2>三、喜马拉雅 Multi-Agent 深挖（10题）</h2>
+    <div class="qa"><p class="q"><strong>Q19：智慧大师项目里你负责哪条主链路？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>我负责“画像抽取 -> 长期记忆 -> 工具调度 -> 多维召回”主链路，重点是把 Agent 从单轮问答升级为跨会话连续服务能力。</p></div>
+    <div class="qa"><p class="q"><strong>Q20：Mem0长期记忆写入策略怎么做？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>不是每轮都写。只写信息增量（偏好变化、关键事件、情绪波动），并做去重与冲突合并，防止记忆污染。读取时按相关度+时间衰减，优先近期高价值记忆。</p></div>
+    <div class="qa"><p class="q"><strong>Q21：MCP在项目中解决了什么问题？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>MCP把账号信息、行为特征、长期记忆和外部工具做标准化封装，让 Agent 的工具发现和调用协议统一，减少硬编码 function 描述，提升扩展性和权限隔离能力。</p></div>
+    <div class="qa"><p class="q"><strong>Q22：为什么是 Main Agent + SubAgent？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>Main Agent 保持目标一致性和最终决策，SubAgent 负责情绪分析、计划生成、知识检索等专长任务，能降低单 Agent 的上下文负担与推理漂移，提升复杂任务可控性。</p></div>
+    <div class="qa"><p class="q"><strong>Q23：RabbitMQ削峰具体做了什么？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>把高延迟步骤（特征抽取、向量化写入、记忆同步）从同步主链路拆到异步队列，主链路只保留必要推理。结果是高峰期工具调用超时率下降约60%，响应稳定性明显改善。</p></div>
+    <div class="qa"><p class="q"><strong>Q24：Milvus召回如何兼顾“当前情绪+历史偏好+长期目标”？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>召回阶段同时使用当前对话向量、历史记忆向量和目标标签，做多路检索与加权融合，并用情绪标签做二次筛选。这样避免“只看当下”或“只看历史”的单一偏差。</p></div>
+    <div class="qa"><p class="q"><strong>Q25：点击率提升8%-12%主要来自哪一步？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>主要来自“画像结构化质量 + 召回重排策略”的联动。没有高质量画像，向量检索再强也会偏；没有合理重排，召回结果也难转化。我的工作重点是把这两步打通。</p></div>
+    <div class="qa"><p class="q"><strong>Q26：这个项目里你做过哪些取舍？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>我优先稳定和可迭代：先用可落地方案快速上线（异步化+可观测），再做高级优化（聚类精细化、权重自动调参）。在增长场景里，先保障服务稳定比追求模型极限更关键。</p></div>
+    <div class="qa"><p class="q"><strong>Q27：如果今天让你复盘一个失败点，你会说什么？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>早期记忆写入门槛偏低导致噪声偏多，后续我补了写入评分和冲突合并策略。这个复盘说明：Agent系统质量问题很多不是“模型不够强”，而是“信息治理没做好”。</p></div>
+    <div class="qa"><p class="q"><strong>Q28：如何让面试官信你是真的做过？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>我会讲清决策链：为什么拆异步、怎么拆、拆后指标怎么变、遇到什么副作用（重复消费、幂等处理）以及怎么修。能讲“副作用和修复”，通常比讲术语更有说服力。</p></div>
+
+    <h2>四、小花狮与教育平台深挖（10题）</h2>
+    <div class="qa"><p class="q"><strong>Q29：小花狮项目你的核心职责是什么？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>负责 Agentic Workflow 的后端落地，覆盖作文批改链路、RAG增强、流式返回、高并发性能治理和线上稳定性保障。</p></div>
+    <div class="qa"><p class="q"><strong>Q30：为什么要做Reflection闭环？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>单次生成在教育场景风险高，容易出现评分漂移和反馈不一致。引入“生成 -> 校验 -> 修订”能显著提高稳定性，并且可把失败样例沉淀为后续优化数据。</p></div>
+    <div class="qa"><p class="q"><strong>Q31：多级缓存+Lua限流具体怎么配合？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>L1/L2 缓存先抗常规流量，Lua 令牌桶再抗突发尖峰。前者优化均值性能，后者保护极端场景；两者结合才能把 P99 拉到目标区间。</p></div>
+    <div class="qa"><p class="q"><strong>Q32：QPS 2000+、P99<100ms你做了哪些关键动作？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>慢 SQL 排查与索引优化、读写路径分离、热点接口缓存前置、重任务异步化、SSE流式降低等待感知。不是单点优化，而是“数据库、缓存、队列、接口协议”四层联动。</p></div>
+    <div class="qa"><p class="q"><strong>Q33：RAG在作文批改里主要解决什么问题？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>把评分标准、教学知识点和示例规则作为外部知识注入，减少模型“凭感觉批改”。这能提升反馈一致性和可解释性，尤其对教师端信任很重要。</p></div>
+    <div class="qa"><p class="q"><strong>Q34：你们如何做 bad case 回流？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>收集失败样例后做分类（检索问题、生成问题、规则问题），分别修 prompt、规则和数据。每次迭代跑回归集，避免“修一个坏三个”。这就是持续优化闭环。</p></div>
+    <div class="qa"><p class="q"><strong>Q35：为什么用SSE而不是WebSocket？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>该场景主要是服务端单向流式输出，SSE 足够且更轻量，代理/CDN 兼容性好、实现成本低。若需要高频双向交互再考虑 WebSocket。</p></div>
+    <div class="qa"><p class="q"><strong>Q36：如果学生端反馈“批改忽快忽慢”，你怎么排查？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>分层排查：入口排队时延、队列积压、模型调用时延、数据库回写、SSE 推送阻塞。通过 trace_id 贯穿链路，定位瓶颈后再做针对性扩容或降级。</p></div>
+    <div class="qa"><p class="q"><strong>Q37：这个项目你最想强调的工程能力是什么？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>把 AI 功能放到高并发业务里仍可稳定运行的能力。很多人会做 Demo，我更重视线上可用性和可持续优化能力。</p></div>
+    <div class="qa"><p class="q"><strong>Q38：如果要做2.0版本，你会优先改哪里？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>优先补“自动评测平台 + 质量看板”，把每次模型或提示词变更都纳入标准化回归。没有自动评测，迭代会越来越靠主观感觉。</p></div>
+
+    <h2>五、科研助手与流式系统深挖（8题）</h2>
+    <div class="qa"><p class="q"><strong>Q39：长文导图生成里，为什么要“分块并行 + 二次聚合”？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>单次上下文放不下长论文，直接截断会丢信息。分块并行解决窗口限制，二次聚合解决跨段冲突和结构一致性，组合后才能稳定输出可渲染 JSON。</p></div>
+    <div class="qa"><p class="q"><strong>Q40：跨段冲突你们怎么处理？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>先做节点归一（名称/语义近似合并），再按规则决策层级冲突（频次优先或后文修正优先），最后补段间引用边，避免图谱碎片化。</p></div>
+    <div class="qa"><p class="q"><strong>Q41：Redis Stream + SSE 的一致性怎么保证？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>利用 Consumer Group 的 pending 机制做已读未确认管理，断线后先消费未 ACK 消息再读新消息；同任务加分布式锁控制并发消费，避免重复推送和乱序。</p></div>
+    <div class="qa"><p class="q"><strong>Q42：为什么这套方案比一次性返回更好？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>一次性返回首屏等待长、失败重试成本高；流式可尽快展示中间结果，用户感知更好，且便于进度可视化和中断恢复。</p></div>
+    <div class="qa"><p class="q"><strong>Q43：你在Go微服务里做了哪些工程规范？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>接口契约统一、错误码标准化、日志结构化、幂等键设计、消费位点可追踪。我的关注点是后续维护成本，而非只追求短期开发速度。</p></div>
+    <div class="qa"><p class="q"><strong>Q44：断点续推如何设计才靠谱？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>“任务ID + 消息ID + ACK状态”三元组必须可重建；前端重连带上最后已接收ID，后端按位点补发。关键是状态持久化，不依赖内存现场。</p></div>
+    <div class="qa"><p class="q"><strong>Q45：这段经历迁移到Agent岗位的价值是什么？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>Agent系统本质也是长链路异步系统，这段经历让我更擅长做流式交互、状态一致性、故障恢复，这些都是 Agent 产品化的基础能力。</p></div>
+    <div class="qa"><p class="q"><strong>Q46：如果消息堆积严重，你会怎么处理？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>先限流保核心路径，再扩消费者并按任务优先级分流，必要时降级输出（只推关键节点）。同时定位上游慢点，避免“只扩容不治因”。</p></div>
+
+    <h2>六、AI/LLM/Agent通识与进阶（16题）</h2>
+    <div class="qa"><p class="q"><strong>Q47：Agent 和 Workflow 的边界怎么划？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>路径可枚举、错误代价高就 Workflow；路径不可枚举、需要探索就 Agent。实际系统用“Workflow包住Agent”，保证边界和安全。</p></div>
+    <div class="qa"><p class="q"><strong>Q48：ReAct、Plan-and-Solve、Reflection怎么选？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>工具密集且实时反馈强用 ReAct；复杂长任务先规划再执行用 Plan-and-Solve；质量要求高、可迭代优化用 Reflection。可组合，不是互斥关系。</p></div>
+    <div class="qa"><p class="q"><strong>Q49：RAG与微调各自适合什么场景？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>知识更新快、可追溯要求高优先 RAG；风格/能力迁移、稳定输出需求高可做微调。企业里常见是“RAG为主，微调为辅”。</p></div>
+    <div class="qa"><p class="q"><strong>Q50：如何评估RAG质量？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>看检索层（Recall@K、NDCG）、生成层（Faithfulness、Relevancy）、工程层（延迟、成本）。评测一定要有固定回归集，避免主观波动。</p></div>
+    <div class="qa"><p class="q"><strong>Q51：如何应对Lost in the Middle？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>减少无关上下文、重要证据首尾布局、分段生成再汇总、引入重排模型。核心是提升有效信息密度，而不是单纯加上下文长度。</p></div>
+    <div class="qa"><p class="q"><strong>Q52：Context Engineering比Prompt Engineering更重要吗？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>在系统层面更重要。Prompt 决定“怎么说”，Context 决定“看到了什么”。数据注入顺序、摘要策略、记忆选择对结果影响往往更大。</p></div>
+    <div class="qa"><p class="q"><strong>Q53：Prompt注入怎么防？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>输入分层隔离、工具白名单、参数校验、风险动作人工确认、输出审计。不要只靠模型“自觉安全”，要有系统级防线。</p></div>
+    <div class="qa"><p class="q"><strong>Q54：你如何设计Agent记忆写入门槛？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>按信息增量、可复用性、时效性三维打分；低分不写。写入前去重和冲突检测，写入后加 TTL/衰减，防止记忆库“越用越脏”。</p></div>
+    <div class="qa"><p class="q"><strong>Q55：为什么需要可观测性？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>没有可观测就无法定位失败源头。Agent系统要追踪每一步：thought、tool call、latency、token、error。可观测是迭代效率的前提。</p></div>
+    <div class="qa"><p class="q"><strong>Q56：KV Cache为什么能提速？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>自回归生成时复用历史K/V，避免重复计算，把每步计算从“重算全部历史”降为“增量计算”，显著降低解码阶段开销。</p></div>
+    <div class="qa"><p class="q"><strong>Q57：vLLM的核心价值是什么？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>PagedAttention + Continuous Batching 提升吞吐和显存利用率，适合高并发推理服务。它解决的是“服务效率问题”，不是“模型能力问题”。</p></div>
+    <div class="qa"><p class="q"><strong>Q58：为什么你简历里也提到了Ollama？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>Ollama适合本地快速验证与轻部署，vLLM适合生产高并发。两者不是替代关系，而是不同阶段的工具选择。</p></div>
+    <div class="qa"><p class="q"><strong>Q59：SFT、DPO、RLHF怎么讲最清楚？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>SFT学“基本答题方式”，DPO/RLHF学“偏好对齐”。我会强调业务里常见路径是“先SFT稳定输出，再偏好对齐提升体验”。</p></div>
+    <div class="qa"><p class="q"><strong>Q60：LoRA的工程价值是什么？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>在不全量微调的前提下，低成本获得领域适配能力，训练资源和部署复杂度更可控。这也是我在数学项目里采用LoRA的原因。</p></div>
+    <div class="qa"><p class="q"><strong>Q61：你怎么看多模型融合？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>融合能提升稳定性，但要控制成本和延迟。适合高价值关键任务（如复杂推理），不适合所有请求都全量投票。应做分层路由。</p></div>
+    <div class="qa"><p class="q"><strong>Q62：Agent系统里最常见的“假优化”是什么？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>只调 prompt 不改系统。很多问题源于检索、状态、工具协议，不在 prompt 层。正确方式是端到端剖析并逐层优化。</p></div>
+
+    <h2>七、系统设计与行为面（8题）</h2>
+    <div class="qa"><p class="q"><strong>Q63：设计一个日百万请求的Agent系统，你会怎么拆？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>A：</strong>接入层（鉴权限流）-> 编排层（状态机/任务路由）-> 推理层（vLLM集群）-> 检索层（Milvus+关键词检索）-> 存储与缓存层（Redis+DB）-> 可观测层（trace+metrics+log）。关键是异步化和降级策略。</p></div>
+    <div class="qa"><p class="q"><strong>Q64：你怎么做可靠性设计？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>超时、重试、熔断、幂等、回退、人工兜底六件套。并把高风险操作隔离为“确认型动作”，防止智能体误执行。</p></div>
+    <div class="qa"><p class="q"><strong>Q65：如何控制Agent成本？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>前置缓存、检索裁剪、摘要压缩、模型分级路由（小模型先行，大模型兜底）、减少无效循环。成本优化本质是减少“无效token”。</p></div>
+    <div class="qa"><p class="q"><strong>Q66：你经历过最典型的失败案例是什么？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>早期版本过度追求功能，忽视评测闭环，导致线上效果波动。后续我把 bad case 回流和回归评测前置，才把迭代变得可控。失败让我更重视工程纪律。</p></div>
+    <div class="qa"><p class="q"><strong>Q67：你做技术选型时的原则是什么？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>先看业务目标和约束，再看团队能力和上线节奏，最后看长期维护成本。不是“最先进”，而是“当下最合适且可演进”。</p></div>
+    <div class="qa"><p class="q"><strong>Q68：如果面试官质疑你的指标，你怎么回应？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>我会说明指标口径、采样周期、对照基线和边界条件，并承认不确定性。真实项目指标一定有上下文，我会把上下文讲完整而不是只报一个数字。</p></div>
+    <div class="qa"><p class="q"><strong>Q69：你如何带动团队协作？</strong><span class="depth d1">基础</span></p><p class="a"><strong>A：</strong>我习惯先统一接口契约和验收标准，再推进并行开发。出现争议时回到目标和数据，不陷入“技术偏好之争”。工程协作的关键是降低沟通摩擦。</p></div>
+    <div class="qa"><p class="q"><strong>Q70：你为什么适合这个岗位？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>A：</strong>因为我的能力组合和岗位要求高度重叠：我既做过 Agent/RAG/Memory/MCP，也做过高并发后端和性能治理；既能讨论模型机制，也能把系统稳定跑起来，并持续用指标驱动优化。这正是“智能体与大模型应用工程”岗位最看重的落地能力。</p></div>
+
+    <div class="note">
+        口径建议：如果现场时间紧，优先准备 Q9~Q18（NVIDIA）、Q19~Q28（喜马拉雅）、Q63~Q70（系统设计与行为面）。
+        这三块最能体现“你真的做过，并且有系统性思考”。
+    </div>
+</div>
+<script src="./auth.js"></script>
+</body>
+</html>
