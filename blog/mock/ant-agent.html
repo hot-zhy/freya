@@ -57,6 +57,16 @@ h1{margin:0 0 4px;font-size:1.6rem}
 <strong>AI Infra（重点准备）</strong> ← JD 要求了解 vLLM/Ollama/KV Cache，简历覆盖较少
 </div>
 
+<div class="qa"><p class="q"><strong>开场可直接说的自我介绍（60-90秒）</strong><span class="depth d1">基础</span></p>
+<p class="a"><strong>口语稿：</strong>面试官您好，我是赵晗瑜，华东师范大学软件工程硕士在读。我的核心方向是把大模型和 Agent 做成可上线、可观测、可持续优化的系统。过去几段经历中，我在 NVIDIA 做过 NVPunish 的批量 RCA 与可视化闭环，在喜马拉雅做过 Multi-Agent、Mem0 长期记忆、MCP 工具编排和 Milvus 多维召回，在小花狮做过高并发 Agentic Workflow、RAG 注入和 SSE 流式返回。我的优势是既能做模型应用设计，也能把后端稳定性、性能和成本控制到业务可用水平，比如高峰期超时率下降、接口响应和点击指标可量化提升。希望在这个岗位继续做“智能体能力产品化”的工作。</p>
+<p class="a"><strong>被打断时30秒收束：</strong>如果用一句话总结，我是“Agent 应用工程 + 后端性能治理”的复合型选手，重点能力是把模型能力从 Demo 变成稳定可交付系统。</p></div>
+
+<div class="qa"><p class="q"><strong>喜马拉雅项目完整链路示例：从用户输入到点击率提升是怎么发生的？</strong><span class="depth d3">深追问</span></p>
+<p class="a"><strong>端到端链路（可口述）：</strong>用户在主 App 发起一轮对话后，Main Agent 先做意图识别；如果需要个性化推荐，会并行拿三类信息：MCP 拉取账号与行为特征、Mem0 检索长期记忆、实时情绪分析子 Agent 给出当前情绪标签。然后推荐 Agent 组装召回请求，在 Milvus 做向量检索（画像向量 + 记忆向量），拿到候选内容后做聚类与重排，最终返回 top-N 内容给前端卡片位。用户点击后埋点回流，再异步写回画像和记忆，形成下一轮优化闭环。</p>
+<p class="a"><strong>具体怎么做（工程细节）：</strong>1）<strong>特征抽取</strong>：LLM 从多轮对话中抽结构化标签（偏好、主题、关键事件、情绪趋势）；2）<strong>记忆写入</strong>：高延迟写入（向量化、Mem0 同步）通过 RabbitMQ 异步化，主链路不阻塞；3）<strong>检索重排</strong>：Milvus ANN 召回后，按“相关度 + 时间衰减 + 情绪匹配”加权重排；4）<strong>结果呈现</strong>：前端展示推荐卡片并打曝光/点击埋点；5）<strong>在线学习</strong>：点击结果回流更新用户画像权重，下一轮召回更贴近用户状态。</p>
+<p class="a"><strong>点击率提升体现在哪里（指标口径）：</strong>这里的点击率指推荐模块 CTR，口径是 <code>CTR = 推荐卡片点击次数 / 推荐卡片曝光次数</code>，在固定位置（如会话建议区）按同口径对照统计。项目里“8%-12% 提升”体现为：在同类流量和同一曝光位下，实验组（引入 Mem0 + MCP + 多维重排）相对基线组（仅基础召回）的 CTR 提升。也会同时看次级指标如停留时长、二跳行为，防止只追 CTR 造成短期点击偏置。</p>
+<p class="a"><strong>追问应对：</strong>追问“怎么确认不是活动流量带来的假提升？”可回答：通过 A/B 分桶、统一曝光位、统一统计窗口，并做分层分析（新老用户、时段、内容类目）来排除外部波动影响。</p></div>
+
 <div class="toc">
 <strong>目录</strong>
 <ul>
