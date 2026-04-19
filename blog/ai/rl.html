@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强化学习与对齐</title>
+    <style>
+        body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}
+        .wrap{max-width:960px;margin:0 auto;padding:24px 16px 44px;line-height:1.9}
+        a{color:#00f5ff;text-decoration:none}
+        h1{margin:0 0 8px}
+        h2{margin:22px 0 10px;color:#00f5ff;border-bottom:1px solid rgba(0,245,255,.25);padding-bottom:6px;font-size:1.16rem}
+        .meta{color:#a0a0b8;margin-bottom:16px}
+        .note{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:14px;color:#c2c8dc}
+        .qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+        .q{color:#00f5ff}
+        .a{margin-top:6px;color:rgba(232,232,240,.94);font-size:.92rem}
+        .a code{background:rgba(0,245,255,.11);padding:1px 5px;border-radius:4px;font-size:.88em}
+        .tag{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:5px;margin-left:6px;background:rgba(168,85,247,.2);color:#a855f7}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+    <h1>强化学习与对齐</h1>
+    <p class="meta">RL Fundamentals + LLM Alignment（高频八股）</p>
+    <div class="note">答题建议：先说“要优化什么目标”，再说“如何更新策略”，最后补“为什么在工程上可用”。</div>
+
+    <h2>一、经典 RL 必背（MDP 到 Actor-Critic）</h2>
+    <div class="qa"><p class="q"><strong>Q1：什么是 MDP？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>MDP 用 <code>(S, A, P, R, gamma)</code> 描述序列决策：在状态 <code>S</code> 选动作 <code>A</code>，环境按转移概率 <code>P</code> 到新状态并给奖励 <code>R</code>，目标是最大化折扣回报。</p><p class="a"><strong>实现细节：</strong>马尔可夫性假设表示“下一步只依赖当前状态和动作”，不依赖完整历史。</p><p class="a"><strong>追问应对：</strong>追问：现实问题不满足马尔可夫怎么办？回答：做状态增强，例如加入历史窗口或隐状态建模。</p></div>
+    <div class="qa"><p class="q"><strong>Q2：贝尔曼方程直觉是什么？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>价值函数满足“当前价值 = 当前奖励 + 下一状态价值的折扣期望”，这是 RL 里价值传播的核心递推关系。</p><p class="a"><strong>实现细节：</strong>策略评估和最优控制都依赖贝尔曼方程，只是一个对固定策略求值，一个对动作取最大化。</p><p class="a"><strong>追问应对：</strong>追问：为什么这条式子重要？回答：它把长期目标拆成可迭代更新的局部目标，才能做动态规划和 TD 学习。</p></div>
+    <div class="qa"><p class="q"><strong>Q3：Monte Carlo 和 TD 学习的区别？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>MC 要等一整局结束再回传回报，方差大但无偏；TD 每步就更新，偏差更大但样本效率更高、在线学习更实用。</p><p class="a"><strong>实现细节：</strong>TD 的核心是 bootstrap，用当前估计值近似未来回报。</p><p class="a"><strong>追问应对：</strong>追问：工程上更常用谁？回答：多数深度 RL 更常用 TD 系列，因为收敛速度和在线性更好。</p></div>
+    <div class="qa"><p class="q"><strong>Q4：on-policy vs off-policy 怎么区分？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>on-policy 用当前策略采样并更新当前策略；off-policy 可以用行为策略的数据学习目标策略，数据复用效率更高。</p><p class="a"><strong>实现细节：</strong>DQN、DDPG、SAC 属于 off-policy；REINFORCE、PPO 常被归为 on-policy。</p><p class="a"><strong>追问应对：</strong>追问：off-policy 一定更好？回答：不一定，稳定性和偏差控制更难，需要重放和目标网络等机制。</p></div>
+    <div class="qa"><p class="q"><strong>Q5：DQN 为什么需要经验回放和目标网络？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>经验回放打破样本相关性、提升数据利用率；目标网络延迟更新，减少训练目标剧烈抖动，稳定 Q 学习。</p><p class="a"><strong>实现细节：</strong>DQN 常见稳定性三件套是 replay buffer、target network、reward/gradient clipping。</p><p class="a"><strong>追问应对：</strong>追问：DQN 主要局限？回答：对连续动作空间不友好、探索效率有限。</p></div>
+    <div class="qa"><p class="q"><strong>Q6：Policy Gradient 的优缺点？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>直接优化策略能处理连续动作，表达更灵活；但方差大、样本效率通常不如 value-based 方法。</p><p class="a"><strong>实现细节：</strong>常通过 baseline 或 advantage 减方差，避免梯度噪声过大。</p><p class="a"><strong>追问应对：</strong>追问：为什么很多算法仍用它？回答：在复杂策略空间里，直接优化策略更自然。</p></div>
+    <div class="qa"><p class="q"><strong>Q7：Actor-Critic 在解决什么问题？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>Actor 负责出动作，Critic 负责估值，等于把“决策”和“评估”解耦，兼顾策略表达能力和训练稳定性。</p><p class="a"><strong>实现细节：</strong>优势函数 <code>A(s,a)=Q(s,a)-V(s)</code> 常用于指导 Actor 更新，降低方差。</p><p class="a"><strong>追问应对：</strong>追问：会不会偏差累积？回答：会，Critic 估值误差会传到 Actor，所以 Critic 训练质量是关键。</p></div>
+    <div class="qa"><p class="q"><strong>Q8：PPO 为什么工程上这么流行？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>PPO 在 TRPO 思路上做了简化，通过 clipped objective 控制更新步长，训练更稳、实现更简单，成为工业界常用基线。</p><p class="a"><strong>实现细节：</strong>通常配合 GAE 做优势估计，优势归一化和多轮小 batch 更新提升样本利用。</p><p class="a"><strong>追问应对：</strong>追问：PPO 的短板？回答：on-policy 样本利用率有限，训练成本仍高。</p></div>
+    <div class="qa"><p class="q"><strong>Q9：SAC 核心思想是什么？</strong><span class="tag">进阶</span></p><p class="a"><strong>口语稿：</strong>SAC 是最大熵 RL，目标不仅最大化奖励，还鼓励策略保持足够探索性，因此在连续控制中常更稳定。</p><p class="a"><strong>实现细节：</strong>加入熵项后，策略倾向在高回报区域保持随机性，减少早熟收敛。</p><p class="a"><strong>追问应对：</strong>追问：SAC 与 PPO 怎么选？回答：若能离线复用数据且动作连续，SAC 常更高效；若流程与约束复杂，PPO 更直观。</p></div>
+    <div class="qa"><p class="q"><strong>Q10：探索-利用权衡怎么回答？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>只利用会陷入局部最优，只探索会浪费样本，RL 的核心是动态平衡两者。</p><p class="a"><strong>实现细节：</strong>常见手段有 epsilon-greedy、熵正则、UCB、随机网络蒸馏等。</p><p class="a"><strong>追问应对：</strong>追问：什么时候探索要收紧？回答：当策略已稳定且线上风险高时，优先保守利用。</p></div>
+
+    <h2>二、LLM 对齐中的 RL（RLHF / DPO / GRPO）</h2>
+    <div class="qa"><p class="q"><strong>Q11：LLM 为什么要做对齐，而不只做 SFT？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>SFT 让模型学会任务形式，但不保证偏好一致性和安全边界；对齐阶段补的是“人类更想要什么”。</p><p class="a"><strong>实现细节：</strong>偏好学习常依赖 chosen/rejected 数据，优化帮助度、无害性、遵循性。</p><p class="a"><strong>追问应对：</strong>追问：对齐会损伤能力吗？回答：可能会，需监控任务准确率与拒答率的平衡。</p></div>
+    <div class="qa"><p class="q"><strong>Q12：RLHF 训练链路常见失败点？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>常见问题是奖励模型偏差、策略过拟合奖励、训练不稳定，最终出现“看起来高分但回答并不好”的 reward hacking。</p><p class="a"><strong>实现细节：</strong>实践上要做 KL 约束、奖励裁剪和多维评测，避免单一奖励牵引。</p><p class="a"><strong>追问应对：</strong>追问：如何降低 reward hacking？回答：增加多源反馈、校验规则和离线回归集，不让模型只学会讨好奖励器。</p></div>
+    <div class="qa"><p class="q"><strong>Q13：DPO 的一句话本质？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>DPO 把偏好优化改写为直接可训练目标，不显式训练 RM + PPO，工程路径更短、更稳。</p><p class="a"><strong>实现细节：</strong>关键是拉大模型对 chosen 与 rejected 的相对概率差，并受参考模型约束。</p><p class="a"><strong>追问应对：</strong>追问：DPO 需要 SFT 底座吗？回答：通常需要，SFT 提供 in-distribution 的基础行为。</p></div>
+    <div class="qa"><p class="q"><strong>Q14：GRPO 在推理任务里为什么常被提？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>GRPO 强调组内相对优势，适合用“同题多轨迹比较”构造信号，在推理和格式约束任务中常有不错表现。</p><p class="a"><strong>实现细节：</strong>常见奖励会混合正确性、格式完整性和 KL 约束，兼顾答案对和输出可控。</p><p class="a"><strong>追问应对：</strong>追问：GRPO 风险在哪？回答：奖励设计与采样质量决定上限，奖励噪声会直接影响稳定性。</p></div>
+    <div class="qa"><p class="q"><strong>Q15：如何回答“PPO、DPO、GRPO 怎么选”？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>追求链路简单和稳定可先 DPO；有更复杂在线反馈或策略探索需求可用 PPO 类；若有高质量组内比较信号，GRPO 在推理任务有优势。</p><p class="a"><strong>实现细节：</strong>选型本质看数据形态、算力预算、训练稳定性要求和上线节奏。</p><p class="a"><strong>追问应对：</strong>追问：资源紧张时怎么做？回答：通常先 SFT + DPO，小步快跑验证收益。</p></div>
+
+    <h2>三、面试高频追问（工程化回答模板）</h2>
+    <div class="qa"><p class="q"><strong>Q16：如何定义 RL 训练“有效”？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>不能只看 reward 曲线，要同时看任务成功率、稳定性、泛化和成本，尤其要防“训练集提升、线上退化”。</p><p class="a"><strong>实现细节：</strong>建议分离离线评测、在线灰度和回归集三层，跟踪 reward、KL、成功率、拒答率、时延成本。</p><p class="a"><strong>追问应对：</strong>追问：如果 reward 上升但用户体验下降？回答：说明奖励目标错配，优先修奖励定义和评测口径。</p></div>
+    <div class="qa"><p class="q"><strong>Q17：RL 里“高方差”怎么解释给面试官？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>回报依赖长链路随机过程，梯度估计噪声大，所以训练抖动明显，这就是高方差问题。</p><p class="a"><strong>实现细节：</strong>常见缓解方法是 baseline、advantage normalization、更稳定采样和更大 batch。</p><p class="a"><strong>追问应对：</strong>追问：高方差会带来什么现象？回答：训练曲线剧烈波动、收敛慢、复现实验困难。</p></div>
+    <div class="qa"><p class="q"><strong>Q18：如何回答“你做的不是纯 RL，为什么写 RL 能力”？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>可以明确说自己做的是“LLM 对齐中的 RL 工程”，重点在偏好优化、奖励设计、稳定训练和评测闭环，而不是通用控制任务。</p><p class="a"><strong>实现细节：</strong>再补充你掌握经典 RL 基础（MDP、Bellman、Actor-Critic、PPO/SAC），说明理论和工程都能对齐。</p><p class="a"><strong>追问应对：</strong>追问：怎么证明不是背概念？回答：给出你实际做过的奖励项、训练日志指标和失败复盘。</p></div>
+</div>
+</body>
+</html>

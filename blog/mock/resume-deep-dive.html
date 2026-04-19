@@ -42,8 +42,8 @@
 
 <div id="main-content" class="wrap">
     <p><a href="./index.html">返回模拟面试</a> · <a href="../index.html">返回总题库</a></p>
-    <h1>简历深挖面试（70题）</h1>
-    <p class="sub">基于 `赵晗瑜0407.pdf` 定制：项目细节 + 技术深挖 + 追问应对 + 口语化回答。目标是让面试官感受到“确实做过、思考过、复盘过”。</p>
+    <h1>简历深挖面试（70题+新简历增量）</h1>
+    <p class="sub">基于 `赵晗瑜-中文(3).pdf` 定制：项目细节 + 技术深挖 + 追问应对 + 口语化回答。目标是让面试官感受到“确实做过、思考过、复盘过”。</p>
 
     <div class="note">
         使用建议：每题按“<strong>业务问题 -> 技术方案 -> 指标结果 -> 复盘取舍</strong>”回答；被追问时优先补“为什么这么做，而不是别的方案”。
@@ -174,9 +174,23 @@
     <div class="qa"><p class="q"><strong>Q69：你如何带动团队协作？</strong><span class="depth d1">基础</span></p><p class="a"><strong>口语稿：</strong>我带协作的方式是先统一契约，再并行开发。接口、验收标准、回滚方案先写清楚，后面沟通摩擦会少很多。出现争议我会回到目标和数据，而不是技术偏好。</p><p class="a"><strong>实现细节：</strong>我习惯在项目初期建立 API 合同、状态流图和验收清单，并把关键指标接入看板。这样产品、算法、后端对齐速度更快，问题出现时也能快速定位责任边界。</p><p class="a"><strong>追问应对：</strong>追问：跨团队协作最怕什么？回答：最怕口径不一致，所以我会先统一定义，再推进实现。</p></div>
     <div class="qa"><p class="q"><strong>Q70：你为什么适合这个岗位？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>我适合这个岗位，因为能力结构和岗位核心要求重叠度很高：我做过 Agent/RAG/Memory/MCP，也做过高并发后端和性能治理，能把模型能力稳定落到业务上，并持续用指标驱动优化。</p><p class="a"><strong>实现细节：</strong>从 NVPunish 的 1000+ pattern 自动 RCA、到喜马拉雅 CTR 提升与超时下降、再到小花狮 1 万+ 用户下的低延迟稳定运行，我都参与了从方案到上线再到复盘的完整闭环。</p><p class="a"><strong>追问应对：</strong>追问：入职后前 3 个月你能交付什么？回答：先快速接管一条核心链路，交付可观测和稳定性改造，再在此基础上做一项可量化增长优化。</p></div>
 
+    <h2>八、2026 新简历增量深挖（12题）</h2>
+    <div class="qa"><p class="q"><strong>Q71：喜马拉雅里“CTR 提升 8%~12%”你怎么证明可信？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>口语稿：</strong>我会先把口径讲清楚：CTR 只统计推荐子分支，定义是 <code>click/exposure</code>，不是整条对话质量。实验采用同曝光位分桶 A/B，观察期跨多个自然周，避免活动流量干扰。</p><p class="a"><strong>实现细节：</strong>指标看板按人群分层（新老用户、时段、内容类目），并同步看重复推荐率和会话承接率，防止只冲 CTR 导致体验副作用。</p><p class="a"><strong>追问应对：</strong>追问：会不会是短期波动？回答：我会给出连续窗口趋势和置信区间，而不是只报一个峰值。</p></div>
+    <div class="qa"><p class="q"><strong>Q72：你说重复推荐率下降 15%+，具体怎么做？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>核心做法是“去重前置 + 多样性重排”：候选阶段按历史曝光做硬去重，排序阶段引入 MMR 控制语义冗余，避免模型只推高相似内容。</p><p class="a"><strong>实现细节：</strong>流程是多路召回 -> 负反馈过滤 -> MMR 多样性 -> LLM Rerank，最终输出前再做一次 session 级去重。</p><p class="a"><strong>追问应对：</strong>追问：多样性会伤 CTR 吗？回答：会有拉扯，所以我用分桶策略设定探索位比例，平衡短期点击和长期留存。</p></div>
+    <div class="qa"><p class="q"><strong>Q73：NVIDIA 1000+ failure pattern 的 Batch RCA，怎么保证稳定吞吐？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>口语稿：</strong>我用滑动窗口并发调度，而不是全量并发。窗口内任务完成就补位，能在配额、时延和失败率之间保持稳定点。</p><p class="a"><strong>实现细节：</strong>每个 pattern 都是独立状态机单元，带 timeout、重试、熔断计数；失败任务隔离，不阻塞全局队列。</p><p class="a"><strong>追问应对：</strong>追问：窗口大小怎么定？回答：先按配额与均值时延估算理论上限，再压测找“吞吐高且错误率不抬头”的拐点。</p></div>
+    <div class="qa"><p class="q"><strong>Q74：幂等恢复与断点续跑怎么实现，如何防重复写？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>口语稿：</strong>我把 <code>pattern_id + version</code> 作为幂等键，任务状态持久化为 pending/running/completed/failed。恢复时先回收超时 running，再继续处理 pending/failed。</p><p class="a"><strong>实现细节：</strong>结果写库统一 upsert，并记录 attempt 元数据用于审计与回放；并发触发同任务时，后到请求只读已有结果或返回处理中。</p><p class="a"><strong>追问应对：</strong>追问：幂等会不会拖慢性能？回答：有少量开销，但相比重复计算和脏写风险，这个开销是必须成本。</p></div>
+    <div class="qa"><p class="q"><strong>Q75：科研项目 Recall@5 从 71% 到 86%，你做了哪些关键动作？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>不是单点调参，而是完整检索链路改造：Intent Routing + Hybrid Retrieval + Cross-Encoder Rerank + MMR 去冗余 + parent-child 回溯。</p><p class="a"><strong>实现细节：</strong>我先构建 358 条标注集分阶段评测召回和重排，再按 bad case 分类迭代，最终 Recall@5、MRR、重复片段率三项一起改善。</p><p class="a"><strong>追问应对：</strong>追问：为什么不用更大模型直接解决？回答：检索问题先要结构化治理，盲目换模型成本高且收益不稳定。</p></div>
+    <div class="qa"><p class="q"><strong>Q76：Top-K 重复片段从 34% 降到 19%，和 MMR 的关系怎么讲？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>MMR 的作用是同时考虑相关性和多样性，避免 Top-K 被同质片段占满，让上下文信息密度更高。</p><p class="a"><strong>实现细节：</strong>排序目标可理解为 <code>lambda*relevance-(1-lambda)*redundancy</code>，lambda 通过离线网格搜索并在线小流量校正。</p><p class="a"><strong>追问应对：</strong>追问：lambda 固定吗？回答：不固定，会按 query 类型和任务场景分桶配置。</p></div>
+    <div class="qa"><p class="q"><strong>Q77：你在数学推理项目里做 GRPO，奖励怎么设计？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>口语稿：</strong>我采用多项奖励组合：答案正确性、格式完整性和 KL 约束。目标是既提升正确率，也避免输出风格跑偏。</p><p class="a"><strong>实现细节：</strong>同一题做 group sampling 产生多条轨迹，用组内相对优势更新策略；训练过程跟踪 reward、KL、loss 和格式符合率。</p><p class="a"><strong>追问应对：</strong>追问：为什么加 KL？回答：防止策略更新过快偏离参考分布，训练会更稳。</p></div>
+    <div class="qa"><p class="q"><strong>Q78：单卡 4090 完成 GRPO 训练，你如何做资源取舍？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>核心是把有限算力优先给有效信号：控制 batch 和序列长度、用 LoRA 降训练成本、合理设置采样组大小，保证可迭代。</p><p class="a"><strong>实现细节：</strong>我在数据构造上按题型分配样本，优先覆盖错误率高的题型；日志监控到不稳定就先稳训练再追峰值。</p><p class="a"><strong>追问应对：</strong>追问：为什么不直接上多卡？回答：研究阶段先验证方法闭环，单卡可复现实验更便于快速迭代。</p></div>
+    <div class="qa"><p class="q"><strong>Q79：GSM8K 62% 到 72%，你如何避免被质疑“刷榜”？</strong><span class="depth d3">深追问</span></p><p class="a"><strong>口语稿：</strong>我会主动说明实验设置：同评测集、同解码策略、同提示模板，只更改训练策略；并补充格式符合率提升到 85%，说明不是只靠运气命中。</p><p class="a"><strong>实现细节：</strong>同时会给出失败样本类型（多步计算、单位转换、格式约束冲突）和未解决问题，避免过度宣称。</p><p class="a"><strong>追问应对：</strong>追问：只有 1 epoch 是否可信？回答：这是阶段性可复现增益，不是最终上限，后续还要做更多 epoch 和泛化评估。</p></div>
+    <div class="qa"><p class="q"><strong>Q80：简历里“MQA/GQA、KV Cache、vLLM”你真的做过到什么深度？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>我的深度是工程应用层：能解释机制、评估收益边界，并结合请求分桶与并发策略落地，不夸成底层算子作者。</p><p class="a"><strong>实现细节：</strong>我会结合真实场景讲：长上下文收益大、短请求收益有限；并强调缓存管理和调度策略不当会反向拉高尾延迟。</p><p class="a"><strong>追问应对：</strong>追问：你会手写 kernel 吗？回答：不把自己包装成 kernel 专家，我的优势是把这些能力稳定集成进服务链路。</p></div>
+    <div class="qa"><p class="q"><strong>Q81：如果面试官追问“为什么你适合 Agent 应用工程岗”？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>我能交付的是端到端闭环，不只是模型试验：从需求拆解、链路编排、性能治理到指标复盘都做过，并且有量化结果。</p><p class="a"><strong>实现细节：</strong>可以用三段经历快速证明：NVIDIA 的可靠性工程、喜马拉雅的增长与稳定性平衡、科研项目的检索评测闭环。</p><p class="a"><strong>追问应对：</strong>追问：入职前三个月怎么落地？回答：先接管一条核心链路做可观测与稳定性基建，再推进一项可量化增长优化。</p></div>
+    <div class="qa"><p class="q"><strong>Q82：如何把“技术强”讲成“业务也能成”？</strong><span class="depth d2">进阶</span></p><p class="a"><strong>口语稿：</strong>我的表达会从业务目标开始，不先堆术语。每个技术动作都绑定一个业务指标和风险边界，面试官会更容易相信你是能上线交付的人。</p><p class="a"><strong>实现细节：</strong>固定模板是“业务约束 -> 技术方案 -> 指标变化 -> 副作用 -> 修复动作”，并明确口径和时间窗口。</p><p class="a"><strong>追问应对：</strong>追问：如果指标没达标怎么办？回答：先复盘口径与瓶颈层，再给出下一轮可验证改动，不把失败包装成成功。</p></div>
+
     <div class="note">
         口径建议：如果现场时间紧，优先准备 Q9~Q18（NVIDIA）、Q19~Q28（喜马拉雅）、Q63~Q70（系统设计与行为面）。
-        这三块最能体现“你真的做过，并且有系统性思考”。
+        新简历版本优先加刷 Q71~Q82（指标口径 + 算法取舍 + 可靠性追问），更贴近 2026 版经历描述。
     </div>
 </div>
 <script src="./auth.js"></script>

@@ -1,0 +1,150 @@
+{
+  "request_meta": {
+    "request_id": "ra-20260414-0001",
+    "generated_at": "2026-04-14T10:30:00Z",
+    "engine_version": "risk-engine-v1.0.0",
+    "ruleset_version": "ruleset-2026-04-01"
+  },
+  "mr_context": {
+    "platform": "gitlab",
+    "project": "xhs/recommendation-service",
+    "mr_id": "MR-19842",
+    "author": "dev_user_a",
+    "base_sha": "a12bc34",
+    "head_sha": "d56ef78",
+    "changed_files_count": 18,
+    "changed_lines": {
+      "added": 426,
+      "deleted": 193
+    },
+    "impacted_services": [
+      "feed-recommend-core",
+      "feature-store-client"
+    ]
+  },
+  "risk_assessment": {
+    "risk_level": "L3",
+    "risk_score": 68,
+    "score_breakdown": {
+      "change_score": 0.72,
+      "dependency_score": 0.66,
+      "criticality_score": 0.7,
+      "history_score": 0.55,
+      "release_context_score": 0.48
+    },
+    "top_risk_drivers": [
+      {
+        "driver": "跨服务依赖变更",
+        "severity": "high",
+        "evidence_ref": "EV-002"
+      },
+      {
+        "driver": "核心推荐链路服务变更",
+        "severity": "high",
+        "evidence_ref": "EV-001"
+      },
+      {
+        "driver": "历史相似拦截命中",
+        "severity": "medium",
+        "evidence_ref": "EV-004"
+      }
+    ],
+    "hard_rule_hits": [
+      {
+        "rule_id": "RULE-CONTRACT-003",
+        "status": "warning",
+        "message": "检测到 API 字段新增，建议做兼容性验证"
+      }
+    ],
+    "residual_risk": [
+      "高峰期流量放大可能放大延迟抖动",
+      "跨服务缓存一致性问题仍需灰度观察验证"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "EV-001",
+      "type": "code_change",
+      "path": "services/feed-recommend-core/src/ranker/online_ranker.py",
+      "summary": "排序链路核心逻辑改动，涉及召回候选融合策略"
+    },
+    {
+      "id": "EV-002",
+      "type": "dependency_impact",
+      "path": "services/feed-recommend-core/src/client/feature_store_client.py",
+      "summary": "feature-store-client 版本升级，默认超时策略变化"
+    },
+    {
+      "id": "EV-003",
+      "type": "config_change",
+      "path": "deploy/helm/values-prod.yaml",
+      "summary": "推荐服务并发参数提升，可能引入资源竞争风险"
+    },
+    {
+      "id": "EV-004",
+      "type": "historical_case",
+      "case_id": "INC-2025-087",
+      "summary": "相似模块历史出现缓存一致性导致推荐结果波动"
+    }
+  ],
+  "recommended_test_plan": {
+    "level": "L3",
+    "must_run": [
+      "unit_tests:key_ranking_logic_boundaries",
+      "integration_tests:feature_store_contract_compatibility",
+      "regression_tests:feed_recommend_core_journey"
+    ],
+    "conditional_run": [
+      {
+        "name": "performance_tests:ranking_latency_under_peak",
+        "trigger": "发布窗口在活动日或核心时段"
+      },
+      {
+        "name": "resilience_tests:feature_store_timeout_fallback",
+        "trigger": "检测到依赖服务超时策略变化"
+      }
+    ],
+    "canary_strategy": {
+      "enabled": true,
+      "stages": [
+        {
+          "traffic_ratio": "1%",
+          "duration_minutes": 30,
+          "promotion_criteria": [
+            "error_rate_delta < 0.2%",
+            "p99_latency_delta < 10%",
+            "business_kpi_drop < 1%"
+          ]
+        },
+        {
+          "traffic_ratio": "10%",
+          "duration_minutes": 60,
+          "promotion_criteria": [
+            "error_rate_delta < 0.3%",
+            "p99_latency_delta < 12%"
+          ]
+        }
+      ],
+      "rollback_conditions": [
+        "error_rate_delta >= 0.5%",
+        "关键业务KPI连续5分钟下滑 >= 2%",
+        "对账差异异常"
+      ]
+    },
+    "observability_checklist": [
+      "service_error_rate",
+      "p99_latency",
+      "downstream_timeout_rate",
+      "recommendation_ctr_delta",
+      "dead_letter_queue_size"
+    ]
+  },
+  "review_actions": {
+    "merge_gate": "needs_manual_review",
+    "required_approvers": [
+      "service_owner",
+      "qa_owner"
+    ],
+    "notes": "建议先完成阶段灰度后再全量发布"
+  }
+}

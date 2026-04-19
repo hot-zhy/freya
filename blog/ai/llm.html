@@ -1,12 +1,60 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI 大模型</title>
-<style>body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}.wrap{max-width:900px;margin:0 auto;padding:24px 16px 40px;line-height:1.9}a{color:#00f5ff;text-decoration:none}h1{margin:0 0 8px}.meta{color:#a0a0b8;margin-bottom:16px}.qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}.q{color:#00f5ff}</style></head>
-<body><div class="wrap"><p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
-<h1>AI 大模型</h1><p class="meta">LLM Fundamentals（逐题 Q/A）</p>
-<div class="qa"><p class="q"><strong>Q1：为什么 Transformer 成为大模型主流？</strong></p><p><strong>A1：</strong>自注意力并行性强，能建模长距离依赖，扩展性好。配合大数据和算力，形成了可持续扩展的训练路线。</p></div>
-<div class="qa"><p class="q"><strong>Q2：预训练、指令微调、对齐关系？</strong></p><p><strong>A2：</strong>预训练学知识与语言能力，指令微调学任务跟随，对齐阶段学人类偏好与安全边界，三步共同决定可用性。</p></div>
-<div class="qa"><p class="q"><strong>Q3：LoRA/QLoRA 思想？</strong></p><p><strong>A3：</strong>冻结大模型主干，仅训练低秩增量参数，降低显存和训练成本。QLoRA 再结合量化进一步节省资源。</p></div>
-<div class="qa"><p class="q"><strong>Q4：如何缓解幻觉？</strong></p><p><strong>A4：</strong>通过 RAG 提供证据、工具校验事实、结构化输出约束、拒答策略与温度控制，减少“看似流畅但错误”的回答。</p></div>
-<div class="qa"><p class="q"><strong>Q5：上下文窗口越大越好吗？</strong></p><p><strong>A5：</strong>不一定。窗口越大成本越高且注意力可能稀释，实践中应结合检索和摘要，给模型“必要且干净”的上下文。</p></div>
-<div class="qa"><p class="q"><strong>Q6：LLM 上线评估看什么？</strong></p><p><strong>A6：</strong>至少看任务效果、时延吞吐、稳定性与安全合规，再用灰度流量验证真实业务价值，不只看离线榜单。</p></div>
-</div></body></html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 大模型</title>
+    <style>
+        body{font-family:"STKaiti","KaiTi","Kaiti SC","Noto Serif SC",serif;background:#0a0a0f;color:#e8e8f0;margin:0}
+        .wrap{max-width:960px;margin:0 auto;padding:24px 16px 44px;line-height:1.9}
+        a{color:#00f5ff;text-decoration:none}
+        h1{margin:0 0 8px}
+        h2{margin:22px 0 10px;color:#00f5ff;border-bottom:1px solid rgba(0,245,255,.25);padding-bottom:6px;font-size:1.16rem}
+        .meta{color:#a0a0b8;margin-bottom:16px}
+        .note{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:14px;color:#c2c8dc}
+        .qa{background:#151522;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+        .q{color:#00f5ff}
+        .a{margin-top:6px;color:rgba(232,232,240,.94);font-size:.92rem}
+        .a code{background:rgba(0,245,255,.11);padding:1px 5px;border-radius:4px;font-size:.88em}
+        .tag{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:5px;margin-left:6px;background:rgba(0,245,255,.15);color:#00f5ff}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <p><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a></p>
+    <h1>AI 大模型</h1>
+    <p class="meta">LLM Fundamentals（高频八股 + 工程化追问）</p>
+    <div class="note">答题建议：按“概念一句话 -> 机制/公式 -> 工程取舍 -> 追问补刀”组织，优先把为什么这么做讲清楚。</div>
+
+    <h2>一、必背高频（原理层）</h2>
+    <div class="qa"><p class="q"><strong>Q1：为什么 Transformer 成为大模型主流？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>Transformer 统一用自注意力建模序列关系，训练可并行、扩展性强，能在更大数据和算力下稳定提升能力，所以成为大模型主流。</p><p class="a"><strong>实现细节：</strong>RNN 难并行、长依赖弱；Transformer 用矩阵运算适配 GPU，且参数规模、数据规模、训练步数都更容易按同一范式扩展。</p><p class="a"><strong>追问应对：</strong>追问：是不是 Transformer 一定最优？回答：不是，当前是“工程可扩展性最优”，不是理论终局。</p></div>
+    <div class="qa"><p class="q"><strong>Q2：Self-Attention 的核心公式和复杂度？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>核心是 <code>Attention(Q,K,V)=softmax(QK^T/sqrt(d_k))V</code>，序列长度为 <code>n</code> 时注意力矩阵是 <code>n*n</code>，所以计算和显存在长序列下是主要瓶颈。</p><p class="a"><strong>实现细节：</strong>多头注意力把表示拆到多个子空间，增强表达能力；缩放项避免点积过大导致 softmax 饱和。</p><p class="a"><strong>追问应对：</strong>追问：瓶颈怎么解？回答：工程上靠 FlashAttention、MQA/GQA、KV Cache、分块推理和上下文裁剪联合优化。</p></div>
+    <div class="qa"><p class="q"><strong>Q3：RoPE 为什么几乎成了标配？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>RoPE 用旋转位置编码把相对位置信息注入注意力，兼顾效果和长度外推能力，长上下文场景比绝对位置编码更稳。</p><p class="a"><strong>实现细节：</strong>它本质是在 Q/K 通道做按位置角度旋转，使注意力自然携带相对位置信息。</p><p class="a"><strong>追问应对：</strong>追问：长上下文还会退化吗？回答：会，位置编码只能缓解，不会消除检索噪声和注意力稀释问题。</p></div>
+    <div class="qa"><p class="q"><strong>Q4：MQA 和 GQA 在做什么取舍？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>它们通过减少 K/V 头数降低 KV Cache 体积，核心是用少量共享 K/V 支撑多查询头，在速度和精度之间做平衡。</p><p class="a"><strong>实现细节：</strong>MQA 是所有查询头共享一组 K/V，压缩更激进；GQA 是分组共享，精度通常更稳。</p><p class="a"><strong>追问应对：</strong>追问：为什么很多模型选 GQA？回答：它比 MQA 更均衡，吞吐提升明显且质量损失可控。</p></div>
+    <div class="qa"><p class="q"><strong>Q5：KV Cache 为什么能提速？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>自回归解码时历史 token 的 K/V 不会变，缓存后每步只算新增 token，避免重复计算，所以长输出场景提速明显。</p><p class="a"><strong>实现细节：</strong>每层缓存 K/V 张量，按请求生命周期管理；收益越大通常代表上下文越长、解码步数越多。</p><p class="a"><strong>追问应对：</strong>追问：代价是什么？回答：显存占用变大，必须配合分页管理、淘汰策略和并发控制。</p></div>
+    <div class="qa"><p class="q"><strong>Q6：FlashAttention 的核心价值？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>FlashAttention 不是改模型语义，而是改算子执行方式：通过分块和在线 softmax 减少 HBM 访存，提升速度并节省显存。</p><p class="a"><strong>实现细节：</strong>它把 Q/K/V 分块加载到更快存储中计算，减少中间大矩阵物化。</p><p class="a"><strong>追问应对：</strong>追问：它能单独解决长上下文吗？回答：不能，它解决算子效率，仍需系统层上下文治理。</p></div>
+
+    <h2>二、训练与对齐（SFT / RLHF / DPO / GRPO）</h2>
+    <div class="qa"><p class="q"><strong>Q7：预训练、SFT、对齐三阶段关系？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>预训练负责“会语言和知识”，SFT 负责“会按指令做事”，对齐阶段负责“输出更符合人类偏好和安全约束”，三者职责不同但互补。</p><p class="a"><strong>实现细节：</strong>SFT 用监督信号拉齐行为模式；对齐一般引入偏好数据和约束，优化帮助度、无害性、一致性。</p><p class="a"><strong>追问应对：</strong>追问：能跳过 SFT 直接对齐吗？回答：不建议，基础行为不稳时对齐很容易学到偏门策略。</p></div>
+    <div class="qa"><p class="q"><strong>Q8：RLHF 的工程链路怎么讲清楚？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>RLHF 典型流程是 SFT 初模 -> 偏好数据训练奖励模型 -> 用 PPO 等策略优化，让策略模型更偏向高奖励输出。</p><p class="a"><strong>实现细节：</strong>PPO 通过剪切目标限制策略更新幅度，避免一步走太远导致训练崩。</p><p class="a"><strong>追问应对：</strong>追问：RLHF 最大难点？回答：奖励建模偏差与训练不稳定，容易出现 reward hacking。</p></div>
+    <div class="qa"><p class="q"><strong>Q9：DPO 相比 RLHF 的优势？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>DPO 直接在偏好对上优化，不显式训练奖励模型和复杂 RL 环节，工程实现更简单、训练更稳定。</p><p class="a"><strong>实现细节：</strong>它把“偏好学习”转成可直接优化的目标，核心比较 chosen 与 rejected 的相对概率。</p><p class="a"><strong>追问应对：</strong>追问：DPO 就一定优于 RLHF 吗？回答：不绝对，RLHF 在复杂在线反馈和策略探索场景仍有空间。</p></div>
+    <div class="qa"><p class="q"><strong>Q10：GRPO 为什么近两年很热？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>GRPO 用组内相对比较构造学习信号，减少对单独价值函数的依赖，在推理任务和偏好优化里兼顾稳定性和效果，工程关注度很高。</p><p class="a"><strong>实现细节：</strong>常见做法是同一提示采样多条轨迹，基于组内相对优势更新策略，并加 KL 约束避免偏移过大。</p><p class="a"><strong>追问应对：</strong>追问：GRPO 的风险？回答：组内样本质量与奖励设计高度耦合，奖励噪声会被放大。</p></div>
+    <div class="qa"><p class="q"><strong>Q11：PPO clipped objective 直觉是什么？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>PPO 的直觉是“更新要大胆但别失控”，通过对策略概率比做裁剪，避免单次更新把策略推离旧策略太远。</p><p class="a"><strong>实现细节：</strong>常见写法比较 <code>r_t(theta)A_t</code> 与 <code>clip(r_t(theta),1-eps,1+eps)A_t</code> 的较小值，限制极端梯度。</p><p class="a"><strong>追问应对：</strong>追问：为什么不用硬 KL 约束？回答：clipping 实现简单、稳定性好，工程上更易落地。</p></div>
+    <div class="qa"><p class="q"><strong>Q12：LoRA / QLoRA 面试怎么讲得工程化？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>LoRA 冻结底座，只训练低秩增量矩阵，核心收益是低成本快速迭代；QLoRA 再通过低比特量化压缩显存，单卡也能做较大模型调优。</p><p class="a"><strong>实现细节：</strong>调参关键在 rank、alpha、dropout 和数据配比；上线要做适配器版本治理和回归评测。</p><p class="a"><strong>追问应对：</strong>追问：LoRA 会破坏通用能力吗？回答：可能，会出现领域增强与泛化能力的权衡，需要做多集评测。</p></div>
+
+    <h2>三、推理服务与系统设计（面试追问高发）</h2>
+    <div class="qa"><p class="q"><strong>Q13：continuous batching 与 static batching 区别？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>static batching 等整批再算，容易排队；continuous batching 让请求动态入批，能更好利用 GPU，吞吐和时延更均衡。</p><p class="a"><strong>实现细节：</strong>关键在调度器：按 token step 调度、长度分桶和请求抢占策略。</p><p class="a"><strong>追问应对：</strong>追问：为什么会影响 P99？回答：队头阻塞减少后，长尾请求被大批次拖慢的概率下降。</p></div>
+    <div class="qa"><p class="q"><strong>Q14：vLLM 的核心价值是什么？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>vLLM 通过 PagedAttention + continuous batching 提高 KV Cache 管理效率和并发利用率，目标是更高吞吐和更低成本。</p><p class="a"><strong>实现细节：</strong>分页思想让 KV 管理更像虚拟内存，降低大块连续显存要求，减少碎片问题。</p><p class="a"><strong>追问应对：</strong>追问：上线前先看什么？回答：长度分布、并发峰值、SLA 和显存水位，先确认瓶颈是不是推理层。</p></div>
+    <div class="qa"><p class="q"><strong>Q15：量化（INT8/INT4）核心收益与风险？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>量化主要换显存和吞吐，能显著降低单次推理成本；风险是精度掉点、长链路推理稳定性变差。</p><p class="a"><strong>实现细节：</strong>常见做法先离线校准，再按任务集评估准确率、拒答率、格式遵循和时延。</p><p class="a"><strong>追问应对：</strong>追问：何时不建议量化？回答：高精度要求的推理任务或输出极敏感场景要谨慎。</p></div>
+    <div class="qa"><p class="q"><strong>Q16：上下文窗口越大越好吗？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>不是。窗口变大能装更多信息，但计算成本和噪声也会增长，实践里关键是“信息密度”，不是 token 数量。</p><p class="a"><strong>实现细节：</strong>工程上用检索、重排、摘要压缩、证据前置来提高有效上下文比例。</p><p class="a"><strong>追问应对：</strong>追问：怎么证明优化有效？回答：看关键证据引用率、任务成功率和 token 成本的联合变化。</p></div>
+    <div class="qa"><p class="q"><strong>Q17：如何系统降低幻觉？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>幻觉治理要做系统工程：检索证据、工具校验、输出约束、置信度门控和拒答策略联合，不是只改 prompt。</p><p class="a"><strong>实现细节：</strong>常见链路是 RAG 提证据 -> 答案强制引用 -> 规则检查 -> 低置信降级或拒答。</p><p class="a"><strong>追问应对：</strong>追问：幻觉能清零吗？回答：不能，目标是把高风险错误降到业务可接受范围并可追溯。</p></div>
+    <div class="qa"><p class="q"><strong>Q18：LLM 上线评估为什么不能只看离线榜单？</strong><span class="tag">高频</span></p><p class="a"><strong>口语稿：</strong>离线榜单回答的是“模型能力”，线上系统要回答“用户价值与稳定交付”，两者不等价。</p><p class="a"><strong>实现细节：</strong>线上至少看任务完成率、时延吞吐、错误率、成本和安全事件，并结合灰度与回归集做持续验证。</p><p class="a"><strong>追问应对：</strong>追问：面试里怎么证明你有线上意识？回答：给出指标口径、发布策略和故障回滚机制，不只讲算法名词。</p></div>
+
+    <h2>四、加分题（面试官常追）</h2>
+    <div class="qa"><p class="q"><strong>Q19：RAG 与微调如何取舍？</strong></p><p class="a"><strong>口语稿：</strong>知识更新快、要可追溯优先 RAG；行为模式要长期稳定且高一致才考虑微调，很多场景是 RAG + 轻量微调并用。</p><p class="a"><strong>实现细节：</strong>可以先用 RAG 验证价值，再决定是否投入微调做长周期优化。</p></div>
+    <div class="qa"><p class="q"><strong>Q20：Agent 与 Workflow 的边界？</strong></p><p class="a"><strong>口语稿：</strong>可枚举、高风险流程交给 Workflow；不确定、探索型任务交给 Agent，生产上通常是 Workflow 包裹 Agent。</p><p class="a"><strong>实现细节：</strong>把权限、重试、超时、审计放在工作流层，保证模型波动不会直接突破系统边界。</p></div>
+    <div class="qa"><p class="q"><strong>Q21：Prompt Engineering 和 Context Engineering 谁更重要？</strong></p><p class="a"><strong>口语稿：</strong>系统场景里通常是 Context Engineering 更基础，先保证喂给模型的是对的，再谈怎么说得更好。</p><p class="a"><strong>实现细节：</strong>上下文来源、排序、裁剪、冲突消解决定了答案上限；prompt 常是后 20% 的精修。</p></div>
+    <div class="qa"><p class="q"><strong>Q22：如何回答“你真的做过，不是背过”？</strong></p><p class="a"><strong>口语稿：</strong>按“问题背景 -> 方案 -> 指标变化 -> 副作用 -> 修复动作”回答，能把失败点和取舍讲出来，可信度会高很多。</p><p class="a"><strong>实现细节：</strong>尽量给出明确口径，例如 CTR 统计范围、超时率定义、实验窗口和回滚条件。</p></div>
+</div>
+</body>
+</html>
