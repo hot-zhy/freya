@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大模型训练与推理工程深挖</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #151522;
+            --card-soft: rgba(21, 21, 34, 0.72);
+            --text: #e8e8f0;
+            --muted: #a0a0b8;
+            --accent: #00f5ff;
+            --accent2: #a855f7;
+            --accent3: #00ff88;
+            --border: rgba(255,255,255,0.08);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: "STKaiti", "KaiTi", "Kaiti SC", "Noto Serif SC", serif;
+            background:
+                radial-gradient(circle at 15% 12%, rgba(168,85,247,.14), transparent 28%),
+                radial-gradient(circle at 78% 30%, rgba(0,245,255,.10), transparent 30%),
+                var(--bg);
+            color: var(--text);
+            margin: 0;
+            line-height: 1.9;
+        }
+        a { color: var(--accent); text-decoration: none; }
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 52px; }
+        .top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; color: var(--muted); }
+        h1 { margin: 0 0 8px; font-size: 2rem; line-height: 1.25; }
+        h2 { margin: 34px 0 14px; color: var(--accent); border-bottom: 1px solid rgba(0,245,255,.24); padding-bottom: 8px; font-size: 1.28rem; }
+        h3 { margin: 18px 0 8px; color: var(--accent3); font-size: 1.06rem; }
+        .meta { color: var(--muted); margin: 0 0 18px; }
+        .hero, .qa, .panel {
+            background: var(--card-soft);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 0 24px rgba(0,245,255,.04);
+        }
+        .hero { border-color: rgba(0,245,255,.18); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 20px; }
+        .toc a {
+            border: 1px solid rgba(0,245,255,.25);
+            border-radius: 999px;
+            padding: 4px 12px;
+            color: var(--text);
+            background: rgba(0,245,255,.06);
+        }
+        .q { color: var(--accent); margin: 0 0 8px; font-size: 1.02rem; }
+        .a { margin: 6px 0; color: rgba(232,232,240,.95); }
+        .a strong { color: #ffffff; }
+        .tag {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 1px 7px;
+            border-radius: 6px;
+            font-size: .72rem;
+            color: var(--accent2);
+            background: rgba(168,85,247,.18);
+        }
+        code {
+            background: rgba(0,245,255,.11);
+            border: 1px solid rgba(0,245,255,.13);
+            padding: 1px 5px;
+            border-radius: 5px;
+            color: #dffcff;
+            font-size: .92em;
+        }
+        ul { padding-left: 1.2rem; margin: 8px 0; }
+        li { margin: 4px 0; }
+        .formula {
+            background: rgba(0,0,0,.22);
+            border-left: 3px solid var(--accent);
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: #d8fbff;
+            margin: 8px 0;
+        }
+        .warn { border-color: rgba(255, 0, 170, .22); }
+        .small { color: var(--muted); font-size: .92rem; }
+        @media (max-width: 680px) {
+            .wrap { padding: 18px 12px 40px; }
+            h1 { font-size: 1.55rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <div><a href="./index.html">返回 AI 分页题库</a> · <a href="../index.html">返回总题库</a> · <a href="../../index.html">返回首页</a></div>
+        <div>LLM Infra Deep Dive</div>
+    </div>
+
+    <h1>大模型训练与推理工程深挖</h1>
+    <p class="meta">目标：学到能在项目里讲清楚、面试追问能答上、看曲线能定位问题的程度。</p>
+
+    <div class="hero">
+        <h3>这页怎么用</h3>
+        <p class="a">不要只背名词。每个问题都按四层回答：先给一句话定义，再讲核心机制，再落到工程指标，最后准备一个追问。面试官问“你做过到什么程度”时，最可信的回答不是说自己改过底层 kernel，而是能说清楚为什么用、收益在哪、风险怎么监控、出了问题怎么查。</p>
+        <div class="grid">
+            <div class="panel">
+                <strong>最低标准</strong>
+                <p class="small">能解释 vLLM、KV Cache、TP/PP、RoPE、PPO/GRPO 是什么。</p>
+            </div>
+            <div class="panel">
+                <strong>项目标准</strong>
+                <p class="small">能结合吞吐、P99、显存、loss、reward、KL、entropy 讲取舍。</p>
+            </div>
+            <div class="panel">
+                <strong>追问标准</strong>
+                <p class="small">能回答为什么不选另一种方案、指标异常如何定位、如何灰度上线。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toc">
+        <a href="#serving">推理优化</a>
+        <a href="#distributed">分布式训练</a>
+        <a href="#theory">模型理论</a>
+        <a href="#rl">RL 与对齐</a>
+        <a href="#metrics">指标与曲线</a>
+        <a href="#project">项目中怎么讲</a>
+        <a href="#checklist">复习清单</a>
+    </div>
+
+    <section id="serving">
+        <h2>一、推理优化：从 KV Cache 到 vLLM / SGLang</h2>
+
+        <div class="qa">
+            <p class="q"><strong>Q1：大模型推理优化到底在优化什么？</strong><span class="tag">总纲</span></p>
+            <p class="a"><strong>口语稿：</strong>推理优化不是单纯“跑得更快”，而是在 SLA 约束下平衡首 token 延迟、单 token 生成速度、吞吐、显存占用、稳定性和成本。</p>
+            <p class="a"><strong>核心原理：</strong>自回归模型推理分成 prefill 和 decode。prefill 对整段 prompt 并行计算，主要吃算力；decode 每次生成一个 token，强依赖 KV Cache 和调度效率，常常更容易受显存带宽、批处理策略和请求长度分布影响。</p>
+            <p class="a"><strong>项目落地：</strong>上线前先看请求长度分布、并发峰值、TTFT、TPOT、P95/P99、GPU 利用率、显存水位和队列长度。没有这些基线，讨论 vLLM、量化、FlashAttention 都容易变成堆名词。</p>
+            <p class="a"><strong>追问应对：</strong>如果被问“优化顺序”，可以说先做指标和压测，再看瓶颈：显存不足优先量化/KV 管理，吞吐不足看 continuous batching，长上下文慢看 FlashAttention、上下文裁剪和 prefill 优化。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q2：KV Cache 为什么能提速？代价是什么？</strong><span class="tag">高频</span></p>
+            <p class="a"><strong>口语稿：</strong>自回归生成时，历史 token 的 Key/Value 不会随着新 token 改变，所以可以缓存每层历史 K/V。下一步只需要算新增 token 的 Q/K/V，再和历史 K/V 做注意力，避免重复计算整段上下文。</p>
+            <div class="formula">没有 KV Cache：每步近似重复处理完整前缀；有 KV Cache：每步只追加新 token 的 K/V，但注意力仍要读历史 K/V。</div>
+            <p class="a"><strong>工程代价：</strong>KV Cache 会占用大量显存，且和 batch size、层数、隐藏维度、序列长度、KV 头数、精度直接相关。长上下文和高并发时，KV Cache 往往是显存瓶颈。</p>
+            <p class="a"><strong>追问应对：</strong>如果问“为什么 GQA/MQA 有用”，答：它们减少 K/V 头数，直接降低 KV Cache 体积和显存带宽压力，但可能牺牲部分表达能力。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q3：PagedAttention 的核心思想是什么？</strong><span class="tag">vLLM</span></p>
+            <p class="a"><strong>口语稿：</strong>PagedAttention 把 KV Cache 管理做得像操作系统的虚拟内存分页：不要求每个请求拿到一整块连续显存，而是把 KV 按 block 存储，通过 block table 映射逻辑位置和物理块。</p>
+            <p class="a"><strong>为什么重要：</strong>传统 KV Cache 容易因为变长请求产生显存碎片和预留浪费。PagedAttention 让显存按块分配、复用和回收，提升并发下的显存利用率。</p>
+            <p class="a"><strong>项目落地：</strong>适合请求长度差异大、并发高、长上下文多的服务。上线要关注 block size、显存水位、抢占策略、swap/evict 行为和长请求对短请求的影响。</p>
+            <p class="a"><strong>追问应对：</strong>PagedAttention 不是改变模型结构，也不是让注意力复杂度消失。它主要优化 KV Cache 的系统管理效率。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q4：vLLM 为什么吞吐高？</strong><span class="tag">高频</span></p>
+            <p class="a"><strong>口语稿：</strong>vLLM 的核心价值是 PagedAttention 加 continuous batching。前者提升 KV Cache 显存利用率，后者让不同请求在 token step 级别动态入批，减少 GPU 空转。</p>
+            <p class="a"><strong>调度直觉：</strong>传统 static batching 要等一批请求凑齐，并且整批完成后才能处理下一批；continuous batching 可以让已经完成的请求退出，新请求补进来，特别适合输出长度不一致的 LLM 服务。</p>
+            <p class="a"><strong>面试说法：</strong>我会把 vLLM 定位成推理服务引擎，不只是模型加载器。它解决的是高并发下的调度、KV 管理和吞吐成本问题。</p>
+            <p class="a"><strong>追问应对：</strong>如果 P99 变差，要检查队列等待、长请求占用、batch token 数、max_num_seqs、max_num_batched_tokens、GPU 显存水位，而不是只看平均吞吐。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q5：SGLang 和 vLLM 的区别怎么讲？</strong><span class="tag">系统选型</span></p>
+            <p class="a"><strong>口语稿：</strong>vLLM 更偏通用高吞吐推理引擎，SGLang 更强调结构化生成程序、复杂推理流程、前后端协同调度和 KV Cache 复用。</p>
+            <p class="a"><strong>核心能力：</strong>SGLang 常用于多轮、多分支、工具调用、agentic workflow、JSON/约束输出等场景。它通过运行时和调度器优化，让复杂 LLM 程序不只是串行调用模型。</p>
+            <p class="a"><strong>选型话术：</strong>如果只是标准 chat completion，高吞吐服务优先考虑 vLLM；如果业务里有复杂提示编排、多阶段推理、可复用前缀、并发分支，SGLang 的编程模型更有吸引力。</p>
+            <p class="a"><strong>追问应对：</strong>不要说二者谁完全替代谁。更准确的是看调用模式、模型支持、部署生态、团队熟悉度和压测结果。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q6：FlashAttention 原理怎么讲清楚？</strong><span class="tag">算子</span></p>
+            <p class="a"><strong>口语稿：</strong>FlashAttention 不改变注意力数学结果，改变的是执行方式。它通过分块计算和在线 softmax，减少注意力矩阵在 HBM 中的读写和物化，从而提升速度、降低显存。</p>
+            <p class="a"><strong>核心瓶颈：</strong>标准 attention 会形成 <code>QK^T</code> 的大矩阵，长序列下中间结果读写很重。FlashAttention 把 Q/K/V 切块放到更快的片上存储中计算，用在线归一化保证 softmax 数值正确。</p>
+            <p class="a"><strong>追问应对：</strong>它不是稀疏注意力，也不是把复杂度从 <code>O(n^2)</code> 变成 <code>O(n)</code>。它优化的是 IO 和显存占用，所以长上下文仍然要配合上下文压缩、检索和调度策略。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q7：GPTQ 和 AWQ 量化差异怎么讲？</strong><span class="tag">量化</span></p>
+            <p class="a"><strong>口语稿：</strong>GPTQ 和 AWQ 都是常见的权重量化方法，目标是把模型权重压到 INT4/INT8 等低比特，降低显存和带宽成本。GPTQ 更强调基于二阶近似的逐层误差补偿，AWQ 更强调保护激活敏感的关键权重通道。</p>
+            <p class="a"><strong>GPTQ：</strong>通常用校准数据估计量化误差，通过近似 Hessian 信息做误差补偿，让低比特权重尽量接近原模型输出。</p>
+            <p class="a"><strong>AWQ：</strong>观察到少量权重通道对激活影响很大，因此通过缩放和通道保护减少量化损失，实践中常见于高效部署。</p>
+            <p class="a"><strong>工程评估：</strong>量化后不能只看困惑度。要看业务集准确率、格式遵循、拒答率、长推理稳定性、吞吐、显存、P99 和回滚成本。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q8：INT4 量化一定比 FP16 更快吗？</strong><span class="tag">陷阱题</span></p>
+            <p class="a"><strong>口语稿：</strong>不一定。量化能显著降低显存占用和带宽压力，但是否更快取决于硬件、kernel、batch、模型结构和反量化开销。</p>
+            <p class="a"><strong>工程判断：</strong>如果瓶颈是显存容量或内存带宽，量化收益明显；如果 kernel 不成熟、batch 很小、反量化开销占比高，速度提升可能有限甚至变慢。</p>
+            <p class="a"><strong>追问应对：</strong>我会先用真实请求压测 FP16/BF16、INT8、INT4，不只看单条样例。关注 TTFT、TPOT、吞吐、质量掉点和显存余量。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q9：prefill 和 decode 为什么要分开优化？</strong><span class="tag">服务拆解</span></p>
+            <p class="a"><strong>口语稿：</strong>prefill 是对 prompt 的并行计算，通常算力密集；decode 是逐 token 生成，通常更受 KV Cache、显存带宽和调度影响。两阶段瓶颈不同，所以优化手段也不同。</p>
+            <p class="a"><strong>工程手段：</strong>prefill 可通过 prompt 缓存、chunked prefill、上下文裁剪、FlashAttention 优化；decode 可通过 continuous batching、KV Cache 管理、GQA/MQA、speculative decoding 优化。</p>
+            <p class="a"><strong>追问应对：</strong>如果用户抱怨“打开慢”，重点看 TTFT 和队列等待；如果抱怨“流式输出慢”，重点看 TPOT、decode batch 和 GPU 利用率。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q10：推理服务上线怎么做容量评估？</strong><span class="tag">项目落地</span></p>
+            <p class="a"><strong>口语稿：</strong>容量评估要把请求数转成 token 数，因为 LLM 成本主要和输入/输出 token、并发、模型大小、精度和 SLA 有关。</p>
+            <p class="a"><strong>指标口径：</strong>统计 QPS、输入 token P50/P95、输出 token P50/P95、峰值并发、TTFT、TPOT、P95/P99、错误率、超时率、GPU 利用率、显存水位。</p>
+            <p class="a"><strong>项目落地：</strong>压测时要混合短请求和长请求，模拟真实长度分布。只用固定长度 prompt 压测会高估线上表现。</p>
+        </div>
+    </section>
+
+    <section id="distributed">
+        <h2>二、分布式训练：Megatron-LM、DeepSpeed、FSDP、TP、PP</h2>
+
+        <div class="qa">
+            <p class="q"><strong>Q11：为什么大模型训练需要并行？</strong><span class="tag">总纲</span></p>
+            <p class="a"><strong>口语稿：</strong>单卡放不下模型参数、优化器状态、梯度和激活，也无法在可接受时间内完成训练，所以需要数据并行、张量并行、流水线并行、ZeRO/FSDP 等混合方案。</p>
+            <p class="a"><strong>显存构成：</strong>训练显存主要来自参数、梯度、优化器状态、激活、临时 buffer。Adam 优化器会带来额外一阶/二阶矩状态，显存压力远高于推理。</p>
+            <p class="a"><strong>选型思路：</strong>数据并行解决吞吐，张量并行解决单层太大，流水线并行解决层数太深，ZeRO/FSDP 解决状态冗余。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q12：张量并行 TP 的核心是什么？</strong><span class="tag">重点</span></p>
+            <p class="a"><strong>口语稿：</strong>TP 是把单层里的大矩阵切到多张 GPU 上共同计算。例如 Transformer 里的线性层可以按列切或按行切，每张卡算一部分，再通过 all-reduce 或 all-gather 合并结果。</p>
+            <p class="a"><strong>Megatron 视角：</strong>Megatron-LM 经典做法是对 MLP 和 attention 的大矩阵做列并行、行并行组合，尽量减少通信点，同时保持数学等价。</p>
+            <p class="a"><strong>代价：</strong>TP 通信频繁，依赖高速互联。TP 跨节点会很贵，通常优先放在同机 NVLink/NVSwitch 内。</p>
+            <p class="a"><strong>追问应对：</strong>TP 适合“单层太宽，单卡算不下或算不快”的情况；但 TP 度数不是越大越好，通信会吞掉收益。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q13：流水线并行 PP 的核心是什么？</strong><span class="tag">重点</span></p>
+            <p class="a"><strong>口语稿：</strong>PP 是把模型按层切成多个 stage，每个 stage 放在不同 GPU 上。训练时把 batch 切成 micro-batch，像流水线一样让不同 stage 同时处理不同 micro-batch。</p>
+            <p class="a"><strong>关键问题：</strong>PP 最大问题是 pipeline bubble，也就是有些 stage 在等待前后 stage，GPU 空转。micro-batch 越多，bubble 占比越低，但调度和激活显存压力也会变化。</p>
+            <p class="a"><strong>常见策略：</strong>GPipe 使用先全 forward 后全 backward；1F1B 调度让 forward/backward 交错，减少显存和空泡。</p>
+            <p class="a"><strong>追问应对：</strong>PP 适合模型层数深、整模型放不下的情况；切分时要让每个 stage 计算量接近，否则会负载不均。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q14：DeepSpeed ZeRO 三个阶段怎么讲？</strong><span class="tag">高频</span></p>
+            <p class="a"><strong>口语稿：</strong>ZeRO 的思想是把数据并行中每张卡重复保存的训练状态切分掉，逐步分片优化器状态、梯度和参数。</p>
+            <ul>
+                <li><strong>ZeRO-1：</strong>分片优化器状态，降低 Adam 状态冗余。</li>
+                <li><strong>ZeRO-2：</strong>继续分片梯度，进一步省显存。</li>
+                <li><strong>ZeRO-3：</strong>连参数也分片，需要时再 gather，显存省最多，通信和调度更复杂。</li>
+            </ul>
+            <p class="a"><strong>追问应对：</strong>ZeRO-3 不是免费午餐。模型越大越有价值，但通信、参数 gather、checkpoint 和调试复杂度都会上升。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q15：FSDP 和 ZeRO 的关系是什么？</strong><span class="tag">PyTorch</span></p>
+            <p class="a"><strong>口语稿：</strong>FSDP 可以理解为 PyTorch 生态里对参数、梯度、优化器状态进行全分片训练的方案，思想上接近 ZeRO-3。它在 forward 前 all-gather 参数，计算后释放，backward 时再按需处理梯度。</p>
+            <p class="a"><strong>工程关注：</strong>FSDP 要关注 auto wrap policy、sharding strategy、activation checkpointing、mixed precision、state dict 保存方式和恢复速度。</p>
+            <p class="a"><strong>选型话术：</strong>DeepSpeed 生态成熟、配置能力强；FSDP 更贴近 PyTorch 原生，和 torch.compile、原生 checkpoint 等集成更自然。最终看团队栈和训练规模。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q16：Megatron-LM 主要解决什么？</strong><span class="tag">框架</span></p>
+            <p class="a"><strong>口语稿：</strong>Megatron-LM 是面向超大 Transformer 训练的高性能框架，核心能力是张量并行、流水线并行、序列并行和混合并行，把模型切到大量 GPU 上高效训练。</p>
+            <p class="a"><strong>项目理解：</strong>它不是只提供“启动脚本”，而是把 Transformer 结构和并行策略深度耦合，例如 attention/MLP 的矩阵切分、通信点设计、pipeline 调度。</p>
+            <p class="a"><strong>追问应对：</strong>如果问“为什么不用普通 DDP”，答：DDP 每卡有完整模型，模型太大时放不下；即使放得下，单层计算也可能成为瓶颈，TP/PP 才能继续扩展。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q17：混合并行怎么设计？</strong><span class="tag">系统设计</span></p>
+            <p class="a"><strong>口语稿：</strong>混合并行通常把 TP 放在高速互联范围内，把 PP 跨更大的模型层级切分，再用 DP/FSDP 扩吞吐。目标是让显存放得下、通信不过载、每张卡负载均衡。</p>
+            <p class="a"><strong>示例：</strong>假设 64 卡训练，可以按 TP=4、PP=4、DP=4 组织。每个 pipeline stage 内 4 卡做张量并行，4 个 stage 串成模型，再复制 4 份做数据并行。</p>
+            <p class="a"><strong>追问应对：</strong>并行度要通过 profile 调整。看到 GPU 利用率低，可能是 pipeline bubble、通信阻塞、数据加载慢、checkpoint 太频繁或 batch 设置不合理。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q18：训练吞吐上不去怎么排查？</strong><span class="tag">排障</span></p>
+            <p class="a"><strong>口语稿：</strong>先区分是计算瓶颈、通信瓶颈、数据瓶颈还是调度瓶颈。不要只看 loss，要同时看 tokens/s、MFU、GPU 利用率、通信耗时、data loader 等待和显存水位。</p>
+            <p class="a"><strong>排查路径：</strong>单卡 profile 算子效率，多卡看 all-reduce/all-gather 时间，PP 看 stage idle，数据侧看 dataloader 队列和样本长度分布。</p>
+            <p class="a"><strong>常见修复：</strong>增大 global batch、调 micro-batch、开启 activation checkpointing、通信计算重叠、调整 TP/PP、清洗超长样本、优化 checkpoint 间隔。</p>
+        </div>
+    </section>
+
+    <section id="theory">
+        <h2>三、模型理论：Transformer、RoPE、Scaling Law、MoE</h2>
+
+        <div class="qa">
+            <p class="q"><strong>Q19：Transformer Block 细节怎么讲？</strong><span class="tag">基础必会</span></p>
+            <p class="a"><strong>口语稿：</strong>典型 decoder-only Transformer block 包括归一化、自注意力、残差连接、前馈网络。输入 token embedding 加位置信息后，逐层通过 attention 建模上下文关系，再通过 MLP 做非线性变换。</p>
+            <p class="a"><strong>细节：</strong>现代 LLM 常用 Pre-LN、RMSNorm、SwiGLU/GEGLU、RoPE、GQA/MQA、残差连接。Pre-LN 有助于深层训练稳定，RMSNorm 更轻量。</p>
+            <p class="a"><strong>追问应对：</strong>如果问“attention 和 MLP 分别做什么”，可以说 attention 负责 token 间信息路由，MLP 负责每个位置上的特征变换和知识存储。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q20：多头注意力为什么需要多个头？</strong><span class="tag">高频</span></p>
+            <p class="a"><strong>口语稿：</strong>多头注意力让模型在不同子空间里关注不同关系，例如语法依赖、实体指代、局部窗口、长程依赖。多个头不是简单复制，而是提高表示多样性。</p>
+            <p class="a"><strong>公式：</strong><code>head_i = Attention(QW_i^Q, KW_i^K, VW_i^V)</code>，多个 head 拼接后再线性投影。</p>
+            <p class="a"><strong>工程追问：</strong>头数越多不一定越好。头数增加会影响维度切分、KV Cache、并行效率和模型质量，现代推理常用 GQA/MQA 降低 K/V 成本。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q21：RoPE 的本质是什么？</strong><span class="tag">位置编码</span></p>
+            <p class="a"><strong>口语稿：</strong>RoPE 是旋转位置编码，它把位置信息通过旋转矩阵注入 Q/K，使注意力分数天然包含相对位置信息，因此在 decoder-only LLM 中很常见。</p>
+            <p class="a"><strong>直觉：</strong>不同位置对应不同旋转角度，两个 token 的相对距离会反映在 Q 和 K 的点积里。相比绝对位置 embedding，它对长度外推更友好。</p>
+            <p class="a"><strong>追问应对：</strong>RoPE 不等于无限长上下文。长上下文还会遇到注意力稀释、检索噪声、训练长度外推不足等问题，需要 NTK scaling、YaRN、位置插值或训练阶段扩长配合。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q22：Scaling Law 怎么讲？</strong><span class="tag">理论</span></p>
+            <p class="a"><strong>口语稿：</strong>Scaling law 描述模型性能随参数量、数据量、计算量扩大而呈现可预测改善。它的价值是指导资源分配：给定算力预算时，模型太大但数据不足，或者数据太多但模型太小，都不是最优。</p>
+            <p class="a"><strong>关键点：</strong>Chinchilla 风格结论强调 compute-optimal：参数和训练 token 要匹配。很多能力不是魔法突然出现，而是在规模、数据质量、训练目标共同作用下逐步增强。</p>
+            <p class="a"><strong>追问应对：</strong>Scaling law 是经验规律，不保证所有任务、所有数据、所有架构都同样成立。数据质量、去重、课程学习、对齐方式会显著影响结果。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q23：MoE 架构的核心收益和风险？</strong><span class="tag">架构</span></p>
+            <p class="a"><strong>口语稿：</strong>MoE 用多个专家网络扩大总参数量，但每个 token 只激活少数专家，因此在计算量相对可控的情况下提升模型容量。</p>
+            <p class="a"><strong>核心模块：</strong>router 根据 token 表示选择 top-k expert；expert 通常是 FFN；还需要 load balancing loss 避免所有 token 挤到少数专家。</p>
+            <p class="a"><strong>工程风险：</strong>MoE 会带来路由不均、专家负载倾斜、跨卡 all-to-all 通信、训练不稳定、推理部署复杂等问题。</p>
+            <p class="a"><strong>追问应对：</strong>MoE 不是“免费变大”。如果 batch 小、路由分散或通信慢，推理效率可能不如 dense 模型。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q24：长上下文为什么容易退化？</strong><span class="tag">长上下文</span></p>
+            <p class="a"><strong>口语稿：</strong>上下文变长后，模型能看到更多信息，但有效信息密度下降，注意力更容易被噪声干扰，且位置外推、KV Cache 和计算成本都会变差。</p>
+            <p class="a"><strong>项目落地：</strong>不要把长上下文当万能方案。生产里更常用 RAG、重排、摘要、证据压缩、结构化上下文和引用校验，提高“有效 token 比例”。</p>
+            <p class="a"><strong>追问应对：</strong>评估长上下文要看 needle-in-haystack、真实任务成功率、引用准确率、成本和延迟，不只看最大窗口长度。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q25：为什么 LLM 常用 BF16 而不是 FP16？</strong><span class="tag">数值稳定</span></p>
+            <p class="a"><strong>口语稿：</strong>BF16 指数位更宽，动态范围接近 FP32，比 FP16 更不容易溢出，适合大模型训练。FP16 精度更细一点但动态范围小，训练中更容易出现 overflow。</p>
+            <p class="a"><strong>工程追问：</strong>混合精度训练还要配合 loss scaling、梯度裁剪、异常检测。看到 loss NaN，要查学习率、数据异常、归一化、混精溢出和梯度爆炸。</p>
+        </div>
+    </section>
+
+    <section id="rl">
+        <h2>四、RL 算法与对齐：PPO、GRPO、GSPO、奖励设计和稳定性</h2>
+
+        <div class="qa">
+            <p class="q"><strong>Q26：LLM 对齐里的 RL 在优化什么？</strong><span class="tag">总纲</span></p>
+            <p class="a"><strong>口语稿：</strong>LLM 对齐里的 RL 不是让模型玩游戏，而是把“回答是否符合偏好、是否正确、是否安全、格式是否合规”等目标转成奖励信号，用策略优化让模型更倾向产生高奖励回答。</p>
+            <p class="a"><strong>基本链路：</strong>SFT 让模型会按指令回答；奖励模型或规则奖励提供偏好信号；PPO/GRPO/GSPO 等算法更新策略；KL 约束防止模型偏离参考模型太远。</p>
+            <p class="a"><strong>追问应对：</strong>如果被问“你做的 RL 到什么程度”，要讲自己实际训练过的任务、reward 项、曲线、失败样例和调参动作，不要只报算法名。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q27：PPO 核心思想怎么讲？</strong><span class="tag">高频</span></p>
+            <p class="a"><strong>口语稿：</strong>PPO 的核心是限制策略每次更新不要离旧策略太远。它用 clipped objective 裁剪新旧策略概率比，在提升奖励的同时避免训练突然崩掉。</p>
+            <div class="formula">直觉：如果新策略相对旧策略的概率比 <code>r_t</code> 超出 <code>1 +/- epsilon</code>，就限制这部分收益，防止过大更新。</div>
+            <p class="a"><strong>LLM 场景：</strong>通常会有 policy model、reference model、reward model、value model。reward 给方向，value 估计优势，KL 控制偏移。</p>
+            <p class="a"><strong>追问应对：</strong>PPO 稳但成本高，因为需要采样、奖励打分、价值估计和多轮更新；on-policy 数据复用效率有限。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q28：GRPO 的创新点是什么？</strong><span class="tag">推理对齐</span></p>
+            <p class="a"><strong>口语稿：</strong>GRPO 的核心是对同一个 prompt 采样一组回答，用组内相对奖励构造 advantage，减少对单独 value model 的依赖，适合数学、代码、推理这类可以做组内比较的任务。</p>
+            <p class="a"><strong>为什么有用：</strong>如果同题采样多条轨迹，有的正确、有的错误，就可以用组内均值和方差做归一化，让模型学习“相对更好的推理路径”。</p>
+            <p class="a"><strong>常见奖励：</strong>正确性奖励、格式奖励、过程约束、长度惩罚、重复惩罚、KL 惩罚。数学题常把最终答案正确性作为主奖励，格式作为辅助奖励。</p>
+            <p class="a"><strong>追问应对：</strong>GRPO 的风险是奖励噪声和采样质量。若组内样本都很差或奖励器误判，更新信号会偏。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q29：GSPO 怎么理解？</strong><span class="tag">进阶</span></p>
+            <p class="a"><strong>口语稿：</strong>GSPO 可以按“序列级策略优化”理解：相比只在 token 级别看概率比，它更关注整条回答序列的优化稳定性，适合长推理场景中减少 token 级噪声带来的不稳定。</p>
+            <p class="a"><strong>和 GRPO 的关系：</strong>二者都可以利用组内采样和相对优势。GRPO 更常被描述为 group relative advantage；GSPO 更强调 sequence-level objective，让更新信号和完整回答质量更一致。</p>
+            <p class="a"><strong>面试边界：</strong>如果没有亲自实现底层算法，不要硬说自己改过公式。可以说理解其动机：长链路推理中 token 级奖励稀疏、方差高，因此希望用更稳定的组内/序列级信号做策略更新。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q30：reward 怎么设计才像做过项目？</strong><span class="tag">重点</span></p>
+            <p class="a"><strong>口语稿：</strong>reward 设计要从业务目标拆解，不是只给一个总分。一般会把正确性、格式、可读性、安全、工具调用、长度和成本拆成多项奖励，再做权重和约束。</p>
+            <p class="a"><strong>示例：</strong>数学推理可设 <code>R = 答案正确 + 格式合规 + 推理步骤完整 - 重复惩罚 - 过长惩罚 - KL惩罚</code>。Agent 任务可加工具调用成功率、参数正确性、最终任务完成度。</p>
+            <p class="a"><strong>追问应对：</strong>奖励项要能被验证。凡是无法稳定自动评估的项，要么引入人工偏好/模型裁判并做一致性校验，要么降低权重，避免模型钻空子。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q31：reward hacking / 奖励劫持是什么？怎么解决？</strong><span class="tag">高频</span></p>
+            <p class="a"><strong>口语稿：</strong>奖励劫持是模型学会了拿高 reward 的捷径，但没有真正提升任务质量。例如为了格式分重复模板、为了长度奖励堆废话、为了裁判偏好写看似严谨但错误的解释。</p>
+            <p class="a"><strong>定位方法：</strong>看 reward 上升但人工评测或真实成功率不升；抽样高 reward 低质量样本；比较各 reward 子项是否某一项异常主导。</p>
+            <p class="a"><strong>解决：</strong>重构奖励、增加反作弊规则、引入多维评测、限制单项奖励上限、加入 KL/长度惩罚、维护 holdout 回归集，并定期人工审查高分样本。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q32：熵崩溃是什么？怎么解决？</strong><span class="tag">训练稳定</span></p>
+            <p class="a"><strong>口语稿：</strong>熵崩溃是策略输出分布过早变得很尖锐，模型不再探索，回答模式单一，容易陷入局部最优。曲线上通常表现为 entropy 快速下降、KL 异常、输出多样性变差。</p>
+            <p class="a"><strong>原因：</strong>学习率太大、奖励过强、KL 约束太弱、采样温度过低、训练数据过窄、某类格式奖励被过度放大。</p>
+            <p class="a"><strong>解决：</strong>降低学习率、增加 entropy bonus、加强 KL 控制、调高采样温度、扩大 prompt 多样性、裁剪奖励、缩短每轮更新步数。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q33：训练几个模型后，loss 曲线应该怎么看？</strong><span class="tag">实战</span></p>
+            <p class="a"><strong>口语稿：</strong>RL 对齐不能只看一个 loss。要联合看 reward、KL、entropy、clip fraction、policy loss、value loss、response length、任务成功率和人工评测。</p>
+            <p class="a"><strong>常见现象：</strong>reward 上升但 KL 失控，说明模型偏离参考太远；entropy 快速下降，可能探索不足；value loss 抖动大，可能 critic 学不好；长度持续变长，可能奖励鼓励啰嗦。</p>
+            <p class="a"><strong>追问应对：</strong>如果指标波动，先确认数据和评测是否稳定，再查学习率、batch size、reward scale、KL coefficient、采样温度和异常样本。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q34：PPO、GRPO、DPO 怎么选？</strong><span class="tag">选型</span></p>
+            <p class="a"><strong>口语稿：</strong>DPO 链路简单，适合有高质量 chosen/rejected 偏好对时快速对齐；PPO 更通用，适合复杂奖励和在线探索，但成本高；GRPO 适合同题多采样、可自动验证的推理任务。</p>
+            <p class="a"><strong>工程判断：</strong>如果资源紧张，先 SFT + DPO 建 baseline；如果有规则奖励和可验证答案，再尝试 GRPO；如果需要复杂 reward model、在线反馈和价值函数估计，再考虑 PPO。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q35：实际训练时哪些超参数最关键？</strong><span class="tag">调参</span></p>
+            <p class="a"><strong>口语稿：</strong>关键超参数包括学习率、batch size、rollout 数、每个 prompt 采样条数、KL coefficient、clip range、reward scale、max response length、temperature、top-p 和梯度裁剪。</p>
+            <p class="a"><strong>调参顺序：</strong>先固定数据和评测集，调 reward scale 和 KL，让模型不跑飞；再调学习率和 batch 稳定曲线；最后调采样和长度，提高探索和任务收益。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>Q36：如何证明 RL 训练真的有效？</strong><span class="tag">面试闭环</span></p>
+            <p class="a"><strong>口语稿：</strong>要用多层评估证明：训练 reward 只是内部信号，最终要看离线任务成功率、holdout 泛化、人工偏好、格式错误率、安全问题、长度成本和线上灰度指标。</p>
+            <p class="a"><strong>项目说法：</strong>我会保留固定回归集，每次训练后对比 SFT baseline、DPO baseline 和 RL 模型，抽样分析高分错误、低分正确、奖励冲突样本，再决定是否进入灰度。</p>
+        </div>
+    </section>
+
+    <section id="metrics">
+        <h2>五、指标与曲线：看到波动要能解释</h2>
+
+        <div class="grid">
+            <div class="panel">
+                <h3>推理服务指标</h3>
+                <ul>
+                    <li><strong>TTFT：</strong>首 token 延迟，受排队、prefill、调度影响。</li>
+                    <li><strong>TPOT：</strong>每 token 延迟，反映 decode 阶段速度。</li>
+                    <li><strong>P95/P99：</strong>长尾体验，常被长请求、队列阻塞、显存抢占拉高。</li>
+                    <li><strong>Throughput：</strong>tokens/s 比 QPS 更适合衡量 LLM 服务。</li>
+                    <li><strong>GPU 利用率：</strong>低不一定是坏事，要结合队列和 SLA 看。</li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h3>训练稳定指标</h3>
+                <ul>
+                    <li><strong>loss：</strong>下降不代表业务必然提升，要看验证集和任务指标。</li>
+                    <li><strong>grad norm：</strong>异常尖峰可能是脏数据、学习率过大或数值溢出。</li>
+                    <li><strong>tokens/s：</strong>训练吞吐，和并行策略、数据加载、通信相关。</li>
+                    <li><strong>MFU：</strong>模型 FLOPs 利用率，用于判断训练效率。</li>
+                    <li><strong>NaN/Inf：</strong>优先查混精、学习率、异常样本和归一化。</li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h3>RL 对齐指标</h3>
+                <ul>
+                    <li><strong>reward：</strong>方向信号，不等于真实质量。</li>
+                    <li><strong>KL：</strong>衡量策略偏离参考模型的程度。</li>
+                    <li><strong>entropy：</strong>反映探索和输出多样性。</li>
+                    <li><strong>clip fraction：</strong>PPO 更新被裁剪比例，过高说明步子太大。</li>
+                    <li><strong>response length：</strong>长度异常变化常暗示奖励被钻空子。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="qa warn">
+            <p class="q"><strong>常见曲线异常怎么解释？</strong></p>
+            <p class="a"><strong>reward 升、准确率不升：</strong>奖励错配或 reward hacking，抽样高 reward 样本排查。</p>
+            <p class="a"><strong>KL 突然升高：</strong>学习率过大、KL 系数太低、reward scale 太强或异常 batch。</p>
+            <p class="a"><strong>entropy 快速归零：</strong>探索崩溃，调低更新强度、提高 KL/entropy 约束。</p>
+            <p class="a"><strong>P99 高但平均低：</strong>长尾请求、长度分布、队列等待或 batch 调度不合理。</p>
+            <p class="a"><strong>GPU 利用率低：</strong>可能是数据加载慢、通信阻塞、batch 太小、pipeline bubble 或服务等待请求。</p>
+        </div>
+    </section>
+
+    <section id="project">
+        <h2>六、项目中怎么讲：把技术和经历连起来</h2>
+
+        <div class="qa">
+            <p class="q"><strong>1. 推理服务怎么讲成项目能力？</strong></p>
+            <p class="a">可以说：我不会把 vLLM 只当成“换一个推理框架”，而是先分析服务 SLA 和 token 分布，再决定是否引入 PagedAttention、continuous batching、量化和缓存。比如智慧教育/Agent 场景里，用户请求长度差异大、并发波峰明显，就要关注 TTFT、P99、队列长度和显存水位。</p>
+            <p class="a"><strong>可复述模板：</strong>问题背景是高峰时推理超时和成本高；方案是按模型大小和任务价值分层路由，长请求做上下文压缩，推理引擎用 vLLM 提升并发，关键指标看超时率、P99、tokens/s 和 GPU 利用率；副作用是长请求可能拉高尾延迟，需要限流、优先级和超时取消。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>2. 分布式训练怎么讲到“掌握程度”？</strong></p>
+            <p class="a">可以说：我理解 Megatron-LM、DeepSpeed、FSDP 的核心差异，重点掌握 TP/PP 的切分逻辑和通信代价。实际项目如果没有训千亿模型，也可以诚实表达为“能读懂配置、能解释为什么这样切、能根据显存和吞吐排查问题”。</p>
+            <p class="a"><strong>可复述模板：</strong>单卡放不下时先估算参数、梯度、优化器和激活显存；单层太大用 TP，层数太深用 PP，状态冗余用 ZeRO/FSDP；调优看 tokens/s、MFU、通信耗时、stage idle 和 loss 稳定性。</p>
+        </div>
+
+        <div class="qa">
+            <p class="q"><strong>3. RL 训练怎么讲得可信？</strong></p>
+            <p class="a">可以说：我实际训练时会先做 SFT baseline，再设计 reward，跑 PPO/GRPO 类实验，对比 reward、KL、entropy、成功率和人工抽样。重点不是只说算法名，而是能说明一次失败如何修。</p>
+            <p class="a"><strong>可复述模板：</strong>我遇到过 reward 上升但答案变啰嗦的问题，定位后发现格式/长度相关奖励过强，于是降低该项权重、增加长度惩罚和人工 holdout，对比后任务准确率恢复，平均输出长度下降。</p>
+        </div>
+    </section>
+
+    <section id="checklist">
+        <h2>七、面试前复习清单</h2>
+        <div class="grid">
+            <div class="panel">
+                <h3>必须能白板讲</h3>
+                <ul>
+                    <li>Attention 公式、KV Cache、RoPE、GQA/MQA。</li>
+                    <li>vLLM = PagedAttention + continuous batching。</li>
+                    <li>FlashAttention 优化 IO，不改变模型语义。</li>
+                    <li>TP 切矩阵，PP 切层，DP 复制模型。</li>
+                    <li>PPO clipping、GRPO 组内相对优势、GSPO 序列级优化动机。</li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h3>必须能回答追问</h3>
+                <ul>
+                    <li>为什么量化后可能不变快？</li>
+                    <li>为什么 P99 比平均值更重要？</li>
+                    <li>TP/PP 并行度为什么不是越大越好？</li>
+                    <li>reward hacking 怎么发现和修？</li>
+                    <li>entropy collapse 说明什么？</li>
+                </ul>
+            </div>
+            <div class="panel">
+                <h3>必须能联系项目</h3>
+                <ul>
+                    <li>用 SLA 和 token 分布解释推理优化。</li>
+                    <li>用显存构成解释训练并行选型。</li>
+                    <li>用曲线和样本分析解释 RL 调参。</li>
+                    <li>用灰度、回滚、回归集说明上线意识。</li>
+                    <li>明确自己做过什么、理解什么、没夸大什么。</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
