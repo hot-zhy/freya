@@ -44,6 +44,69 @@
         }
         .hero { border-color: rgba(0,245,255,.18); }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .term-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+        .term {
+            background: rgba(0,0,0,.18);
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .term strong { color: var(--accent); }
+        .term p { margin: 6px 0 0; color: rgba(232,232,240,.9); font-size: .92rem; }
+        .step-list {
+            counter-reset: step;
+            display: grid;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .step {
+            position: relative;
+            padding: 12px 12px 12px 46px;
+            border: 1px solid rgba(0,245,255,.16);
+            border-radius: 12px;
+            background: rgba(0,245,255,.05);
+        }
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 12px;
+            top: 14px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: #001014;
+            background: var(--accent);
+            font-weight: 700;
+        }
+        .compare {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 12px;
+            margin: 10px 0 14px;
+            font-size: .94rem;
+        }
+        .compare th, .compare td {
+            border: 1px solid rgba(255,255,255,.08);
+            padding: 9px 10px;
+            vertical-align: top;
+        }
+        .compare th {
+            color: var(--accent);
+            background: rgba(0,245,255,.08);
+            text-align: left;
+        }
+        .example {
+            background: rgba(168,85,247,.10);
+            border-left: 3px solid var(--accent2);
+            border-radius: 8px;
+            padding: 9px 12px;
+            margin: 8px 0;
+            color: #efe8ff;
+        }
         .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 20px; }
         .toc a {
             border: 1px solid rgba(0,245,255,.25);
@@ -120,17 +183,219 @@
     </div>
 
     <div class="toc">
+        <a href="#map">全局地图</a>
+        <a href="#glossary">小白词典</a>
+        <a href="#beginner-transformer">Transformer 从零</a>
+        <a href="#beginner-serving">推理从零</a>
+        <a href="#beginner-distributed">训练从零</a>
+        <a href="#beginner-rl">RL 从零</a>
         <a href="#serving">推理优化</a>
         <a href="#distributed">分布式训练</a>
         <a href="#theory">模型理论</a>
         <a href="#rl">RL 与对齐</a>
         <a href="#metrics">指标与曲线</a>
         <a href="#project">项目中怎么讲</a>
+        <a href="#confusing">易混淆对比</a>
+        <a href="#roadmap">复习路线</a>
         <a href="#checklist">复习清单</a>
     </div>
 
+    <section id="map">
+        <h2>零、先建立全局地图：大模型到底怎么从训练到上线</h2>
+        <div class="hero">
+            <p class="a">你可以先把大模型理解成一个“超大的函数”：输入一串文字，模型把文字拆成 token，经过很多层 Transformer 计算，输出下一个 token 的概率。训练是在调整这个函数里的参数；推理是在使用训练好的函数生成答案；部署是在让这个函数稳定、便宜、快速地服务很多用户。</p>
+            <div class="step-list">
+                <div class="step"><strong>数据准备：</strong>收集文本、代码、问答、偏好数据，清洗去重，切成 token。数据质量决定模型上限。</div>
+                <div class="step"><strong>预训练：</strong>让模型做“预测下一个 token”的任务，学语言、知识和模式。这里最吃算力和数据。</div>
+                <div class="step"><strong>SFT 微调：</strong>用高质量指令数据教模型按人类指令回答，比如问答、代码、总结、推理格式。</div>
+                <div class="step"><strong>对齐训练：</strong>用偏好数据、奖励模型、DPO/PPO/GRPO 等方法，让模型更符合人类偏好、安全和业务目标。</div>
+                <div class="step"><strong>推理部署：</strong>把模型放到 GPU 服务上，对外提供 API，同时优化延迟、吞吐、显存、稳定性和成本。</div>
+                <div class="step"><strong>监控迭代：</strong>上线后看 P99、错误率、成本、用户反馈、幻觉率、成功率，再继续调模型和系统。</div>
+            </div>
+            <p class="example"><strong>小白类比：</strong>训练像“长期学习做题方法”，SFT 像“看标准答案学答题格式”，RL 对齐像“老师按偏好打分后继续改答题习惯”，推理部署像“考试时又快又稳地答题给很多人看”。</p>
+        </div>
+    </section>
+
+    <section id="glossary">
+        <h2>一、小白必懂词典：先把名词翻译成人话</h2>
+        <div class="term-grid">
+            <div class="term"><strong>模型 Model</strong><p>一套可以把输入映射成输出的参数系统。LLM 的输入是 token 序列，输出通常是下一个 token 的概率。</p></div>
+            <div class="term"><strong>参数 Parameter</strong><p>模型内部可学习的数字。训练就是不断调整这些数字，让模型预测更准、回答更好。</p></div>
+            <div class="term"><strong>Token</strong><p>模型处理文字的基本单位，可能是一个字、一个词、一个符号或词的一部分。成本和速度通常按 token 算。</p></div>
+            <div class="term"><strong>Embedding</strong><p>把 token 变成向量。模型不能直接理解文字，只能处理数字向量。</p></div>
+            <div class="term"><strong>上下文 Context</strong><p>模型当前能看到的输入和历史对话。上下文越长，能放的信息越多，但成本和噪声也更高。</p></div>
+            <div class="term"><strong>Logits</strong><p>模型在 softmax 前输出的原始分数。每个候选 token 都有一个分数。</p></div>
+            <div class="term"><strong>Softmax</strong><p>把一堆分数变成概率分布。分数越高的 token，被选中的概率越大。</p></div>
+            <div class="term"><strong>Loss</strong><p>模型“错得有多离谱”的数字。训练目标通常是让 loss 下降，但业务效果不能只看 loss。</p></div>
+            <div class="term"><strong>梯度 Gradient</strong><p>告诉参数应该往哪个方向改，才能让 loss 变小。反向传播就是计算梯度的过程。</p></div>
+            <div class="term"><strong>优化器 Optimizer</strong><p>根据梯度更新参数的算法，比如 AdamW。它决定每一步怎么改、改多大。</p></div>
+            <div class="term"><strong>Batch</strong><p>一次送进模型处理的一组样本或请求。batch 大通常吞吐高，但显存占用也高。</p></div>
+            <div class="term"><strong>GPU</strong><p>适合做大规模矩阵运算的硬件。大模型训练和推理依赖 GPU 的并行计算能力。</p></div>
+            <div class="term"><strong>显存 VRAM</strong><p>GPU 上的内存，用来放模型参数、KV Cache、激活、梯度等。显存不够模型就跑不起来。</p></div>
+            <div class="term"><strong>吞吐 Throughput</strong><p>单位时间处理多少 token 或请求。推理服务更常看 tokens/s，而不只是 QPS。</p></div>
+            <div class="term"><strong>延迟 Latency</strong><p>用户等多久拿到结果。LLM 常看首 token 延迟 TTFT 和每 token 延迟 TPOT。</p></div>
+            <div class="term"><strong>Checkpoint</strong><p>训练中保存的模型状态。训练中断后可以恢复，也用于版本管理和回滚。</p></div>
+            <div class="term"><strong>Attention</strong><p>让每个 token 决定该关注上下文里的哪些 token。它是 Transformer 的核心。</p></div>
+            <div class="term"><strong>KV Cache</strong><p>推理时缓存历史 token 的 Key/Value，避免每生成一个 token 都重复计算全部历史。</p></div>
+            <div class="term"><strong>Reward</strong><p>RL 中给模型输出打的分。分数设计不好，模型会学会钻空子。</p></div>
+            <div class="term"><strong>KL</strong><p>衡量新模型和参考模型输出分布差多远。对齐训练用它防止模型跑偏。</p></div>
+            <div class="term"><strong>Entropy</strong><p>输出分布的“不确定性”。太低说明模型过早变得死板，太高说明输出可能太散。</p></div>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>小白先记住一句话</strong></p>
+            <p class="a">训练关注“怎么把参数学好”，推理关注“怎么把答案生成得又快又省”，分布式关注“单卡放不下或跑太慢时怎么拆到多卡”，RL 对齐关注“怎么让模型更符合人类和业务偏好”。</p>
+        </div>
+    </section>
+
+    <section id="beginner-transformer">
+        <h2>二、Transformer 从零理解：文字如何变成回答</h2>
+        <div class="qa">
+            <p class="q"><strong>1. 一次回答在模型内部发生了什么？</strong></p>
+            <p class="a"><strong>第一步：</strong>输入文字被 tokenizer 切成 token，例如“你好世界”可能被切成几个数字 id。</p>
+            <p class="a"><strong>第二步：</strong>每个 token id 查表变成 embedding 向量。向量不是语义本身，但能承载语义相似性。</p>
+            <p class="a"><strong>第三步：</strong>向量通过很多层 Transformer block。每层主要做两件事：attention 负责看上下文，MLP 负责加工特征。</p>
+            <p class="a"><strong>第四步：</strong>最后输出 logits，经 softmax 变成下一个 token 的概率，然后采样或贪心选择一个 token。</p>
+            <p class="a"><strong>第五步：</strong>新 token 接到上下文后继续重复，直到生成结束符或达到最大长度。</p>
+        </div>
+        <div class="grid">
+            <div class="panel">
+                <h3>Attention 是什么</h3>
+                <p class="small">一句话：让当前 token 从上下文里“找重点”。比如回答“他是谁”时，模型需要回看前文里“他”指代的名字。</p>
+            </div>
+            <div class="panel">
+                <h3>MLP 是什么</h3>
+                <p class="small">一句话：对每个位置的特征做非线性加工。很多知识和模式会体现在 MLP 参数中。</p>
+            </div>
+            <div class="panel">
+                <h3>残差和归一化</h3>
+                <p class="small">残差让信息不容易在深层网络里丢失；LayerNorm/RMSNorm 让数值更稳定，训练不容易崩。</p>
+            </div>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>2. Q、K、V 怎么理解？</strong></p>
+            <p class="a"><strong>类比：</strong>Query 像“我要找什么”，Key 像“我有什么标签”，Value 像“真正要拿走的信息”。当前 token 用 Q 去和所有 token 的 K 匹配，匹配越高，就从对应 V 里拿更多信息。</p>
+            <p class="a"><strong>为什么要多头：</strong>一个头可能关注语法，一个头关注实体，一个头关注位置。多头让模型能同时从多个角度理解上下文。</p>
+            <p class="a"><strong>为什么需要 RoPE：</strong>如果没有位置信息，模型只看到一堆 token，不知道谁在前谁在后。RoPE 用旋转方式把相对位置注入 Q/K，让模型知道距离关系。</p>
+        </div>
+    </section>
+
+    <section id="beginner-serving">
+        <h2>三、推理优化从零理解：为什么回答会慢，怎么变快</h2>
+        <div class="qa">
+            <p class="q"><strong>1. 推理是什么？</strong></p>
+            <p class="a">推理就是使用训练好的模型生成答案。用户输入 prompt 后，模型不会一次性吐出整段话，而是一个 token 一个 token 地生成。每生成一个 token，都要把它接回上下文，再预测下一个 token。</p>
+            <p class="example"><strong>例子：</strong>用户问“什么是 KV Cache？”模型可能先生成“KV”，再生成“ Cache”，再生成“ 是”，一直循环直到完整回答结束。</p>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>2. 为什么分 prefill 和 decode？</strong></p>
+            <p class="a"><strong>prefill：</strong>处理用户已经给出的整段 prompt，计算所有输入 token 的中间状态。它像“读题”，题目越长，读题越慢。</p>
+            <p class="a"><strong>decode：</strong>开始逐 token 生成答案。它像“一个字一个字写答案”，每一步都依赖前一步，所以并行性更差。</p>
+            <p class="a"><strong>工程意义：</strong>首 token 慢通常和 prefill、排队有关；流式输出慢通常和 decode、KV Cache、batch 调度有关。</p>
+        </div>
+        <div class="grid">
+            <div class="panel">
+                <h3>KV Cache</h3>
+                <p class="small">解决重复计算。历史 token 的 K/V 已经算过，缓存起来，下次只算新增 token。</p>
+            </div>
+            <div class="panel">
+                <h3>PagedAttention</h3>
+                <p class="small">解决 KV Cache 显存碎片。像内存分页一样按块管理 KV，而不是要求连续大块显存。</p>
+            </div>
+            <div class="panel">
+                <h3>Continuous Batching</h3>
+                <p class="small">解决 GPU 等待。请求完成就退出，新请求马上补进来，让 GPU 持续有活干。</p>
+            </div>
+            <div class="panel">
+                <h3>量化</h3>
+                <p class="small">解决显存和带宽。把 FP16/BF16 权重压成 INT8/INT4，但可能损失质量。</p>
+            </div>
+            <div class="panel">
+                <h3>FlashAttention</h3>
+                <p class="small">解决 attention 读写太重。它不改结果，主要减少中间矩阵的显存读写。</p>
+            </div>
+            <div class="panel">
+                <h3>SGLang</h3>
+                <p class="small">解决复杂 LLM 程序编排。多轮、多分支、工具调用、结构化输出场景更有优势。</p>
+            </div>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>3. 小白怎么判断一个优化手段该不该用？</strong></p>
+            <p class="a">先问瓶颈在哪里。显存不够，考虑量化、GQA/MQA、KV 管理；吞吐不够，考虑 vLLM、continuous batching、batch 参数；首 token 慢，考虑 prompt 长度、排队、chunked prefill；质量下降，检查量化和上下文裁剪是否过度。</p>
+        </div>
+    </section>
+
+    <section id="beginner-distributed">
+        <h2>四、分布式训练从零理解：为什么要把模型拆到多张卡</h2>
+        <div class="qa">
+            <p class="q"><strong>1. 单卡为什么不够？</strong></p>
+            <p class="a">训练时 GPU 不只要放模型参数，还要放梯度、优化器状态、激活值和临时 buffer。推理可能只需要放模型和 KV Cache，但训练要保存更多中间信息，所以显存压力大得多。</p>
+            <p class="example"><strong>直觉：</strong>推理像“拿已经学好的书答题”，训练像“边做题边记录每一步错在哪里，还要修改整本书”。需要保存的信息更多。</p>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>2. 几种并行方式先用人话记住</strong></p>
+            <table class="compare">
+                <tr><th>并行方式</th><th>怎么拆</th><th>解决什么问题</th><th>主要代价</th></tr>
+                <tr><td>数据并行 DP</td><td>每张卡一份完整模型，处理不同数据</td><td>提高训练吞吐</td><td>每卡都有完整模型，显存冗余</td></tr>
+                <tr><td>张量并行 TP</td><td>把一层里的大矩阵拆到多卡</td><td>单层太大或计算太重</td><td>通信频繁，依赖高速互联</td></tr>
+                <tr><td>流水线并行 PP</td><td>把不同层放到不同卡</td><td>模型层数多、整模型放不下</td><td>有 pipeline bubble 和负载均衡问题</td></tr>
+                <tr><td>ZeRO / FSDP</td><td>把参数、梯度、优化器状态分片</td><td>减少数据并行的显存冗余</td><td>需要 gather/scatter，通信和恢复更复杂</td></tr>
+            </table>
+        </div>
+        <div class="grid">
+            <div class="panel">
+                <h3>Megatron-LM</h3>
+                <p class="small">更偏超大 Transformer 训练框架，强项是 TP、PP、序列并行、混合并行。</p>
+            </div>
+            <div class="panel">
+                <h3>DeepSpeed</h3>
+                <p class="small">更偏训练系统优化工具箱，ZeRO 是核心能力之一，也支持并行、offload、推理优化。</p>
+            </div>
+            <div class="panel">
+                <h3>FSDP</h3>
+                <p class="small">PyTorch 原生分片训练方案，思想接近 ZeRO-3，把参数等状态分散到多卡。</p>
+            </div>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>3. 小白先掌握 TP 和 PP 到什么程度？</strong></p>
+            <p class="a"><strong>TP：</strong>会解释“把同一层的大矩阵拆开算，再通信合并”。知道它适合单层很大，通信很频繁，最好放在同机高速互联内。</p>
+            <p class="a"><strong>PP：</strong>会解释“把模型按层切成 stage，用 micro-batch 流水线跑”。知道它有空泡 bubble，stage 切不均会导致有的 GPU 等别人。</p>
+            <p class="a"><strong>面试够用表达：</strong>我能根据显存、模型层数、单层矩阵大小和集群拓扑判断为什么用 TP/PP/ZeRO，而不是只背框架名。</p>
+        </div>
+    </section>
+
+    <section id="beginner-rl">
+        <h2>五、RL 对齐从零理解：让模型不只是会说，还要说得符合目标</h2>
+        <div class="qa">
+            <p class="q"><strong>1. 为什么 SFT 后还要对齐？</strong></p>
+            <p class="a">SFT 能让模型学会“按指令回答”的格式，但不一定知道哪种回答更好、更安全、更符合业务目标。对齐就是继续告诉模型：什么样的答案更值得被偏好。</p>
+            <p class="example"><strong>例子：</strong>两个答案都语法正确，但一个更有帮助、引用更准确、格式更稳定。偏好学习和 RL 对齐就是让模型更常生成后者。</p>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>2. RL 里的几个角色</strong></p>
+            <div class="term-grid">
+                <div class="term"><strong>Policy</strong><p>当前要训练的模型。它决定给定 prompt 时输出什么回答。</p></div>
+                <div class="term"><strong>Reference Model</strong><p>参考模型，通常是 SFT 模型。用来约束新模型别跑太远。</p></div>
+                <div class="term"><strong>Reward Model / Rule</strong><p>给回答打分的模型或规则。它告诉 policy 哪些输出更好。</p></div>
+                <div class="term"><strong>KL Penalty</strong><p>惩罚新模型偏离参考模型太多，防止为了高分乱学。</p></div>
+            </div>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>3. PPO、GRPO、GSPO 先用一句话理解</strong></p>
+            <p class="a"><strong>PPO：</strong>有奖励、有价值估计、有 KL/clip 约束，目标是小步稳定地把策略往高奖励方向推。</p>
+            <p class="a"><strong>GRPO：</strong>同一个题目采样多条回答，用组内相对好坏来更新，适合数学、代码、推理这种能自动判分的任务。</p>
+            <p class="a"><strong>GSPO：</strong>更强调整条回答序列级别的优化稳定性，动机是减少长推理中 token 级噪声。</p>
+            <p class="a"><strong>DPO：</strong>不是典型 RL rollout 流程，而是直接用 chosen/rejected 偏好对训练，工程上更简单。</p>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>4. 小白最容易误解什么？</strong></p>
+            <p class="a"><strong>误解一：</strong>reward 越高模型越好。错，reward 只是代理目标，可能被模型钻空子。</p>
+            <p class="a"><strong>误解二：</strong>loss 下降就能上线。错，还要看任务成功率、人工抽样、安全、长度、成本和回归集。</p>
+            <p class="a"><strong>误解三：</strong>熵越低越好。错，熵太低说明模型变死板，可能探索不足、输出模式坍缩。</p>
+        </div>
+    </section>
+
     <section id="serving">
-        <h2>一、推理优化：从 KV Cache 到 vLLM / SGLang</h2>
+        <h2>六、深挖推理优化：从 KV Cache 到 vLLM / SGLang</h2>
 
         <div class="qa">
             <p class="q"><strong>Q1：大模型推理优化到底在优化什么？</strong><span class="tag">总纲</span></p>
@@ -210,7 +475,7 @@
     </section>
 
     <section id="distributed">
-        <h2>二、分布式训练：Megatron-LM、DeepSpeed、FSDP、TP、PP</h2>
+        <h2>七、深挖分布式训练：Megatron-LM、DeepSpeed、FSDP、TP、PP</h2>
 
         <div class="qa">
             <p class="q"><strong>Q11：为什么大模型训练需要并行？</strong><span class="tag">总纲</span></p>
@@ -276,7 +541,7 @@
     </section>
 
     <section id="theory">
-        <h2>三、模型理论：Transformer、RoPE、Scaling Law、MoE</h2>
+        <h2>八、深挖模型理论：Transformer、RoPE、Scaling Law、MoE</h2>
 
         <div class="qa">
             <p class="q"><strong>Q19：Transformer Block 细节怎么讲？</strong><span class="tag">基础必会</span></p>
@@ -329,7 +594,7 @@
     </section>
 
     <section id="rl">
-        <h2>四、RL 算法与对齐：PPO、GRPO、GSPO、奖励设计和稳定性</h2>
+        <h2>九、深挖 RL 算法与对齐：PPO、GRPO、GSPO、奖励设计和稳定性</h2>
 
         <div class="qa">
             <p class="q"><strong>Q26：LLM 对齐里的 RL 在优化什么？</strong><span class="tag">总纲</span></p>
@@ -409,7 +674,7 @@
     </section>
 
     <section id="metrics">
-        <h2>五、指标与曲线：看到波动要能解释</h2>
+        <h2>十、指标与曲线：看到波动要能解释</h2>
 
         <div class="grid">
             <div class="panel">
@@ -455,7 +720,7 @@
     </section>
 
     <section id="project">
-        <h2>六、项目中怎么讲：把技术和经历连起来</h2>
+        <h2>十一、项目中怎么讲：把技术和经历连起来</h2>
 
         <div class="qa">
             <p class="q"><strong>1. 推理服务怎么讲成项目能力？</strong></p>
@@ -476,8 +741,89 @@
         </div>
     </section>
 
+    <section id="confusing">
+        <h2>十二、易混淆概念对比：小白最容易卡在这里</h2>
+        <div class="qa">
+            <p class="q"><strong>1. 训练 vs 推理</strong></p>
+            <table class="compare">
+                <tr><th>概念</th><th>在做什么</th><th>关注指标</th><th>一句话记忆</th></tr>
+                <tr><td>训练</td><td>用数据更新模型参数</td><td>loss、tokens/s、显存、稳定性、验证集效果</td><td>让模型“学会”</td></tr>
+                <tr><td>推理</td><td>用已有参数生成答案</td><td>TTFT、TPOT、P99、吞吐、成本、错误率</td><td>让模型“好好服务用户”</td></tr>
+            </table>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>2. prefill vs decode</strong></p>
+            <table class="compare">
+                <tr><th>阶段</th><th>发生在什么时候</th><th>像什么</th><th>常见瓶颈</th></tr>
+                <tr><td>prefill</td><td>生成第一个 token 前</td><td>读完整道题</td><td>prompt 太长、排队、attention 计算</td></tr>
+                <tr><td>decode</td><td>开始逐 token 输出后</td><td>一个字一个字写答案</td><td>KV Cache、显存带宽、batch 调度</td></tr>
+            </table>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>3. 吞吐 vs 延迟</strong></p>
+            <p class="a"><strong>吞吐：</strong>系统整体单位时间能处理多少 token，像“餐厅一小时能做多少单”。</p>
+            <p class="a"><strong>延迟：</strong>单个用户等多久，像“我这一单多久能上菜”。</p>
+            <p class="a"><strong>取舍：</strong>batch 变大可能提高吞吐，但个别用户可能等更久，所以线上要同时看吞吐和 P95/P99。</p>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>4. TP vs PP vs DP</strong></p>
+            <table class="compare">
+                <tr><th>方式</th><th>核心动作</th><th>小白类比</th><th>什么时候用</th></tr>
+                <tr><td>DP</td><td>复制模型，分数据</td><td>多个人做不同试卷，最后同步答案</td><td>模型单卡能放下，想提高吞吐</td></tr>
+                <tr><td>TP</td><td>拆一层矩阵</td><td>一道大题太宽，几个人分块算</td><td>单层太大、矩阵计算太重</td></tr>
+                <tr><td>PP</td><td>拆不同层</td><td>流水线工厂，每个人负责一段工序</td><td>模型很深、整模型单卡放不下</td></tr>
+            </table>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>5. FSDP vs DeepSpeed ZeRO</strong></p>
+            <p class="a"><strong>共同点：</strong>都想减少多卡训练中的状态冗余，把参数、梯度、优化器状态分散保存。</p>
+            <p class="a"><strong>区别：</strong>FSDP 是 PyTorch 原生路线，更贴近官方生态；DeepSpeed ZeRO 是 DeepSpeed 体系里的核心能力，配置和工程功能更丰富。</p>
+            <p class="a"><strong>面试表达：</strong>不要死记“谁更好”，要说清楚团队栈、训练规模、调试成本、checkpoint、通信开销和生态支持。</p>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>6. PPO vs GRPO vs DPO</strong></p>
+            <table class="compare">
+                <tr><th>算法</th><th>需要什么数据/信号</th><th>优势</th><th>风险</th></tr>
+                <tr><td>PPO</td><td>reward、rollout、value/KL</td><td>通用，能处理复杂奖励</td><td>训练链路重，调参复杂</td></tr>
+                <tr><td>GRPO</td><td>同题多回答的组内比较</td><td>适合可验证推理任务，少依赖 value model</td><td>奖励噪声和采样质量影响大</td></tr>
+                <tr><td>DPO</td><td>chosen/rejected 偏好对</td><td>简单稳定，工程成本低</td><td>探索能力弱，依赖偏好数据质量</td></tr>
+            </table>
+        </div>
+        <div class="qa warn">
+            <p class="q"><strong>指标异常速查</strong></p>
+            <p class="a"><strong>TTFT 高：</strong>查 prompt 长度、排队、prefill、限流、模型冷启动。</p>
+            <p class="a"><strong>TPOT 高：</strong>查 decode batch、KV Cache、显存带宽、GPU 利用率。</p>
+            <p class="a"><strong>loss NaN：</strong>查学习率、混精溢出、脏数据、梯度爆炸、归一化。</p>
+            <p class="a"><strong>reward 上升但效果下降：</strong>查 reward hacking、评测集泄漏、单项奖励权重过大。</p>
+            <p class="a"><strong>entropy 过快下降：</strong>查学习率、KL 约束、采样温度、奖励过强、训练数据太窄。</p>
+        </div>
+    </section>
+
+    <section id="roadmap">
+        <h2>十三、10 天复习路线：从小白到能讲项目</h2>
+        <div class="step-list">
+            <div class="step"><strong>第 1 天：建立全局地图。</strong>只看“零、全局地图”和“小白词典”。目标是能说清训练、推理、部署、对齐分别是什么。</div>
+            <div class="step"><strong>第 2 天：理解 Transformer。</strong>重点理解 token、embedding、attention、Q/K/V、MLP、RoPE。不要急着背 vLLM。</div>
+            <div class="step"><strong>第 3 天：理解一次推理。</strong>把 prefill、decode、KV Cache、TTFT、TPOT 串起来。目标是能解释为什么首 token 慢和输出慢不是一回事。</div>
+            <div class="step"><strong>第 4 天：学习推理优化。</strong>看 vLLM、PagedAttention、continuous batching、FlashAttention、量化。目标是能说每个技术解决哪个瓶颈。</div>
+            <div class="step"><strong>第 5 天：学习分布式训练。</strong>先背显存构成，再理解 DP/TP/PP/FSDP/ZeRO。目标是能用“怎么拆”解释每种并行。</div>
+            <div class="step"><strong>第 6 天：学习模型理论。</strong>看 scaling law、MoE、长上下文退化、BF16/FP16。目标是知道架构和训练规模为什么影响能力。</div>
+            <div class="step"><strong>第 7 天：学习 RL 对齐。</strong>先理解 SFT、偏好数据、reward、KL、entropy，再看 PPO/GRPO/GSPO。目标是能说清 reward 怎么设。</div>
+            <div class="step"><strong>第 8 天：专门看指标和曲线。</strong>把 TTFT、TPOT、P99、loss、reward、KL、entropy 的异常原因背熟，并能给出排查顺序。</div>
+            <div class="step"><strong>第 9 天：练项目表达。</strong>用“背景 -> 瓶颈 -> 方案 -> 指标 -> 风险 -> 复盘”讲推理优化、训练并行、RL 调参各一遍。</div>
+            <div class="step"><strong>第 10 天：模拟追问。</strong>让自己回答：为什么不用另一个方案？指标变差怎么办？如何证明有效？如何避免夸大自己做过的深度？</div>
+        </div>
+        <div class="qa">
+            <p class="q"><strong>每天自测标准</strong></p>
+            <p class="a"><strong>第一档：</strong>能看懂名词，不再害怕。</p>
+            <p class="a"><strong>第二档：</strong>能用自己的话解释，不照读页面。</p>
+            <p class="a"><strong>第三档：</strong>能回答“为什么”“代价是什么”“项目里怎么用”。</p>
+            <p class="a"><strong>第四档：</strong>能看到指标波动，提出可能原因和排查顺序。</p>
+        </div>
+    </section>
+
     <section id="checklist">
-        <h2>七、面试前复习清单</h2>
+        <h2>十四、面试前复习清单</h2>
         <div class="grid">
             <div class="panel">
                 <h3>必须能白板讲</h3>
