@@ -1071,6 +1071,25 @@
             <p class="a"><strong>口语稿：</strong>要用多层评估证明：训练 reward 只是内部信号，最终要看离线任务成功率、holdout 泛化、人工偏好、格式错误率、安全问题、长度成本和线上灰度指标。</p>
             <p class="a"><strong>项目说法：</strong>我会保留固定回归集，每次训练后对比 SFT baseline、DPO baseline 和 RL 模型，抽样分析高分错误、低分正确、奖励冲突样本，再决定是否进入灰度。</p>
         </div>
+        <div class="qa">
+            <p class="q"><strong>Q37：RL 对齐高频追问与回答模板</strong><span class="tag">追问</span></p>
+            <p class="a"><strong>追问 1：你说 reward 设计，那 reward 具体怎么设？</strong></p>
+            <p class="a"><strong>回答：</strong>我会先把任务目标拆成可验证子项。以数学推理为例，主 reward 是最终答案正确性，辅助 reward 是格式合规、推理步骤完整、单位/符号一致；惩罚项包括重复、过长、无关解释和 KL 偏移。权重不会一开始设得很激进，会先跑小样本，看高分样本是否真的好，再逐步调权重。</p>
+            <p class="a"><strong>追问 2：如果 reward 上升但准确率不升，你怎么解释？</strong></p>
+            <p class="a"><strong>回答：</strong>这通常说明 reward 和真实目标错配，或者模型在钻 reward 漏洞。我会先抽样高 reward 低质量样本，拆开看是哪一项 reward 主导；如果是格式或长度奖励过强，就降低权重或加上限；如果是判分器误判，就修规则或加入人工/单元测试校验。</p>
+            <p class="a"><strong>追问 3：KL 高说明什么？怎么处理？</strong></p>
+            <p class="a"><strong>回答：</strong>KL 高说明当前策略和参考模型分布差太远，模型可能为了拿 reward 牺牲原有语言能力或安全边界。我会提高 KL coefficient、降低学习率、减少每轮更新 epoch，必要时回滚到更早 checkpoint，并检查是不是 reward scale 太大。</p>
+            <p class="a"><strong>追问 4：entropy 快速下降说明什么？</strong></p>
+            <p class="a"><strong>回答：</strong>说明输出分布过早变尖，模型探索不足，容易变成固定模板或模式坍缩。我会降低更新强度、增加 entropy bonus、提高采样温度、增加 prompt 多样性，并看 response diversity 和人工样本是否恢复。</p>
+            <p class="a"><strong>追问 5：为什么 GRPO 适合推理任务？</strong></p>
+            <p class="a"><strong>回答：</strong>推理任务通常可以同题采样多条回答，并用答案正确性或测试用例自动评分。GRPO 用组内相对 reward 构造 advantage，不需要单独训练 value model，能减少 critic 成本。它适合数学、代码这类可验证任务，但如果 reward 噪声大或组内样本都很差，训练信号也会变差。</p>
+            <p class="a"><strong>追问 6：DPO 和 PPO 最大区别是什么？</strong></p>
+            <p class="a"><strong>回答：</strong>PPO 是 rollout RL，需要采样、reward、value/critic、KL 等组件，通用但复杂；DPO 是直接在 chosen/rejected 偏好对上优化相对概率，不显式训练 reward model，也不需要 rollout，工程更简单稳定。但 DPO 更依赖偏好数据质量，探索能力不如 PPO/GRPO。</p>
+            <p class="a"><strong>追问 7：怎么证明不是背概念？</strong></p>
+            <p class="a"><strong>回答：</strong>我会拿一个具体任务讲闭环：任务是什么，reward 怎么拆，训练看哪些曲线，出现过什么异常，怎么调参修复，修复后用什么回归集和人工抽样验证。能讲出失败样例和取舍，比只说算法名更能证明做过。</p>
+            <p class="a"><strong>追问 8：如果你没训过很大的模型，怎么回答？</strong></p>
+            <p class="a"><strong>回答：</strong>我会诚实说自己主要在小模型或开源模型上做过流程验证和工程复现，重点掌握 reward 设计、训练曲线分析和稳定性问题。大规模训练的差别在算力、数据量、并行和评测体系，但核心问题仍然是 reward 是否对齐真实目标、策略是否跑偏、指标是否能证明收益。</p>
+        </div>
     </section>
 
     <section id="metrics">
