@@ -972,6 +972,16 @@
         <div class="cause-chain">
             <p><strong>本章逻辑：</strong>先定义你真正想优化的目标，再设计 reward；reward 只是代理目标，所以要用 KL、clip、entropy、回归集和人工抽样防止模型跑偏；PPO 强在通用稳定，GRPO 强在组内比较，DPO 强在工程简单。</p>
         </div>
+        <div class="qa">
+            <p class="q"><strong>本章关键名词先解释清楚</strong></p>
+            <p class="a"><strong>真正想优化的目标：</strong>业务或任务的真实效果，例如数学题答对率、代码测试通过率、回答有帮助且安全、Agent 工具调用成功率。它是最终目标，不一定能被一个训练 loss 完整表达。</p>
+            <p class="a"><strong>reward：</strong>训练时给模型输出打的分，是对真实目标的近似。比如答案正确 +1，格式正确 +0.1，输出太长 -0.2。reward 方便优化，但它只是“代理指标”，不是最终质量本身。</p>
+            <p class="a"><strong>KL：</strong>衡量当前模型和参考模型输出分布差多远。KL 太高说明模型为了拿 reward 偏离原模型太多，可能开始胡编、格式怪异或能力退化。</p>
+            <p class="a"><strong>clip：</strong>PPO 里的“更新限幅”。如果新策略相对旧策略变化太大，就把收益截断，避免一次更新把模型推崩。</p>
+            <p class="a"><strong>entropy：</strong>输出分布的多样性或不确定性。entropy 太低说明模型过早变得死板，容易模式坍缩；太高则可能输出太随机。</p>
+            <p class="a"><strong>回归集：</strong>固定的一组验证题/样本，每次训练后都跑一遍，用来确认新模型没有把旧能力训坏，例如格式遵循、基础问答、安全拒答、数学正确率。</p>
+            <p class="a"><strong>人工抽样：</strong>从训练结果里抽一批样本人工看，尤其看高 reward 但低质量、低 reward 但其实正确的样本，用来发现 reward hacking 和评测错配。</p>
+        </div>
 
         <div class="qa">
             <p class="q"><strong>Q26：LLM 对齐里的 RL 在优化什么？</strong><span class="tag">总纲</span></p>
@@ -979,7 +989,13 @@
             <p class="a"><strong>基本链路：</strong>SFT 让模型会按指令回答；奖励模型或规则奖励提供偏好信号；PPO/GRPO/GSPO 等算法更新策略；KL 约束防止模型偏离参考模型太远。</p>
             <div class="math-card"><strong>Policy Gradient 基本式：</strong><code>∇J(θ) = E[∇ log π_θ(a|s) A(s,a)]</code>。意思是：如果某个动作的 advantage 为正，就提高它在该状态下的概率；为负就降低概率。</div>
             <div class="cause-chain"><strong>从现象到方案：</strong>SFT 回答格式对但偏好不稳定 <span class="arrow">-></span> 引入偏好数据或 reward；reward 能拉动行为但可能过优化 <span class="arrow">-></span> 加 KL、clip、回归集和人工抽样；推理题能自动判分 <span class="arrow">-></span> 考虑 GRPO 组内比较。</div>
-            <p class="a"><strong>追问应对：</strong>如果被问“你做的 RL 到什么程度”，要讲自己实际训练过的任务、reward 项、曲线、失败样例和调参动作，不要只报算法名。</p>
+            <p class="a"><strong>追问应对：</strong>如果被问“你做的 RL 到什么程度”，不要只说“我了解 PPO/GRPO”。建议按下面 5 层回答：</p>
+            <p class="a"><strong>第一层，先定边界：</strong>“我主要做的是 LLM 对齐/推理任务里的 RL 工程，不是通用机器人控制 RL。重点在 reward 设计、训练稳定性、曲线分析和模型效果评估。”</p>
+            <p class="a"><strong>第二层，说任务：</strong>“我会选可验证任务练手，比如数学推理、代码生成、格式化问答或工具调用。每个 prompt 采样多条回答，用正确性、格式、长度、安全等信号打 reward。”</p>
+            <p class="a"><strong>第三层，说 reward 项：</strong>“例如数学题 reward 可以拆成：最终答案正确性、推理格式、过程完整性、长度惩罚、重复惩罚、KL 惩罚。这样能解释模型为什么被鼓励做某种行为。”</p>
+            <p class="a"><strong>第四层，说曲线和调参：</strong>“训练时我不只看 reward，还会看 KL、entropy、response length、成功率、format error、人工抽样。如果 KL 飙升就提高 KL 系数或降学习率；如果 entropy 快速下降就加强探索或减小更新步长；如果长度变长但正确率不升，就检查 reward 是否鼓励啰嗦。”</p>
+            <p class="a"><strong>第五层，说失败复盘：</strong>“我会准备一个失败例子，比如 reward 上升但人工评估下降，定位到格式奖励或长度奖励过强，然后降低该项权重、加入长度惩罚、增加 holdout 回归集，再对比修复前后的曲线和样本。”</p>
+            <div class="interview"><strong>可直接背的回答：</strong>“我的 RL 深度主要在 LLM 对齐工程层：能搭 SFT 后的 PPO/GRPO/DPO 类训练流程，能设计可解释的 reward，能看 reward、KL、entropy、长度和成功率曲线，也能复盘 reward hacking、熵崩溃、KL 失控这类问题。我不会把自己包装成底层 RL 理论专家，但能把算法用在具体任务里并解释调参依据。”</div>
         </div>
 
         <div class="qa">
