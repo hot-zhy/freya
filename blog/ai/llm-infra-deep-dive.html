@@ -462,7 +462,7 @@
         </article>
 
         <article class="deep-topic" id="long-rl-alignment">
-            <h3>8. RL 对齐完整讲解：从 SFT 到 PPO、GRPO、DPO</h3>
+            <h3>8. RL 对齐完整讲解：从 SFT 到 PPO、GRPO、DPO 和新一代推理优化算法</h3>
             <div class="takeaway"><strong>先读懂这一句话：</strong>SFT 让模型学会模仿答案，RL/偏好优化让模型更偏向“人类或业务真正想要的答案”，但 reward 只是代理目标，所以稳定性和评估同样重要。</div>
             <h4>为什么 SFT 不够</h4>
             <p>SFT 数据通常是 prompt 和标准回答。它能教模型回答格式、任务边界和基本行为，但它主要在模仿数据分布。现实中同一个问题可能有多个答案，哪个更有帮助、更安全、更简洁、更符合业务目标，不一定能靠 SFT 单独学出来。于是需要偏好数据：给同一 prompt 的多个回答排序，或给回答打分。</p>
@@ -476,9 +476,12 @@
             <p>推理任务常能自动验证答案，比如数学、代码测试、格式校验。同一题可以采样多条回答，比较它们的相对奖励。GRPO 用组内均值和方差归一化 advantage，减少不同题目难度不同导致的 reward 尺度差异，同时减少对单独 value model 的依赖。</p>
             <h4>DPO 为什么工程简单</h4>
             <p>DPO 不显式训练 reward model，也不走复杂 rollout + critic 流程，而是直接用 chosen/rejected 偏好对优化模型，让模型提高 chosen 相对 rejected 的概率。它稳定、简单、成本低，适合先做 baseline；但如果任务需要在线探索、复杂规则奖励或多步环境反馈，PPO/GRPO 类方法仍有价值。</p>
+            <h4>更新的偏好优化和推理 RL 方法怎么看</h4>
+            <p>近两年很多算法都在围绕一个目标改进：减少 PPO 的复杂度，或者让推理任务的 RL 更稳定。ORPO 把 SFT 和偏好优化揉进一个目标，避免额外参考模型和复杂 RL 流程；SimPO 用更简单的偏好目标和长度归一化思想，降低 DPO 类方法的实现负担；KTO 不要求严格的 chosen/rejected 成对数据，而是利用“好/坏”反馈，更接近真实产品反馈；RLOO 和 ReMax 试图用更轻量的 baseline 减少方差，降低 value model/critic 的成本；DAPO、Dr.GRPO 等则更多面向可验证推理任务，关注 GRPO 在长度偏置、组内方差、负样本更新、训练稳定性上的问题。</p>
+            <p>这些算法不是互相完全替代，而是在不同数据形态和工程约束下做取舍：如果只有偏好对，DPO/SimPO/ORPO 更直接；如果只有正负反馈，KTO 更自然；如果有可验证答案并能同题多采样，GRPO/DAPO/Dr.GRPO 更合适；如果想保留 RL rollout 但降低 critic 成本，可以看 RLOO/ReMax。</p>
             <h4>reward hacking 和 entropy collapse</h4>
             <p>reward hacking 是模型学会钻 reward 的漏洞，而不是真正变好。例如奖励格式完整，模型就输出固定模板；奖励详细解释，模型就变啰嗦；奖励模型偏好自信语气，模型就更会胡编。entropy collapse 是输出分布过早变尖，模型变得死板、缺乏探索，常伴随多样性下降和模式化回答。</p>
-            <div class="interview"><strong>面试能答到这个程度就够了：</strong>我会先说 SFT 的局限，再说 reward 如何定义，再说 PPO/GRPO/DPO 各自适用条件，最后补稳定性：KL、entropy、长度、人工抽样、holdout 回归集一起看。</div>
+            <div class="interview"><strong>面试能答到这个程度就够了：</strong>我会先说 SFT 的局限，再说 reward 如何定义，再按数据形态选算法：偏好对用 DPO/SimPO/ORPO，正负反馈可看 KTO，可验证推理任务用 GRPO/DAPO/Dr.GRPO，复杂在线探索才考虑 PPO/RLOO/ReMax。最后补稳定性：KL、entropy、长度、人工抽样、holdout 回归集一起看。</div>
         </article>
 
         <article class="deep-topic" id="long-debugging">
@@ -704,11 +707,30 @@
             </div>
         </div>
         <div class="qa">
-            <p class="q"><strong>3. PPO、GRPO、GSPO 先用一句话理解</strong></p>
-            <p class="a"><strong>PPO：</strong>有奖励、有价值估计、有 KL/clip 约束，目标是小步稳定地把策略往高奖励方向推。</p>
-            <p class="a"><strong>GRPO：</strong>同一个题目采样多条回答，用组内相对好坏来更新，适合数学、代码、推理这种能自动判分的任务。</p>
-            <p class="a"><strong>GSPO：</strong>更强调整条回答序列级别的优化稳定性，动机是减少长推理中 token 级噪声。</p>
-            <p class="a"><strong>DPO：</strong>不是典型 RL rollout 流程，而是直接用 chosen/rejected 偏好对训练，工程上更简单。</p>
+            <p class="q"><strong>3. PPO、GRPO、GSPO 以及更新算法怎么系统理解？</strong></p>
+            <p class="a"><strong>先分清两条路线：</strong>一条是真正做 rollout 的 RL 路线，模型会采样回答、拿 reward、再更新策略，例如 PPO、GRPO、RLOO、ReMax、DAPO/Dr.GRPO；另一条是偏好优化路线，不一定显式 rollout，而是直接利用偏好数据优化模型，例如 DPO、IPO、KTO、ORPO、SimPO。</p>
+            <div class="cause-chain">
+                <p><strong>为什么会有这么多算法：</strong>PPO 稳但链路重 <span class="arrow">-></span> DPO 想去掉 reward model + critic + rollout <span class="arrow">-></span> GRPO 想利用同题多回答的相对比较 <span class="arrow">-></span> ORPO/SimPO/KTO 想降低偏好数据和训练流程成本 <span class="arrow">-></span> DAPO/Dr.GRPO 想解决长推理 RL 的稳定性和偏置问题。</p>
+            </div>
+            <p class="a"><strong>PPO：</strong>经典 RLHF 主力算法。它有 policy、reference、reward model、value/critic，用 clipped objective 和 KL 控制更新幅度。优点是通用，能处理复杂 reward；缺点是训练链路重、显存成本高、调参难，容易出现 KL 失控、value loss 抖动、reward hacking。</p>
+            <p class="a"><strong>GRPO：</strong>Group Relative Policy Optimization。同一个 prompt 采样多条回答，用组内 reward 均值/方差构造相对 advantage，减少对 value model 的依赖。它适合数学、代码、推理这种能自动判分、能同题多采样的任务；风险是 reward 噪声、组内样本质量和长度偏置会影响更新。</p>
+            <p class="a"><strong>GSPO：</strong>可以按“序列级策略优化”理解，更关注整条回答的概率和质量，而不是只在 token 级别做局部更新。它的动机是长推理里单 token 概率噪声很大，序列级目标更贴近“这整条答案好不好”。如果面试没有要求公式，重点讲动机和适用场景即可。</p>
+            <p class="a"><strong>DPO：</strong>Direct Preference Optimization。它直接用 chosen/rejected 偏好对优化相对概率，不显式训练 reward model，也不需要 PPO 式 rollout。优点是简单稳定、工程成本低；缺点是依赖偏好对质量，探索能力弱，不适合复杂在线反馈。</p>
+            <table class="compare">
+                <tr><th>算法</th><th>核心信号</th><th>解决的问题</th><th>主要代价/风险</th></tr>
+                <tr><td>PPO</td><td>reward + value + KL</td><td>通用 RLHF，能优化复杂奖励</td><td>链路重、调参难、critic 成本高</td></tr>
+                <tr><td>GRPO</td><td>同题多回答组内相对 reward</td><td>减少 value model，适合可验证推理</td><td>依赖采样质量，可能有长度/方差问题</td></tr>
+                <tr><td>GSPO</td><td>序列级策略目标</td><td>让长推理更新更贴近整条回答质量</td><td>实现和定义更复杂，需看具体论文/框架</td></tr>
+                <tr><td>DPO</td><td>chosen/rejected 偏好对</td><td>绕开显式 RM + PPO，训练简单</td><td>依赖偏好数据，探索弱</td></tr>
+                <tr><td>IPO</td><td>偏好对 + 隐式偏好目标</td><td>缓解 DPO 过度优化偏好间隔的问题</td><td>仍依赖偏好对质量</td></tr>
+                <tr><td>KTO</td><td>好/坏反馈，不强制成对</td><td>适合只有 desirable/undesirable 标签的数据</td><td>反馈标注标准要稳定</td></tr>
+                <tr><td>ORPO</td><td>SFT loss + odds ratio 偏好项</td><td>把监督微调和偏好优化合并</td><td>目标权重和数据配比要调</td></tr>
+                <tr><td>SimPO</td><td>简化偏好目标，常结合长度归一化</td><td>降低 DPO 类方法复杂度，训练更直接</td><td>对长度和 margin 设置敏感</td></tr>
+                <tr><td>RLOO</td><td>leave-one-out baseline</td><td>不用复杂 critic 也能降方差</td><td>需要多采样，采样成本高</td></tr>
+                <tr><td>ReMax</td><td>轻量 baseline / reward normalization</td><td>降低 PPO 式训练复杂度</td><td>稳定性依赖 reward 质量</td></tr>
+                <tr><td>DAPO / Dr.GRPO</td><td>GRPO 改进目标与稳定训练技巧</td><td>面向长推理，缓解长度偏置、低效负样本、训练不稳</td><td>实现细节多，要结合框架和任务验证</td></tr>
+            </table>
+            <p class="a"><strong>选型顺序：</strong>资源紧张、偏好对充足，先 DPO/SimPO/ORPO；只有好/坏标签，考虑 KTO；数学/代码这类可验证任务，考虑 GRPO/DAPO/Dr.GRPO；需要在线探索、复杂奖励、多目标约束，再考虑 PPO/RLOO/ReMax。</p>
         </div>
         <div class="qa">
             <p class="q"><strong>4. 小白最容易误解什么？</strong></p>
